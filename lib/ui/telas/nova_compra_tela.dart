@@ -121,7 +121,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     children: [
                       Expanded(
                         child: Campo(
-                          'Valor individual (R\$)',
+                          'Valor (R\$)',
                           TextField(
                             controller: _valor,
                             focusNode: _focoValor,
@@ -133,7 +133,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                             ],
                             decoration: campoCores(''),
                           ),
-                          hint: 'R\$ 0,00',
+                          hint: 'Valor',
                           focusNode: _focoValor,
                         ),
                       ),
@@ -151,7 +151,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                             ],
                             decoration: campoCores(''),
                           ),
-                          hint: '1',
+                          hint: 'Parcela',
                           focusNode: _focoParcelas,
                         ),
                       ),
@@ -283,7 +283,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                 compradorId: comprador.id,
                                 bancoId: _bancoId!,
                                 descricao: _descricao.text.trim(),
-                                valorIndividual: v,
+                                valorIndividual: v / p,
                                 quantidadeParcelas: p,
                                 data: _mes,
                               );

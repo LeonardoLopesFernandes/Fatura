@@ -34,7 +34,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
     final c = widget.compra;
     _descricao = TextEditingController(text: c.descricao);
     _valor = TextEditingController(
-      text: formatarMoeda(c.valorIndividual)
+      text: formatarMoeda(c.valorTotal)
           .replaceAll('R\$', '')
           .replaceAll(' ', ''),
     );
@@ -92,7 +92,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
               children: [
                 Expanded(
                   child: Campo(
-                    'Valor individual (R\$)',
+                    'Valor (R\$)',
                     TextField(
                       controller: _valor,
                       focusNode: _focoValor,
@@ -104,7 +104,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                       ],
                       decoration: campoCores(''),
                     ),
-                    hint: 'R\$ 0,00',
+                    hint: 'Valor',
                     focusNode: _focoValor,
                   ),
                 ),
@@ -122,7 +122,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                       ],
                       decoration: campoCores(''),
                     ),
-                    hint: '1',
+                    hint: 'Parcela',
                     focusNode: _focoParcelas,
                   ),
                 ),
@@ -224,7 +224,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                   vm.editarCompra(
                     widget.compra.id,
                     descricao: _descricao.text.trim(),
-                    valorIndividual: v,
+                    valorIndividual: v / p,
                     quantidadeParcelas: p,
                     bancoId: _bancoId!,
                     data: _mes,

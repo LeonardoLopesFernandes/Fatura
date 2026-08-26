@@ -12,6 +12,7 @@ class CompraItem extends StatelessWidget {
   final String? rotuloParcelaCustom;
   final bool paga;
   final ValueChanged<bool>? onPagaChanged;
+  final VoidCallback? onRemove;
   final VoidCallback? onEdit;
 
   const CompraItem({
@@ -22,6 +23,7 @@ class CompraItem extends StatelessWidget {
     this.rotuloParcelaCustom,
     this.paga = false,
     this.onPagaChanged,
+    this.onRemove,
     this.onEdit,
   });
 
@@ -117,31 +119,90 @@ class CompraItem extends StatelessWidget {
     if (onEdit != null) {
       corpo = GestureDetector(onLongPress: onEdit, child: corpo);
     }
-    if (onPagaChanged != null) {
+
+    final podePaga = onPagaChanged != null;
+    final podeRemover = onRemove != null;
+
+    if (podePaga || podeRemover) {
       corpo = Dismissible(
         key: Key(compra.id),
-        direction: DismissDirection.endToStart,
-        background: Container(
-          decoration: BoxDecoration(
-            color: Correto,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          padding: const EdgeInsets.only(right: 18),
-          alignment: Alignment.centerRight,
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Icon(Icons.check_circle_outline, color: Branco),
-              SizedBox(width: 6),
-              Text('Paga',
-                  style:
-                      TextStyle(color: Branco, fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
-        confirmDismiss: (_) async {
-          onPagaChanged!(!paga);
-          return false;
+        direction: DismissDirection.horizontal,
+        background: podeRemover
+            ? Container(
+                decoration: BoxDecoration(
+                  color: LacunaVermelha,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                padding: const EdgeInsets.only(left: 18),
+                alignment: Alignment.centerLeft,
+                child: const Row(
+                  children: [
+                    Icon(Icons.delete_outline, color: Branco),
+                    SizedBox(width: 6),
+                    Text('Excluir',
+                        style: TextStyle(
+                            color: Branco, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              )
+            : Container(color: Colors.transparent),
+        secondaryBackground: podePaga
+            ? Container(
+                decoration: BoxDecoration(
+                  color: Correto,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                padding: const EdgeInsets.only(right: 18),
+                alignment: Alignment.centerRight,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(Icons.check_circle_outline, color: Branco),
+                    SizedBox(width: 6),
+                    Text('Paga',
+                        style: TextStyle(
+                            color: Branco, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              )
+            : Container(color: Colors.transparent),
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.startToEnd) {
+            if (!podeRemover) return false;
+            final ok = await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                backgroundColor: Superficie,
+                title: const Text('Excluir compra?',
+                    style: TextStyle(color: Branco)),
+                content: Text(
+                  '${compra.descricao}\n${formatarMoeda(compra.valorTotal)} será removida da fatura.',
+                  style: TextStyle(color: Branco.withOpacity(0.7)),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: Text('Cancelar',
+                        style: TextStyle(color: Branco.withOpacity(0.7))),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: const Text('Excluir',
+                        style: TextStyle(color: VermelhoExcluir)),
+                  ),
+                ],
+              ),
+            );
+            if (ok == true) {
+              onRemove!();
+              return true;
+            }
+            return false;
+          } else {
+            if (!podePaga) return false;
+            onPagaChanged!(!paga);
+            return false;
+          }
         },
         child: corpo,
       );

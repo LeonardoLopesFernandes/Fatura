@@ -188,6 +188,8 @@ class CompradorDetalheScreen extends StatelessWidget {
                             banco: grupo.banco,
                             compras: grupo.compras,
                             mes: mes,
+                            onRemove: (compra) =>
+                                vm.removerCompra(compra.id),
                             onPagaChanged: (compra, paga) =>
                                 vm.marcarPaga(compra.id, mes, paga),
                             onEdit: (compra) => mostrarMenuCompra(
@@ -407,6 +409,7 @@ class GrupoCard extends StatelessWidget {
   final Banco banco;
   final List<Compra> compras;
   final Mes mes;
+  final void Function(Compra) onRemove;
   final void Function(Compra, bool) onPagaChanged;
   final void Function(Compra) onEdit;
 
@@ -415,6 +418,7 @@ class GrupoCard extends StatelessWidget {
     required this.banco,
     required this.compras,
     required this.mes,
+    required this.onRemove,
     required this.onPagaChanged,
     required this.onEdit,
   });
@@ -478,6 +482,7 @@ class GrupoCard extends StatelessWidget {
                     ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
                                     : 'Mensal',
                 onPagaChanged: (paga) => onPagaChanged(compra, paga),
+                onRemove: () => onRemove(compra),
                 onEdit: () => onEdit(compra),
               ),
             );

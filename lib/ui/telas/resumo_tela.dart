@@ -206,6 +206,7 @@ class ResumoScreen extends StatelessWidget {
                                         : 'Mensal',
                                 onPagaChanged: (paga) =>
                                     vm.marcarPaga(compra.id, mes, paga),
+                                onRemove: () => vm.removerCompra(compra.id),
                                 onEdit: () => mostrarMenuCompra(
                                   context,
                                   compra,
