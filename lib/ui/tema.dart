@@ -19,6 +19,7 @@ const Color Branco70 = Color(0xB3FFFFFF);
 const Color Branco38 = Color(0x61FFFFFF);
 const Color StatusBar = Color(0xFF0B1129);
 const Color LacunaVermelha = Color(0xFFC62828);
+const Color CinzaClaro = Color(0xFF9AA4B2);
 
 double _canalLuminancia(int c) {
   final s = c / 255.0;

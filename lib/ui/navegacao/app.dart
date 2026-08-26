@@ -28,6 +28,19 @@ class _AppNavegacaoState extends State<AppNavegacao> {
 
   bool _ehAba(String rota) => _abas.contains(rota);
 
+  String get _tituloAba {
+    switch (_indice) {
+      case 0:
+        return 'Resumo';
+      case 1:
+        return 'Devedores';
+      case 2:
+        return 'Bancos';
+      default:
+        return 'Fatura';
+    }
+  }
+
   void _push(String rota, {Object? arguments}) {
     _navigatorKey.currentState!.pushNamed(rota, arguments: arguments);
   }
@@ -173,6 +186,22 @@ class _AppNavegacaoState extends State<AppNavegacao> {
       onWillPop: _aoVoltar,
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: _ehAba(_rotaAtual)
+            ? AppBar(
+                backgroundColor: FundoInicio,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                centerTitle: true,
+                title: Text(
+                  _tituloAba,
+                  style: const TextStyle(
+                    color: Branco,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : null,
         body: AppBackground(
           child: Navigator(
             key: _navigatorKey,
@@ -184,28 +213,41 @@ class _AppNavegacaoState extends State<AppNavegacao> {
           ),
         ),
         bottomNavigationBar: _ehAba(_rotaAtual)
-            ? NavigationBar(
-                backgroundColor: NavBar,
-                indicatorColor: CorPrimaria.withOpacity(0.25),
-                selectedIndex: _indice,
-                onDestinationSelected: _irParaAba,
-                destinations: const [
-                  NavigationDestination(
-                    icon: Icon(Icons.dashboard_outlined, color: Branco54),
-                    selectedIcon: Icon(Icons.dashboard, color: Branco),
-                    label: 'Resumo',
+            ? NavigationBarTheme(
+                data: NavigationBarThemeData(
+                  labelTextStyle: WidgetStateProperty.resolveWith(
+                    (states) => TextStyle(
+                      color: states.contains(WidgetState.selected)
+                          ? Branco
+                          : Branco54,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  NavigationDestination(
-                    icon: Icon(Icons.people_outlined, color: Branco54),
-                    selectedIcon: Icon(Icons.people, color: Branco),
-                    label: 'Devedores',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.account_balance_outlined, color: Branco54),
-                    selectedIcon: Icon(Icons.account_balance, color: Branco),
-                    label: 'Bancos',
-                  ),
-                ],
+                ),
+                child: NavigationBar(
+                  backgroundColor: NavBar,
+                  indicatorColor: CorPrimaria.withOpacity(0.25),
+                  selectedIndex: _indice,
+                  onDestinationSelected: _irParaAba,
+                  destinations: const [
+                    NavigationDestination(
+                      icon: Icon(Icons.dashboard_outlined, color: Branco54),
+                      selectedIcon: Icon(Icons.dashboard, color: Branco),
+                      label: 'Resumo',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.people_outlined, color: Branco54),
+                      selectedIcon: Icon(Icons.people, color: Branco),
+                      label: 'Devedores',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.account_balance_outlined, color: Branco54),
+                      selectedIcon: Icon(Icons.account_balance, color: Branco),
+                      label: 'Bancos',
+                    ),
+                  ],
+                ),
               )
             : null,
       ),

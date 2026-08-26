@@ -38,7 +38,7 @@ InputDecoration campoCores(
       fontWeight: FontWeight.w600,
     ),
     hintText: hint,
-    hintStyle: TextStyle(color: Branco70),
+    hintStyle: const TextStyle(color: CinzaClaro),
     prefixIcon: prefixIcon,
     filled: true,
     fillColor: SuperficieElevada,
