@@ -31,14 +31,13 @@ InputDecoration campoCores(
   Widget? prefixIcon,
 }) {
   return InputDecoration(
-    labelText: label,
+    labelText: hint ?? label,
     labelStyle: const TextStyle(
       color: Branco70,
       fontSize: 12,
       fontWeight: FontWeight.w600,
     ),
-    hintText: hint,
-    hintStyle: const TextStyle(color: CinzaClaro),
+    floatingLabelBehavior: FloatingLabelBehavior.auto,
     prefixIcon: prefixIcon,
     filled: true,
     fillColor: SuperficieElevada,

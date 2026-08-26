@@ -153,7 +153,8 @@ class _BancoFormularioState extends State<BancoFormulario> {
           ),
         ),
       ),
-      body: Column(
+      body: AppBackground(
+        child: Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
@@ -380,6 +381,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
