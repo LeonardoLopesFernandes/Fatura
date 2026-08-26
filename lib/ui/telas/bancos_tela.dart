@@ -254,12 +254,12 @@ class BancosScreen extends StatelessWidget {
 
   Future<void> _importar(BuildContext context, FaturaViewModel vm) async {
     try {
-      final resultado = await FilePicker.pickFiles(
+      final resultado = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
       );
-      if (resultado == null || resultado.isEmpty) return;
-      final arquivo = resultado.first;
+      if (resultado == null || resultado.files.isEmpty) return;
+      final arquivo = resultado.files.first;
       if (arquivo.path == null) return;
       final conteudo = await File(arquivo.path!).readAsString();
       final ok = vm.importarJson(conteudo);
