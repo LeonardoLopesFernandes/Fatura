@@ -11,6 +11,7 @@ import '../../ui/telas/bancos_tela.dart';
 import '../../ui/telas/nova_compra_tela.dart';
 import '../../ui/telas/fatura_banco_tela.dart';
 import '../../ui/telas/banco_formulario_tela.dart';
+import '../../ui/telas/configuracoes_tela.dart';
 
 Route<dynamic> _rotaAnimada(RouteSettings settings, WidgetBuilder builder) {
   return PageRouteBuilder(
@@ -202,6 +203,11 @@ class _AppNavegacaoState extends State<AppNavegacao> {
             onVoltar: () => _navigatorKey.currentState!.pop(),
           ),
         );
+      case 'configuracoes':
+        return _rotaAnimada(
+          settings,
+          (_) => const ConfiguracoesScreen(),
+        );
       default:
         return _rotaAnimada(
           settings,
@@ -235,6 +241,12 @@ class _AppNavegacaoState extends State<AppNavegacao> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                actions: [
+                  IconButton(
+                    onPressed: () => _push('configuracoes'),
+                    icon: const Icon(Icons.settings, color: Branco54),
+                  ),
+                ],
               )
             : null,
         body: AppBackground(

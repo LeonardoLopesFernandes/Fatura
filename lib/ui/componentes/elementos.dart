@@ -74,21 +74,46 @@ class CabecalhoMes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        BotaoMes(Icons.chevron_left, aoAnterior),
-        Text(
-          rotuloMes(mes),
-          style: const TextStyle(
-            color: Branco,
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1,
+    return Container(
+      decoration: BoxDecoration(
+        color: Superficie.withOpacity(0.55),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Branco.withOpacity(0.08)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          BotaoMes(Icons.chevron_left, aoAnterior),
+          Expanded(
+            child: Column(
+              children: [
+                const Text(
+                  'MÊS',
+                  style: TextStyle(
+                    color: TituloAzul,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  rotuloMesLongo(mes).toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Branco,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        BotaoMes(Icons.chevron_right, aoProximo),
-      ],
+          BotaoMes(Icons.chevron_right, aoProximo),
+        ],
+      ),
     );
   }
 }

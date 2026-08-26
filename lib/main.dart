@@ -4,11 +4,16 @@ import 'package:provider/provider.dart';
 import 'data/fatura_view_model.dart';
 import 'ui/navegacao/app.dart';
 import 'ui/tema.dart';
+import 'util/notificacoes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final vm = FaturaViewModel();
   await vm.carregar();
+  await inicializarNotificacoes();
+  if (vm.lembretesAtivos) {
+    await agendarLembretes(true);
+  }
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: StatusBar,
     statusBarIconBrightness: Brightness.light,

@@ -11,6 +11,8 @@ class CompraItem extends StatelessWidget {
   final double? valorExibido;
   final String? rotuloParcelaCustom;
   final VoidCallback? onRemove;
+  final ValueChanged<bool>? onPagaChanged;
+  final VoidCallback? onEdit;
 
   const CompraItem({
     super.key,
@@ -19,6 +21,8 @@ class CompraItem extends StatelessWidget {
     this.valorExibido,
     this.rotuloParcelaCustom,
     this.onRemove,
+    this.onPagaChanged,
+    this.onEdit,
   });
 
   @override
@@ -28,6 +32,30 @@ class CompraItem extends StatelessWidget {
     final valor = valorExibido ?? compra.valorTotal;
     final rotulo =
         rotuloParcelaCustom ?? rotuloParcela(compra.quantidadeParcelas);
+
+    Widget check() {
+      if (onPagaChanged == null) return const SizedBox.shrink();
+      return GestureDetector(
+        onTap: () => onPagaChanged!(!compra.paga),
+        child: Container(
+          width: 24,
+          height: 24,
+          margin: const EdgeInsets.only(right: 10),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: compra.paga ? Correto : Branco.withOpacity(0.16),
+            border: compra.paga
+                ? null
+                : Border.all(color: Branco54, width: 1.5),
+          ),
+          child: Icon(
+            compra.paga ? Icons.check : Icons.circle,
+            size: 14,
+            color: compra.paga ? Branco : Colors.transparent,
+          ),
+        ),
+      );
+    }
 
     Widget card() {
       return Container(
@@ -40,6 +68,7 @@ class CompraItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            check(),
             BancoLogo(banco: banco, tamanho: 40, raio: 10),
             const SizedBox(width: 12),
             Expanded(
@@ -52,9 +81,14 @@ class CompraItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: corTexto,
+                      color: compra.paga
+                          ? corTexto.withOpacity(0.6)
+                          : corTexto,
                       fontSize: 14.5,
                       fontWeight: FontWeight.bold,
+                      decoration: compra.paga
+                          ? TextDecoration.lineThrough
+                          : null,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -107,59 +141,67 @@ class CompraItem extends StatelessWidget {
       );
     }
 
-    if (onRemove == null) return card();
-
-    return Dismissible(
-      key: Key(compra.id),
-      direction: DismissDirection.startToEnd,
-      background: Container(
-        decoration: BoxDecoration(
-          color: LacunaVermelha,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        padding: const EdgeInsets.only(left: 18),
-        alignment: Alignment.centerLeft,
-        child: const Row(
-          children: [
-            Icon(Icons.delete_outline, color: Branco),
-            SizedBox(width: 6),
-            Text('Excluir',
-                style: TextStyle(color: Branco, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
-      confirmDismiss: (direction) async {
-        final ok = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: Superficie,
-            title: const Text('Excluir compra?',
-                style: TextStyle(color: Branco)),
-            content: Text(
-              '${compra.descricao}\n${formatarMoeda(compra.valorTotal)} será removida da fatura.',
-              style: TextStyle(color: Branco.withOpacity(0.7)),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text('Cancelar',
-                    style: TextStyle(color: Branco.withOpacity(0.7))),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Excluir',
-                    style: TextStyle(color: VermelhoExcluir)),
-              ),
+    Widget child;
+    if (onRemove == null) {
+      child = card();
+    } else {
+      child = Dismissible(
+        key: Key(compra.id),
+        direction: DismissDirection.startToEnd,
+        background: Container(
+          decoration: BoxDecoration(
+            color: LacunaVermelha,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          padding: const EdgeInsets.only(left: 18),
+          alignment: Alignment.centerLeft,
+          child: const Row(
+            children: [
+              Icon(Icons.delete_outline, color: Branco),
+              SizedBox(width: 6),
+              Text('Excluir',
+                  style: TextStyle(color: Branco, fontWeight: FontWeight.bold)),
             ],
           ),
-        );
-        if (ok == true) {
-          onRemove!();
-          return true;
-        }
-        return false;
-      },
-      child: card(),
-    );
+        ),
+        confirmDismiss: (direction) async {
+          final ok = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              backgroundColor: Superficie,
+              title: const Text('Excluir compra?',
+                  style: TextStyle(color: Branco)),
+              content: Text(
+                '${compra.descricao}\n${formatarMoeda(compra.valorTotal)} será removida da fatura.',
+                style: TextStyle(color: Branco.withOpacity(0.7)),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(false),
+                  child: Text('Cancelar',
+                      style: TextStyle(color: Branco.withOpacity(0.7))),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  child: const Text('Excluir',
+                      style: TextStyle(color: VermelhoExcluir)),
+                ),
+              ],
+            ),
+          );
+          if (ok == true) {
+            onRemove!();
+            return true;
+          }
+          return false;
+        },
+        child: card(),
+      );
+    }
+
+    if (onEdit != null) {
+      child = GestureDetector(onLongPress: onEdit, child: child);
+    }
+    return child;
   }
 }

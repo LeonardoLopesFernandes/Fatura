@@ -8,6 +8,7 @@ class Compra {
   final double valorIndividual;
   final int quantidadeParcelas;
   final Mes data;
+  final bool paga;
 
   Compra({
     required this.id,
@@ -17,6 +18,7 @@ class Compra {
     required this.valorIndividual,
     required this.quantidadeParcelas,
     required this.data,
+    this.paga = false,
   });
 
   double get valorTotal => valorIndividual * quantidadeParcelas;
@@ -46,6 +48,7 @@ class Compra {
         'quantidadeParcelas': quantidadeParcelas,
         'ano': data.ano,
         'mes': data.mes,
+        'paga': paga,
       };
 
   factory Compra.fromJson(Map<String, dynamic> json) => Compra(
@@ -56,5 +59,6 @@ class Compra {
         valorIndividual: (json['valorIndividual'] as num).toDouble(),
         quantidadeParcelas: json['quantidadeParcelas'],
         data: Mes(json['ano'], json['mes']),
+        paga: json['paga'] as bool? ?? false,
       );
 }

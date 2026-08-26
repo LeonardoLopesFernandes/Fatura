@@ -7,6 +7,7 @@ import '../../data/fatura_view_model.dart';
 import '../../ui/tema.dart';
 import '../../ui/componentes/elementos.dart';
 import '../../ui/componentes/compra_item.dart';
+import '../../ui/componentes/menu_compra.dart';
 import '../../ui/componentes/carousel_bank_card.dart';
 import '../../util/formatadores.dart';
 
@@ -173,6 +174,10 @@ class ResumoScreen extends StatelessWidget {
                                         ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
                                         : 'Mensal',
                                 onRemove: () => vm.removerCompra(compra.id),
+                                onPagaChanged: (paga) =>
+                                    vm.marcarPaga(compra.id, paga),
+                                onEdit: () =>
+                                    mostrarMenuCompra(context, compra, vm),
                               ),
                             );
                           }).toList(),

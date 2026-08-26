@@ -40,6 +40,7 @@ class FaturaViewModel extends ChangeNotifier {
 
   Future<void> carregar() async {
     final prefs = await SharedPreferences.getInstance();
+    _lembretesAtivos = prefs.getBool('fatura.lembretes') ?? false;
     final texto = prefs.getString('fatura.dados.v1');
     if (texto == null || texto.isEmpty) {
       _bancos = _bancosPadrao();
@@ -439,6 +440,66 @@ class FaturaViewModel extends ChangeNotifier {
   void removerCompra(String id) {
     _compras.removeWhere((c) => c.id == id);
     _alterado();
+  }
+
+  void editarCompra(
+    String id, {
+    String? descricao,
+    double? valorIndividual,
+    int? quantidadeParcelas,
+    String? bancoId,
+    Mes? data,
+  }) {
+    _compras = _compras.map((c) {
+      if (c.id != id) return c;
+      return Compra(
+        id: c.id,
+        compradorId: c.compradorId,
+        bancoId: bancoId ?? c.bancoId,
+        descricao: descricao ?? c.descricao,
+        valorIndividual: valorIndividual ?? c.valorIndividual,
+        quantidadeParcelas: quantidadeParcelas ?? c.quantidadeParcelas,
+        data: data ?? c.data,
+        paga: c.paga,
+      );
+    }).toList();
+    _alterado();
+  }
+
+  void marcarPaga(String id, bool paga) {
+    _compras = _compras.map((c) {
+      if (c.id != id) return c;
+      return Compra(
+        id: c.id,
+        compradorId: c.compradorId,
+        bancoId: c.bancoId,
+        descricao: c.descricao,
+        valorIndividual: c.valorIndividual,
+        quantidadeParcelas: c.quantidadeParcelas,
+        data: c.data,
+        paga: paga,
+      );
+    }).toList();
+    _alterado();
+  }
+
+  void limparTudo() {
+    _bancos = [];
+    _compradores = [];
+    _compras = [];
+    _faturas = {};
+    _alterado();
+  }
+
+  bool _lembretesAtivos = false;
+  bool get lembretesAtivos => _lembretesAtivos;
+
+  void definirLembretesAtivos(bool valor) {
+    _lembretesAtivos = valor;
+    SharedPreferences.getInstance().then(
+      (p) => p.setBool('fatura.lembretes', valor),
+    );
+    notifyListeners();
   }
 
   List<Grupo> agruparPorBanco(List<Compra> compras) {

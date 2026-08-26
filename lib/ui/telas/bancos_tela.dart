@@ -1,9 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:file_picker/file_picker.dart';
 import '../../data/fatura_view_model.dart';
 import '../../models/banco.dart';
 import '../../ui/tema.dart';
@@ -39,14 +35,6 @@ class BancosScreen extends StatelessWidget {
                             color: Branco,
                             fontSize: 28,
                             fontWeight: FontWeight.w800)),
-                  ),
-                  IconButton(
-                    onPressed: () => _confirmarImportar(context, vm),
-                    icon: const Icon(Icons.download, color: Branco),
-                  ),
-                  IconButton(
-                    onPressed: () => _exportarBackup(context, vm),
-                    icon: const Icon(Icons.upload, color: Branco),
                   ),
                 ],
               ),
@@ -198,88 +186,6 @@ class BancosScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<void> _exportarBackup(
-      BuildContext context, FaturaViewModel vm) async {
-    try {
-      final dir = Directory(
-          '${(await getTemporaryDirectory()).path}/compartilhamento');
-      await dir.create(recursive: true);
-      final file = File('${dir.path}/faturas_backup.json');
-      await file.writeAsString(vm.exportarJson());
-      await Share.shareXFiles(
-        [XFile(file.path, mimeType: 'application/json')],
-        subject: 'Backup das faturas',
-      );
-    } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Não foi possível exportar.')),
-        );
-      }
-    }
-  }
-
-  void _confirmarImportar(BuildContext context, FaturaViewModel vm) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Superficie,
-        title: const Text('Importar backup?',
-            style: TextStyle(color: Branco)),
-        content: const Text(
-          'Isso substituirá todos os dados atuais pelos do arquivo de backup.',
-          style: TextStyle(color: Branco54),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child:
-                const Text('Cancelar', style: TextStyle(color: Branco54)),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _importar(context, vm);
-            },
-            child: const Text('Importar',
-                style: TextStyle(color: CorPrimaria)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _importar(BuildContext context, FaturaViewModel vm) async {
-    try {
-      final resultado = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-      );
-      if (resultado == null || resultado.files.isEmpty) return;
-      final arquivo = resultado.files.first;
-      if (arquivo.path == null) return;
-      final conteudo = await File(arquivo.path!).readAsString();
-      final ok = vm.importarJson(conteudo);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(ok
-                ? 'Backup importado com sucesso.'
-                : 'Arquivo de backup inválido.'),
-          ),
-        );
-      }
-    } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Não foi possível ler o arquivo.')),
-        );
-      }
-    }
   }
 }
 

@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../data/fatura_view_model.dart';
 import '../../models/banco.dart';
 import '../../models/compra.dart';
@@ -7,6 +10,7 @@ import '../../models/grupo.dart';
 import '../../ui/tema.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/compra_item.dart';
+import '../../ui/componentes/menu_compra.dart';
 import '../../util/formatadores.dart';
 import '../../compartilhar/gerar_imagem.dart';
 import '../../compartilhar/gerar_pdf.dart';
@@ -152,6 +156,10 @@ class CompradorDetalheScreen extends StatelessWidget {
                             compras: grupo.compras,
                             onRemove: (compra) =>
                                 vm.removerCompra(compra.id),
+                            onPagaChanged: (compra, paga) =>
+                                vm.marcarPaga(compra.id, paga),
+                            onEdit: (compra) =>
+                                mostrarMenuCompra(context, compra, vm),
                           ),
                         );
                       }).toList(),
@@ -220,10 +228,103 @@ class CompradorDetalheScreen extends StatelessWidget {
                 }
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.text_snippet, color: Branco),
+              title:
+                  const Text('Texto', style: TextStyle(color: Branco)),
+              subtitle: const Text('Compartilhar como mensagem',
+                  style: TextStyle(color: Branco54)),
+              onTap: () {
+                Navigator.of(context).pop();
+                Share.share(
+                  _montarTexto(vm, nome, fatura, grupos),
+                  subject: 'Fatura - $nome',
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.table_chart, color: Branco),
+              title: const Text('CSV', style: TextStyle(color: Branco)),
+              subtitle: const Text('Planilha separada por vírgulas',
+                  style: TextStyle(color: Branco54)),
+              onTap: () async {
+                Navigator.of(context).pop();
+                try {
+                  final dir = Directory(
+                      '${(await getTemporaryDirectory()).path}/compartilhamento');
+                  await dir.create(recursive: true);
+                  final arquivo =
+                      File('${dir.path}/fatura_${limparNome(nome)}.csv');
+                  await arquivo.writeAsString(_montarCsv(vm, nome, grupos));
+                  if (context.mounted) {
+                    await Share.shareXFiles(
+                      [
+                        XFile(arquivo.path,
+                            mimeType: 'text/csv'),
+                      ],
+                      subject: 'Fatura - $nome',
+                    );
+                  }
+                } catch (_) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('Não foi possível gerar o CSV.')),
+                    );
+                  }
+                }
+              },
+            ),
           ],
         ),
       ),
     );
+  }
+
+  String _montarTexto(
+      FaturaViewModel vm, String nome, double fatura, List<Grupo> grupos) {
+    final buffer = StringBuffer();
+    buffer.writeln('Fatura - $nome');
+    buffer.writeln('Mês: ${rotuloMesLongo(vm.mesSelecionado)}');
+    buffer.writeln('');
+    if (grupos.isEmpty) {
+      buffer.writeln('Nenhuma compra neste mês.');
+    }
+    for (final g in grupos) {
+      buffer.writeln(g.banco.nome);
+      for (final c in g.compras) {
+        final parcela = c.quantidadeParcelas > 1
+            ? ' (${c.quantidadeParcelas}x)'
+            : '';
+        final pago = c.paga ? ' [pago]' : '';
+        buffer.writeln(
+            '  - ${c.descricao}: ${formatarMoeda(c.valorTotal)}$parcela$pago');
+      }
+    }
+    buffer.writeln('');
+    buffer.writeln('Total: ${formatarMoeda(fatura)}');
+    return buffer.toString();
+  }
+
+  String _montarCsv(FaturaViewModel vm, String nome, List<Grupo> grupos) {
+    final buffer = StringBuffer();
+    buffer.writeln('devedor,banco,descricao,valor,parcelas,data,paga');
+    for (final g in grupos) {
+      for (final c in g.compras) {
+        final data =
+            '${c.data.ano}-${c.data.mes.toString().padLeft(2, '0')}';
+        buffer.writeln(
+            '"${nome.replaceAll('"', "'")}",'
+            '"${g.banco.nome.replaceAll('"', "'")}",'
+            '"${c.descricao.replaceAll('"', "'")}",'
+            '${c.valorTotal.toStringAsFixed(2).replaceAll('.', ',')},'
+            '${c.quantidadeParcelas},'
+            '$data,'
+            '${c.paga ? 'sim' : 'nao'}');
+      }
+    }
+    return buffer.toString();
   }
 
   void _confirmarApagar(
@@ -266,12 +367,16 @@ class GrupoCard extends StatelessWidget {
   final Banco banco;
   final List<Compra> compras;
   final void Function(Compra) onRemove;
+  final void Function(Compra, bool) onPagaChanged;
+  final void Function(Compra) onEdit;
 
   const GrupoCard({
     super.key,
     required this.banco,
     required this.compras,
     required this.onRemove,
+    required this.onPagaChanged,
+    required this.onEdit,
   });
 
   @override
@@ -328,6 +433,8 @@ class GrupoCard extends StatelessWidget {
                 compra: compra,
                 banco: banco,
                 onRemove: () => onRemove(compra),
+                onPagaChanged: (paga) => onPagaChanged(compra, paga),
+                onEdit: () => onEdit(compra),
               ),
             );
           }).toList(),

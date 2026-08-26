@@ -78,7 +78,7 @@ class _NovoDevedorSheetState extends State<NovoDevedorSheet> {
   }
 }
 
-class DevedoresScreen extends StatelessWidget {
+class DevedoresScreen extends StatefulWidget {
   final void Function(String) onAdicionarCompra;
   final void Function(String) onDetalharComprador;
 
@@ -89,8 +89,27 @@ class DevedoresScreen extends StatelessWidget {
   });
 
   @override
+  State<DevedoresScreen> createState() => _DevedoresScreenState();
+}
+
+class _DevedoresScreenState extends State<DevedoresScreen> {
+  final _filtro = TextEditingController();
+
+  @override
+  void dispose() {
+    _filtro.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final vm = Provider.of<FaturaViewModel>(context);
+    final termo = _filtro.text.trim().toLowerCase();
+    final compradores = termo.isEmpty
+        ? vm.compradores
+        : vm.compradores
+            .where((c) => c.nome.toLowerCase().contains(termo))
+            .toList();
     return Column(
       children: [
         Padding(
@@ -109,14 +128,27 @@ class DevedoresScreen extends StatelessWidget {
                 'Cadastre quem usa o cartão e consulte as faturas individuais.',
                 style: TextStyle(color: Branco.withOpacity(0.6), fontSize: 14),
               ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _filtro,
+                onChanged: (_) => setState(() {}),
+                style: const TextStyle(color: Branco, fontSize: 16),
+                decoration: campoCores('', hint: 'Buscar devedor')
+                    .copyWith(
+                  prefixIcon:
+                      const Icon(Icons.search, color: CinzaClaro),
+                ),
+              ),
             ],
           ),
         ),
         Expanded(
-          child: vm.compradores.isEmpty
+          child: compradores.isEmpty
               ? Center(
                   child: Text(
-                    'Nenhum devedor cadastrado.\nToque no botão abaixo.',
+                    vm.compradores.isEmpty
+                        ? 'Nenhum devedor cadastrado.\nToque no botão abaixo.'
+                        : 'Nenhum devedor encontrado.',
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(color: Branco.withOpacity(0.54), fontSize: 14),
@@ -125,10 +157,10 @@ class DevedoresScreen extends StatelessWidget {
               : ListView.separated(
                   padding:
                       const EdgeInsets.only(left: 20, right: 20, top: 4, bottom: 16),
-                  itemCount: vm.compradores.length,
+                  itemCount: compradores.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
-                    final comprador = vm.compradores[index];
+                    final comprador = compradores[index];
                     final banco = vm.bancoPrincipalDoComprador(comprador.id);
                     final corBanco =
                         banco != null ? Color(banco.cor) : CorPrimaria;
@@ -138,9 +170,9 @@ class DevedoresScreen extends StatelessWidget {
                         vm.comprasDoComprador(comprador.id).length;
                     final fatura = vm.faturaDoComprador(comprador.id);
                     return GestureDetector(
-                      onTap: () => onAdicionarCompra(comprador.nome),
+                      onTap: () => widget.onAdicionarCompra(comprador.nome),
                       onLongPress: () =>
-                          onDetalharComprador(comprador.id),
+                          widget.onDetalharComprador(comprador.id),
                       child: Container(
                         decoration: BoxDecoration(
                           color: fundo,
