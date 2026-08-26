@@ -28,6 +28,7 @@ class FaturaBancoScreen extends StatefulWidget {
 
 class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
   final _valor = TextEditingController();
+  final _focoValor = FocusNode();
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
   @override
   void dispose() {
     _valor.dispose();
+    _focoValor.dispose();
     super.dispose();
   }
 
@@ -84,15 +86,17 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
               'Valor total da fatura (R\$)',
               TextField(
                 controller: _valor,
+                focusNode: _focoValor,
                 style: const TextStyle(color: Branco, fontSize: 16),
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   BrazilianCurrencyInputFormatter(),
                 ],
-                decoration: campoCores('',
-                    hint: 'R\$ 0,00'),
+                decoration: campoCores(''),
               ),
+              hint: 'R\$ 0,00',
+              focusNode: _focoValor,
             ),
             const SizedBox(height: 10),
             Text(

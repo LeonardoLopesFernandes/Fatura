@@ -8,7 +8,7 @@ class Compra {
   final double valorIndividual;
   final int quantidadeParcelas;
   final Mes data;
-  final bool paga;
+  final Set<int> pagasPorMes;
 
   Compra({
     required this.id,
@@ -18,8 +18,8 @@ class Compra {
     required this.valorIndividual,
     required this.quantidadeParcelas,
     required this.data,
-    this.paga = false,
-  });
+    Set<int>? pagasPorMes,
+  }) : pagasPorMes = pagasPorMes ?? {};
 
   double get valorTotal => valorIndividual * quantidadeParcelas;
 
@@ -39,6 +39,40 @@ class Compra {
     return m.indice() - inicio + 1;
   }
 
+  bool pagaNoMes(Mes m) => pagasPorMes.contains(m.indice());
+
+  List<Mes> get mesesAtivos {
+    final inicio = data.indice();
+    return List.generate(
+        quantidadeParcelas, (i) => Mes.porIndice(inicio + i));
+  }
+
+  double get valorPendente =>
+      valorIndividual * mesesAtivos.where((m) => !pagaNoMes(m)).length;
+
+  bool get paga => mesesAtivos.every((m) => pagaNoMes(m));
+
+  Compra copyWith({
+    String? id,
+    String? compradorId,
+    String? bancoId,
+    String? descricao,
+    double? valorIndividual,
+    int? quantidadeParcelas,
+    Mes? data,
+    Set<int>? pagasPorMes,
+  }) =>
+      Compra(
+        id: id ?? this.id,
+        compradorId: compradorId ?? this.compradorId,
+        bancoId: bancoId ?? this.bancoId,
+        descricao: descricao ?? this.descricao,
+        valorIndividual: valorIndividual ?? this.valorIndividual,
+        quantidadeParcelas: quantidadeParcelas ?? this.quantidadeParcelas,
+        data: data ?? this.data,
+        pagasPorMes: pagasPorMes ?? this.pagasPorMes,
+      );
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'compradorId': compradorId,
@@ -48,17 +82,30 @@ class Compra {
         'quantidadeParcelas': quantidadeParcelas,
         'ano': data.ano,
         'mes': data.mes,
+        'pagasPorMes': pagasPorMes.toList(),
         'paga': paga,
       };
 
-  factory Compra.fromJson(Map<String, dynamic> json) => Compra(
-        id: json['id'],
-        compradorId: json['compradorId'],
-        bancoId: json['bancoId'],
-        descricao: json['descricao'],
-        valorIndividual: (json['valorIndividual'] as num).toDouble(),
-        quantidadeParcelas: json['quantidadeParcelas'],
-        data: Mes(json['ano'], json['mes']),
-        paga: json['paga'] as bool? ?? false,
-      );
+  factory Compra.fromJson(Map<String, dynamic> json) {
+    Set<int> pagas = {};
+    if (json['pagasPorMes'] != null) {
+      pagas = (json['pagasPorMes'] as List).map((e) => e as int).toSet();
+    } else if (json['paga'] as bool? ?? false) {
+      final qtd = json['quantidadeParcelas'] as int? ?? 1;
+      final ano = json['ano'] as int? ?? 0;
+      final mes = json['mes'] as int? ?? 1;
+      final inicio = Mes(ano, mes).indice();
+      pagas = {for (var i = 0; i < qtd; i++) inicio + i};
+    }
+    return Compra(
+      id: json['id'],
+      compradorId: json['compradorId'],
+      bancoId: json['bancoId'],
+      descricao: json['descricao'],
+      valorIndividual: (json['valorIndividual'] as num).toDouble(),
+      quantidadeParcelas: json['quantidadeParcelas'],
+      data: Mes(json['ano'], json['mes']),
+      pagasPorMes: pagas,
+    );
+  }
 }

@@ -30,6 +30,10 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
   final _devedor = TextEditingController();
   final _valor = TextEditingController();
   final _parcelas = TextEditingController();
+  final _focoDescricao = FocusNode();
+  final _focoDevedor = FocusNode();
+  final _focoValor = FocusNode();
+  final _focoParcelas = FocusNode();
   String? _bancoId;
   late Mes _mes;
   String? _aviso;
@@ -49,6 +53,10 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
     _devedor.dispose();
     _valor.dispose();
     _parcelas.dispose();
+    _focoDescricao.dispose();
+    _focoDevedor.dispose();
+    _focoValor.dispose();
+    _focoParcelas.dispose();
     super.dispose();
   }
 
@@ -86,23 +94,27 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     'Descrição',
                     TextField(
                       controller: _descricao,
+                      focusNode: _focoDescricao,
                       style: const TextStyle(color: Branco, fontSize: 16),
                       keyboardType: TextInputType.text,
                       textCapitalization: TextCapitalization.sentences,
-                      decoration: campoCores('',
-                          hint: 'Nome da compra'),
+                      decoration: campoCores(''),
                     ),
+                    hint: 'Nome da compra',
+                    focusNode: _focoDescricao,
                   ),
                   const SizedBox(height: 14),
                   Campo(
                     'Nome do devedor',
                     TextField(
                       controller: _devedor,
+                      focusNode: _focoDevedor,
                       style: const TextStyle(color: Branco, fontSize: 16),
                       textCapitalization: TextCapitalization.words,
-                      decoration: campoCores('',
-                          hint: 'Quem pagou esta compra'),
+                      decoration: campoCores(''),
                     ),
+                    hint: 'Quem pagou esta compra',
+                    focusNode: _focoDevedor,
                   ),
                   const SizedBox(height: 14),
                   Row(
@@ -112,15 +124,17 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           'Valor individual (R\$)',
                           TextField(
                             controller: _valor,
+                            focusNode: _focoValor,
                             style: const TextStyle(color: Branco, fontSize: 16),
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
                               BrazilianCurrencyInputFormatter(),
                             ],
-                            decoration: campoCores('',
-                                hint: 'R\$ 0,00'),
+                            decoration: campoCores(''),
                           ),
+                          hint: 'R\$ 0,00',
+                          focusNode: _focoValor,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -129,14 +143,16 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           'Parcelas',
                           TextField(
                             controller: _parcelas,
+                            focusNode: _focoParcelas,
                             style: const TextStyle(color: Branco, fontSize: 16),
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
-                            decoration: campoCores('',
-                                hint: '1'),
+                            decoration: campoCores(''),
                           ),
+                          hint: '1',
+                          focusNode: _focoParcelas,
                         ),
                       ),
                     ],

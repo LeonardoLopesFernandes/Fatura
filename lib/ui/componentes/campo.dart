@@ -1,29 +1,65 @@
 import 'package:flutter/material.dart';
 import '../../ui/tema.dart';
 
-class Campo extends StatelessWidget {
+class Campo extends StatefulWidget {
   final String label;
+  final String? hint;
+  final FocusNode? focusNode;
   final Widget child;
-  const Campo(this.label, this.child, {super.key});
+
+  const Campo(
+    this.label,
+    this.child, {
+    this.hint,
+    this.focusNode,
+    super.key,
+  });
+
+  @override
+  State<Campo> createState() => _CampoState();
+}
+
+class _CampoState extends State<Campo> {
+  late final FocusNode _focus;
+  bool _focado = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focus = widget.focusNode ?? FocusNode();
+    _focus.addListener(_aoMudarFoco);
+  }
+
+  void _aoMudarFoco() => setState(() => _focado = _focus.hasFocus);
+
+  @override
+  void dispose() {
+    _focus.removeListener(_aoMudarFoco);
+    if (widget.focusNode == null) _focus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final titulo =
+        (_focado && widget.hint != null) ? widget.hint! : widget.label;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(
-              color: Branco70,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            )),
+        Text(
+          titulo,
+          style: const TextStyle(
+            color: Branco70,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(height: 6),
-        child,
+        widget.child,
       ],
     );
   }
 }
-
 
 InputDecoration campoCores(
   String label, {

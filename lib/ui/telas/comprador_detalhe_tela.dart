@@ -157,9 +157,15 @@ class CompradorDetalheScreen extends StatelessWidget {
                             onRemove: (compra) =>
                                 vm.removerCompra(compra.id),
                             onPagaChanged: (compra, paga) =>
-                                vm.marcarPaga(compra.id, paga),
-                            onEdit: (compra) =>
-                                mostrarMenuCompra(context, compra, vm),
+                                vm.marcarPagaTodos(compra.id, paga),
+                            onEdit: (compra) => mostrarMenuCompra(
+                              context,
+                              compra,
+                              vm,
+                              jaPaga: compra.paga,
+                              onMarcarPaga: () =>
+                                  vm.marcarPagaTodos(compra.id, !compra.paga),
+                            ),
                           ),
                         );
                       }).toList(),
@@ -382,7 +388,7 @@ class GrupoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtotal =
-        compras.where((c) => !c.paga).fold(0.0, (s, c) => s + c.valorTotal);
+        compras.fold(0.0, (s, c) => s + c.valorPendente);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -432,6 +438,7 @@ class GrupoCard extends StatelessWidget {
               child: CompraItem(
                 compra: compra,
                 banco: banco,
+                paga: compra.paga,
                 onRemove: () => onRemove(compra),
                 onPagaChanged: (paga) => onPagaChanged(compra, paga),
                 onEdit: () => onEdit(compra),

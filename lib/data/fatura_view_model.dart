@@ -224,16 +224,14 @@ class FaturaViewModel extends ChangeNotifier {
   double totalComprasDoBancoNoMes(String bancoId, Mes mes) {
     return _compras
         .where((c) =>
-            c.bancoId == bancoId && c.ativaNoMes(mes) && !c.paga)
+            c.bancoId == bancoId &&
+            c.ativaNoMes(mes) &&
+            !c.pagaNoMes(mes))
         .fold(0.0, (s, c) => s + c.valorIndividual);
   }
 
   double saldoDoBancoNoMes(String bancoId, Mes mes) {
-    final fatura = faturaInformadaDoBancoNoMes(bancoId, mes);
-    final compras = totalComprasDoBancoNoMes(bancoId, mes);
-    if (fatura <= 0) return compras;
-    final saldo = fatura - compras;
-    return saldo < 0 ? 0.0 : saldo;
+    return totalComprasDoBancoNoMes(bancoId, mes);
   }
 
   List<String> get iconesDisponiveis {
@@ -294,29 +292,26 @@ class FaturaViewModel extends ChangeNotifier {
       _compras.where((c) => c.ativaNoMes(mes)).toList();
 
   double faturaDoComprador(String id) => comprasDoComprador(id)
-      .where((c) => !c.paga)
-      .fold(0.0, (s, c) => s + c.valorTotal);
+      .fold(0.0, (s, c) => s + c.valorPendente);
 
   double faturaDoCompradorNoMes(String id, Mes mes) =>
       comprasDoCompradorNoMes(id, mes)
-          .where((c) => !c.paga)
+          .where((c) => !c.pagaNoMes(mes))
           .fold(0.0, (s, c) => s + c.valorIndividual);
 
   double faturaDoBanco(String id) =>
-      comprasDoBanco(id)
-          .where((c) => !c.paga)
-          .fold(0.0, (s, c) => s + c.valorTotal);
+      comprasDoBanco(id).fold(0.0, (s, c) => s + c.valorPendente);
 
   double faturaDoBancoNoMes(String id, Mes mes) =>
       comprasDoBancoNoMes(id, mes)
-          .where((c) => !c.paga)
+          .where((c) => !c.pagaNoMes(mes))
           .fold(0.0, (s, c) => s + c.valorIndividual);
 
   double get totalCartao =>
-      _compras.where((c) => !c.paga).fold(0.0, (s, c) => s + c.valorTotal);
+      _compras.fold(0.0, (s, c) => s + c.valorPendente);
 
   double totalCartaoNoMes(Mes mes) => _compras
-      .where((c) => c.ativaNoMes(mes) && !c.paga)
+      .where((c) => c.ativaNoMes(mes) && !c.pagaNoMes(mes))
       .fold(0.0, (s, c) => s + c.valorIndividual);
 
   double diferencaDoCompradorNoMes(String id, Mes mes) =>
@@ -465,25 +460,33 @@ class FaturaViewModel extends ChangeNotifier {
         valorIndividual: valorIndividual ?? c.valorIndividual,
         quantidadeParcelas: quantidadeParcelas ?? c.quantidadeParcelas,
         data: data ?? c.data,
-        paga: c.paga,
+        pagasPorMes: c.pagasPorMes,
       );
     }).toList();
     _alterado();
   }
 
-  void marcarPaga(String id, bool paga) {
+  void marcarPaga(String id, Mes mes, bool paga) {
     _compras = _compras.map((c) {
       if (c.id != id) return c;
-      return Compra(
-        id: c.id,
-        compradorId: c.compradorId,
-        bancoId: c.bancoId,
-        descricao: c.descricao,
-        valorIndividual: c.valorIndividual,
-        quantidadeParcelas: c.quantidadeParcelas,
-        data: c.data,
-        paga: paga,
-      );
+      final conjunto = Set<int>.from(c.pagasPorMes);
+      if (paga) {
+        conjunto.add(mes.indice());
+      } else {
+        conjunto.remove(mes.indice());
+      }
+      return c.copyWith(pagasPorMes: conjunto);
+    }).toList();
+    _alterado();
+  }
+
+  void marcarPagaTodos(String id, bool paga) {
+    _compras = _compras.map((c) {
+      if (c.id != id) return c;
+      final conjunto = paga
+          ? c.mesesAtivos.map((m) => m.indice()).toSet()
+          : <int>{};
+      return c.copyWith(pagasPorMes: conjunto);
     }).toList();
     _alterado();
   }

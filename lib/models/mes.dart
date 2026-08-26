@@ -9,6 +9,9 @@ class Mes implements Comparable<Mes> {
     return Mes(total ~/ 12, (total % 12) + 1);
   }
 
+  factory Mes.porIndice(int indice) =>
+      Mes(indice ~/ 12, (indice % 12) + 1);
+
   int indice() => ano * 12 + (mes - 1);
 
   @override

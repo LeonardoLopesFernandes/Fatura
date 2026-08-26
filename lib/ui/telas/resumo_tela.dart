@@ -168,6 +168,7 @@ class ResumoScreen extends StatelessWidget {
                               child: CompraItem(
                                 compra: compra,
                                 banco: banco!,
+                                paga: compra.pagaNoMes(mes),
                                 valorExibido: compra.valorIndividual,
                                 rotuloParcelaCustom:
                                     compra.quantidadeParcelas > 1
@@ -175,9 +176,17 @@ class ResumoScreen extends StatelessWidget {
                                         : 'Mensal',
                                 onRemove: () => vm.removerCompra(compra.id),
                                 onPagaChanged: (paga) =>
-                                    vm.marcarPaga(compra.id, paga),
-                                onEdit: () =>
-                                    mostrarMenuCompra(context, compra, vm),
+                                    vm.marcarPaga(compra.id, mes, paga),
+                                onEdit: () => mostrarMenuCompra(
+                                  context,
+                                  compra,
+                                  vm,
+                                  jaPaga: compra.pagaNoMes(mes),
+                                  onMarcarPaga: () => vm.marcarPaga(
+                                      compra.id,
+                                      mes,
+                                      !compra.pagaNoMes(mes)),
+                                ),
                               ),
                             );
                           }).toList(),

@@ -22,6 +22,9 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
   late final TextEditingController _descricao;
   late final TextEditingController _valor;
   late final TextEditingController _parcelas;
+  late final FocusNode _focoDescricao;
+  late final FocusNode _focoValor;
+  late final FocusNode _focoParcelas;
   late String? _bancoId;
   late Mes _mes;
 
@@ -38,6 +41,9 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
     _parcelas = TextEditingController(text: c.quantidadeParcelas.toString());
     _bancoId = c.bancoId;
     _mes = c.data;
+    _focoDescricao = FocusNode();
+    _focoValor = FocusNode();
+    _focoParcelas = FocusNode();
   }
 
   @override
@@ -45,6 +51,9 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
     _descricao.dispose();
     _valor.dispose();
     _parcelas.dispose();
+    _focoDescricao.dispose();
+    _focoValor.dispose();
+    _focoParcelas.dispose();
     super.dispose();
   }
 
@@ -70,10 +79,13 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
               'Descrição',
               TextField(
                 controller: _descricao,
+                focusNode: _focoDescricao,
                 style: const TextStyle(color: Branco, fontSize: 16),
                 textCapitalization: TextCapitalization.sentences,
-                decoration: campoCores('', hint: 'Nome da compra', flutuante: false),
+                decoration: campoCores(''),
               ),
+              hint: 'Nome da compra',
+              focusNode: _focoDescricao,
             ),
             const SizedBox(height: 14),
             Row(
@@ -83,14 +95,17 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                     'Valor individual (R\$)',
                     TextField(
                       controller: _valor,
+                      focusNode: _focoValor,
                       style: const TextStyle(color: Branco, fontSize: 16),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                         BrazilianCurrencyInputFormatter(),
                       ],
-                      decoration: campoCores('', hint: 'R\$ 0,00', flutuante: false),
+                      decoration: campoCores(''),
                     ),
+                    hint: 'R\$ 0,00',
+                    focusNode: _focoValor,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -99,13 +114,16 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                     'Parcelas',
                     TextField(
                       controller: _parcelas,
+                      focusNode: _focoParcelas,
                       style: const TextStyle(color: Branco, fontSize: 16),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly
                       ],
-                      decoration: campoCores('', hint: '1', flutuante: false),
+                      decoration: campoCores(''),
                     ),
+                    hint: '1',
+                    focusNode: _focoParcelas,
                   ),
                 ),
               ],

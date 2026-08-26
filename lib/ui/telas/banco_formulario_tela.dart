@@ -30,6 +30,8 @@ class BancoFormulario extends StatefulWidget {
 class _BancoFormularioState extends State<BancoFormulario> {
   final _nome = TextEditingController();
   final _fatura = TextEditingController();
+  final _focoNome = FocusNode();
+  final _focoFatura = FocusNode();
   String? _iconeSelecionado;
   int _corSelecionada = 0;
   String? _imagemSelecionada;
@@ -69,6 +71,8 @@ class _BancoFormularioState extends State<BancoFormulario> {
   void dispose() {
     _nome.dispose();
     _fatura.dispose();
+    _focoNome.dispose();
+    _focoFatura.dispose();
     super.dispose();
   }
 
@@ -166,11 +170,13 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     'Nome do banco',
                     TextField(
                       controller: _nome,
+                      focusNode: _focoNome,
                       style: const TextStyle(color: Branco, fontSize: 16),
                       textCapitalization: TextCapitalization.words,
-                      decoration: campoCores('',
-                          hint: 'Ex.: Nubank, PicPay…'),
+                      decoration: campoCores(''),
                     ),
+                    hint: 'Ex.: Nubank, PicPay…',
+                    focusNode: _focoNome,
                   ),
                   const SizedBox(height: 16),
                   const Text('Logo do banco',
@@ -320,15 +326,17 @@ class _BancoFormularioState extends State<BancoFormulario> {
                       'Valor total da fatura (R\$)',
                       TextField(
                         controller: _fatura,
+                        focusNode: _focoFatura,
                         style: const TextStyle(color: Branco, fontSize: 16),
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           BrazilianCurrencyInputFormatter(),
                         ],
-                        decoration: campoCores('',
-                            hint: 'R\$ 0,00'),
+                        decoration: campoCores(''),
                       ),
+                      hint: 'R\$ 0,00',
+                      focusNode: _focoFatura,
                     ),
                     const SizedBox(height: 10),
                     Builder(builder: (context) {

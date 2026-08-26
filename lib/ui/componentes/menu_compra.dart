@@ -9,8 +9,10 @@ import '../../util/formatadores.dart';
 void mostrarMenuCompra(
   BuildContext context,
   Compra compra,
-  FaturaViewModel vm,
-) {
+  FaturaViewModel vm, {
+  required bool jaPaga,
+  required VoidCallback onMarcarPaga,
+}) {
   showModalBottomSheet(
     context: context,
     backgroundColor: Superficie,
@@ -31,12 +33,12 @@ void mostrarMenuCompra(
         ListTile(
           leading: const Icon(Icons.check_circle_outline, color: Correto),
           title: Text(
-            compra.paga ? 'Marcar como não paga' : 'Marcar como paga',
+            jaPaga ? 'Marcar como não paga' : 'Marcar como paga',
             style: const TextStyle(color: Branco),
           ),
           onTap: () {
             Navigator.of(context).pop();
-            vm.marcarPaga(compra.id, !compra.paga);
+            onMarcarPaga();
           },
         ),
         ListTile(

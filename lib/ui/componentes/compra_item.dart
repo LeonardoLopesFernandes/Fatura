@@ -10,6 +10,7 @@ class CompraItem extends StatelessWidget {
   final Banco banco;
   final double? valorExibido;
   final String? rotuloParcelaCustom;
+  final bool paga;
   final VoidCallback? onRemove;
   final ValueChanged<bool>? onPagaChanged;
   final VoidCallback? onEdit;
@@ -20,6 +21,7 @@ class CompraItem extends StatelessWidget {
     required this.banco,
     this.valorExibido,
     this.rotuloParcelaCustom,
+    this.paga = false,
     this.onRemove,
     this.onPagaChanged,
     this.onEdit,
@@ -36,22 +38,22 @@ class CompraItem extends StatelessWidget {
     Widget check() {
       if (onPagaChanged == null) return const SizedBox.shrink();
       return GestureDetector(
-        onTap: () => onPagaChanged!(!compra.paga),
+        onTap: () => onPagaChanged!(!paga),
         child: Container(
           width: 24,
           height: 24,
           margin: const EdgeInsets.only(right: 10),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: compra.paga ? Correto : Branco.withOpacity(0.16),
-            border: compra.paga
+            color: paga ? Correto : Branco.withOpacity(0.16),
+            border: paga
                 ? null
                 : Border.all(color: Branco54, width: 1.5),
           ),
           child: Icon(
-            compra.paga ? Icons.check : Icons.circle,
+            paga ? Icons.check : Icons.circle,
             size: 14,
-            color: compra.paga ? Branco : Colors.transparent,
+            color: paga ? Branco : Colors.transparent,
           ),
         ),
       );
@@ -81,12 +83,12 @@ class CompraItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: compra.paga
+                      color: paga
                           ? corTexto.withOpacity(0.6)
                           : corTexto,
                       fontSize: 14.5,
                       fontWeight: FontWeight.bold,
-                      decoration: compra.paga
+                      decoration: paga
                           ? TextDecoration.lineThrough
                           : null,
                     ),
