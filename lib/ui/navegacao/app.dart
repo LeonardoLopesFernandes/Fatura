@@ -12,6 +12,28 @@ import '../../ui/telas/nova_compra_tela.dart';
 import '../../ui/telas/fatura_banco_tela.dart';
 import '../../ui/telas/banco_formulario_tela.dart';
 
+Route<dynamic> _rotaAnimada(RouteSettings settings, WidgetBuilder builder) {
+  return PageRouteBuilder(
+    settings: settings,
+    pageBuilder: (context, animation, secondaryAnimation) => builder(context),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 0.06);
+      const end = Offset.zero;
+      const curve = Curves.easeOutCubic;
+      final tween =
+          Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      return FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        ),
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 260),
+  );
+}
+
 class AppNavegacao extends StatefulWidget {
   const AppNavegacao({super.key});
 
@@ -115,76 +137,76 @@ class _AppNavegacaoState extends State<AppNavegacao> {
     final vm = Provider.of<FaturaViewModel>(context, listen: false);
     switch (settings.name) {
       case 'resumo':
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => ResumoScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => ResumoScreen(
             onAdicionarCompra: (nome) => _push('novaCompra', arguments: nome),
             onDetalharComprador: (id) => _push('detalhe', arguments: id),
             onEditarFaturaBanco: (id) => _push('faturaBanco', arguments: id),
           ),
         );
       case 'devedores':
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => DevedoresScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => DevedoresScreen(
             onAdicionarCompra: (nome) => _push('novaCompra', arguments: nome),
             onDetalharComprador: (id) => _push('detalhe', arguments: id),
           ),
         );
       case 'bancos':
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => BancosScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => BancosScreen(
             onNovoBanco: () => _push('novoBanco'),
             onEditarBanco: (id) => _push('editarBanco', arguments: id),
           ),
         );
       case 'detalhe':
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => CompradorDetalheScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => CompradorDetalheScreen(
             compradorId: settings.arguments as String,
             onAdicionarCompra: (nome) => _push('novaCompra', arguments: nome),
             onVoltar: () => _navigatorKey.currentState!.pop(),
           ),
         );
       case 'novaCompra':
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => NovaCompraScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => NovaCompraScreen(
             nomePadrao: settings.arguments as String?,
             onNovoBanco: () => _push('novoBanco'),
             onVoltar: () => _navigatorKey.currentState!.pop(),
           ),
         );
       case 'faturaBanco':
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => FaturaBancoScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => FaturaBancoScreen(
             bancoId: settings.arguments as String,
             mes: vm.mesSelecionado,
             onVoltar: () => _navigatorKey.currentState!.pop(),
           ),
         );
       case 'novoBanco':
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => NovoBancoScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => NovoBancoScreen(
             onVoltar: () => _navigatorKey.currentState!.pop(),
           ),
         );
       case 'editarBanco':
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => EditarBancoScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => EditarBancoScreen(
             bancoId: settings.arguments as String,
             onVoltar: () => _navigatorKey.currentState!.pop(),
           ),
         );
       default:
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (_) => ResumoScreen(
+        return _rotaAnimada(
+          settings,
+          (_) => ResumoScreen(
             onAdicionarCompra: (nome) => _push('novaCompra', arguments: nome),
             onDetalharComprador: (id) => _push('detalhe', arguments: id),
             onEditarFaturaBanco: (id) => _push('faturaBanco', arguments: id),
