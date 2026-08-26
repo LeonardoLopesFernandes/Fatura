@@ -177,7 +177,7 @@ class DevedoresScreen extends StatelessWidget {
                                     style: const TextStyle(
                                       color: Branco,
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   const SizedBox(height: 2),

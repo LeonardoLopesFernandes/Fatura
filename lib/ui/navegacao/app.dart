@@ -73,19 +73,32 @@ class _AppNavegacaoState extends State<AppNavegacao> {
         context: context,
         builder: (ctx) => AlertDialog(
           backgroundColor: Superficie,
-          title: const Text('Sair do aplicativo?',
+          title: const Text('Sair do Faturas?',
               style: TextStyle(color: Branco)),
-          content: const Text('Deseja realmente sair?',
+          content: const Text('Deseja sair do aplicativo',
               style: TextStyle(color: Branco54)),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancelar',
-                  style: TextStyle(color: Branco54)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: VermelhoBotao,
+                foregroundColor: Branco,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('NÃO',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            TextButton(
+            ElevatedButton(
               onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Sair', style: TextStyle(color: VermelhoExcluir)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Correto,
+                foregroundColor: Branco,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('SIM',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
