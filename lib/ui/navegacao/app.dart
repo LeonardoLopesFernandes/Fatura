@@ -84,11 +84,12 @@ class _AppNavegacaoState extends State<AppNavegacao> {
     }
   }
 
-  Future<bool> _aoVoltar() async {
+  Future<void> _aoTentarVoltar(bool didPop, Object? result) async {
+    if (didPop) return;
     final nav = _navigatorKey.currentState!;
     if (nav.canPop()) {
       nav.pop();
-      return false;
+      return;
     }
     if (_ehAba(_rotaAtual)) {
       final sair = await showDialog<bool>(
@@ -128,9 +129,7 @@ class _AppNavegacaoState extends State<AppNavegacao> {
       if (sair == true) {
         SystemNavigator.pop();
       }
-      return false;
     }
-    return false;
   }
 
   Route<dynamic> _onGenerateRoute(RouteSettings settings) {
@@ -217,8 +216,9 @@ class _AppNavegacaoState extends State<AppNavegacao> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _aoVoltar,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: _aoTentarVoltar,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: _ehAba(_rotaAtual)
