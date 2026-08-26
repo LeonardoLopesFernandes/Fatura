@@ -72,7 +72,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                 controller: _descricao,
                 style: const TextStyle(color: Branco, fontSize: 16),
                 textCapitalization: TextCapitalization.sentences,
-                decoration: campoCores('', hint: 'Nome da compra'),
+                decoration: campoCores('', hint: 'Nome da compra', flutuante: false),
               ),
             ),
             const SizedBox(height: 14),
@@ -89,7 +89,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                         FilteringTextInputFormatter.digitsOnly,
                         BrazilianCurrencyInputFormatter(),
                       ],
-                      decoration: campoCores('', hint: 'R\$ 0,00'),
+                      decoration: campoCores('', hint: 'R\$ 0,00', flutuante: false),
                     ),
                   ),
                 ),
@@ -104,7 +104,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly
                       ],
-                      decoration: campoCores('', hint: '1'),
+                      decoration: campoCores('', hint: '1', flutuante: false),
                     ),
                   ),
                 ),

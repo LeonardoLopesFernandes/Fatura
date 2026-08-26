@@ -382,7 +382,7 @@ class GrupoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtotal =
-        compras.fold(0.0, (s, c) => s + c.valorTotal);
+        compras.where((c) => !c.paga).fold(0.0, (s, c) => s + c.valorTotal);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(

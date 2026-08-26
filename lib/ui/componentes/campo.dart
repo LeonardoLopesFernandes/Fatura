@@ -29,13 +29,20 @@ InputDecoration campoCores(
   String label, {
   String? hint,
   Widget? prefixIcon,
+  bool flutuante = true,
 }) {
+  final textoDica = hint ?? label;
   return InputDecoration(
-    labelText: hint ?? label,
+    labelText: flutuante ? textoDica : null,
+    hintText: flutuante ? null : (textoDica.isEmpty ? null : textoDica),
     labelStyle: const TextStyle(
       color: Branco70,
       fontSize: 12,
       fontWeight: FontWeight.w600,
+    ),
+    hintStyle: const TextStyle(
+      color: CinzaClaro,
+      fontSize: 13,
     ),
     floatingLabelBehavior: FloatingLabelBehavior.auto,
     prefixIcon: prefixIcon,

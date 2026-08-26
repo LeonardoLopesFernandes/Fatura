@@ -224,7 +224,7 @@ class FaturaViewModel extends ChangeNotifier {
   double totalComprasDoBancoNoMes(String bancoId, Mes mes) {
     return _compras
         .where((c) =>
-            c.bancoId == bancoId && c.ativaNoMes(mes))
+            c.bancoId == bancoId && c.ativaNoMes(mes) && !c.paga)
         .fold(0.0, (s, c) => s + c.valorIndividual);
   }
 
@@ -294,24 +294,29 @@ class FaturaViewModel extends ChangeNotifier {
       _compras.where((c) => c.ativaNoMes(mes)).toList();
 
   double faturaDoComprador(String id) => comprasDoComprador(id)
+      .where((c) => !c.paga)
       .fold(0.0, (s, c) => s + c.valorTotal);
 
   double faturaDoCompradorNoMes(String id, Mes mes) =>
       comprasDoCompradorNoMes(id, mes)
+          .where((c) => !c.paga)
           .fold(0.0, (s, c) => s + c.valorIndividual);
 
   double faturaDoBanco(String id) =>
-      comprasDoBanco(id).fold(0.0, (s, c) => s + c.valorTotal);
+      comprasDoBanco(id)
+          .where((c) => !c.paga)
+          .fold(0.0, (s, c) => s + c.valorTotal);
 
   double faturaDoBancoNoMes(String id, Mes mes) =>
       comprasDoBancoNoMes(id, mes)
+          .where((c) => !c.paga)
           .fold(0.0, (s, c) => s + c.valorIndividual);
 
   double get totalCartao =>
-      _compras.fold(0.0, (s, c) => s + c.valorTotal);
+      _compras.where((c) => !c.paga).fold(0.0, (s, c) => s + c.valorTotal);
 
   double totalCartaoNoMes(Mes mes) => _compras
-      .where((c) => c.ativaNoMes(mes))
+      .where((c) => c.ativaNoMes(mes) && !c.paga)
       .fold(0.0, (s, c) => s + c.valorIndividual);
 
   double diferencaDoCompradorNoMes(String id, Mes mes) =>
