@@ -63,30 +63,19 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: FundoInicio,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: widget.onVoltar,
+          icon: const Icon(Icons.close, color: Branco54),
+        ),
+        title: const Text('Nova Compra',
+            style: TextStyle(color: Branco, fontSize: 18, fontWeight: FontWeight.bold)),
+      ),
       body: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: CorPrimaria,
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: const Icon(Icons.add_shopping_cart, color: Branco),
-              ),
-              const SizedBox(width: 12),
-              const Text('Nova Compra',
-                  style: TextStyle(
-                      color: Branco, fontSize: 20, fontWeight: FontWeight.bold)),
-              const Spacer(),
-              IconButton(
-                onPressed: widget.onVoltar,
-                icon: const Icon(Icons.close, color: Branco54),
-              ),
-            ],
-          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),

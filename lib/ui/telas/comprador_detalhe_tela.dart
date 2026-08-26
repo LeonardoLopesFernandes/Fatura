@@ -46,40 +46,38 @@ class CompradorDetalheScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: FundoInicio,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: onVoltar,
+          icon: const Icon(Icons.arrow_back, color: Branco),
+        ),
+        title: Text(
+          comprador.nome,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Branco,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => _mostrarCompartilhar(
+                context, vm, comprador.nome, fatura, grupos),
+            icon: const Icon(Icons.share, color: Branco54),
+          ),
+          IconButton(
+            onPressed: () => _confirmarApagar(context, vm, comprador.id),
+            icon: const Icon(Icons.delete_outline, color: Branco54),
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: onVoltar,
-                  icon: const Icon(Icons.arrow_back, color: Branco),
-                ),
-                Expanded(
-                  child: Text(
-                    comprador.nome,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Branco,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => _mostrarCompartilhar(
-                      context, vm, comprador.nome, fatura, grupos),
-                  icon: const Icon(Icons.share, color: Branco54),
-                ),
-                IconButton(
-                  onPressed: () => _confirmarApagar(context, vm, comprador.id),
-                  icon: const Icon(Icons.delete_outline, color: Branco54),
-                ),
-              ],
-            ),
-          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),

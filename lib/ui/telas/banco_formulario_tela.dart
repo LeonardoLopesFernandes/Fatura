@@ -135,30 +135,26 @@ class _BancoFormularioState extends State<BancoFormulario> {
     final temImagem = _imagemSelecionada != null;
     return Scaffold(
       backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: FundoInicio,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: widget.onVoltar,
+          icon: const Icon(Icons.arrow_back, color: Branco),
+        ),
+        title: Text(
+          _editando ? 'Editar ${widget.bancoExistente!.nome}' : 'Novo Banco',
+          maxLines: 1,
+          style: const TextStyle(
+            color: Branco,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Column(
         children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: widget.onVoltar,
-                icon: const Icon(Icons.arrow_back, color: Branco),
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  _editando
-                      ? 'Editar ${widget.bancoExistente!.nome}'
-                      : 'Novo Banco',
-                  maxLines: 1,
-                  style: const TextStyle(
-                    color: Branco,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ],
-          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),

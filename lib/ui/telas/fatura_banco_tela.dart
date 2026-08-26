@@ -62,37 +62,23 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: FundoInicio,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: widget.onVoltar,
+          icon: const Icon(Icons.close, color: Branco54),
+        ),
+        title: Text('Fatura do ${banco.nome}',
+            style: const TextStyle(
+                color: Branco, fontSize: 18, fontWeight: FontWeight.bold)),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                BancoLogo(banco: banco, tamanho: 44, raio: 12),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Fatura do ${banco.nome}',
-                          style: const TextStyle(
-                              color: Branco,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 2),
-                      Text(rotuloMesLongo(widget.mes),
-                          style: const TextStyle(
-                              color: Branco54, fontSize: 13)),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: widget.onVoltar,
-                  icon: const Icon(Icons.close, color: Branco54),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
             Campo(
               'Valor total da fatura (R\$)',

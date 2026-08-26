@@ -20,6 +20,17 @@ void main() async {
       value: vm,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: Colors.transparent,
+          primaryColor: CorPrimaria,
+          colorScheme: ColorScheme.dark(
+            primary: CorPrimaria,
+            surface: Superficie,
+            onSurface: Branco,
+          ),
+          useMaterial3: true,
+        ),
         home: const AppNavegacao(),
       ),
     ),
