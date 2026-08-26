@@ -27,8 +27,8 @@ class ResumoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = Provider.of<FaturaViewModel>(context);
     final mes = vm.mesSelecionado;
-    final totalFaturas = vm.bancos
-        .fold(0.0, (s, b) => s + vm.saldoDoBancoNoMes(b.id, mes));
+    final totalFaturas = vm.totalFaturasBrutoNoMes(mes);
+    final totalRestante = vm.totalCartaoNoMes(mes);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 110),
@@ -63,6 +63,36 @@ class ResumoScreen extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              const Text(
+                'Restante a receber',
+                style: TextStyle(
+                  color: Branco54,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                decoration: BoxDecoration(
+                  color: CorPrimaria.withOpacity(0.18),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                child: Text(
+                  formatarMoeda(totalRestante),
+                  style: const TextStyle(
+                    color: Branco,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           if (vm.bancos.isEmpty)
             const MensagemVazia('Nenhum banco cadastrado.')
@@ -74,10 +104,10 @@ class ResumoScreen extends StatelessWidget {
                 children: vm.bancos.map((banco) {
                   return CarouselBankCard(
                     banco: banco,
-                    saldo: vm.saldoDoBancoNoMes(banco.id, mes),
+                    saldo: vm.faturaDoBancoBrutoNoMes(banco.id, mes),
+                    restante: vm.faturaDoBancoNoMes(banco.id, mes),
                     faturaInformada:
                         vm.faturaInformadaDoBancoNoMes(banco.id, mes),
-                    compras: vm.totalComprasDoBancoNoMes(banco.id, mes),
                     onTap: () => onEditarFaturaBanco(banco.id),
                   );
                 }).toList(),
@@ -174,7 +204,6 @@ class ResumoScreen extends StatelessWidget {
                                     compra.quantidadeParcelas > 1
                                         ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
                                         : 'Mensal',
-                                onRemove: () => vm.removerCompra(compra.id),
                                 onPagaChanged: (paga) =>
                                     vm.marcarPaga(compra.id, mes, paga),
                                 onEdit: () => mostrarMenuCompra(

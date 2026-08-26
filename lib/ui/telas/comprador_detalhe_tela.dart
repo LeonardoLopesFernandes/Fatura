@@ -45,8 +45,11 @@ class CompradorDetalheScreen extends StatelessWidget {
       );
     }
 
-    final fatura = vm.faturaDoComprador(comprador.id);
-    final grupos = vm.agruparPorBanco(vm.comprasDoComprador(comprador.id));
+    final mes = vm.mesSelecionado;
+    final faturaBruta = vm.faturaDoCompradorBrutoNoMes(comprador.id, mes);
+    final faturaRestante = vm.faturaDoCompradorNoMes(comprador.id, mes);
+    final grupos =
+        vm.agruparPorBanco(vm.comprasDoCompradorNoMes(comprador.id, mes));
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -71,7 +74,7 @@ class CompradorDetalheScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () => _mostrarCompartilhar(
-                context, vm, comprador.nome, fatura, grupos),
+                context, vm, comprador.nome, faturaBruta, grupos),
             icon: const Icon(Icons.share, color: Branco54),
           ),
           IconButton(
@@ -95,6 +98,12 @@ class CompradorDetalheScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    CabecalhoMes(
+                      mes,
+                      () => vm.definirMesSelecionado(mes.maisMeses(-1)),
+                      () => vm.definirMesSelecionado(mes.maisMeses(1)),
+                    ),
+                    const SizedBox(height: 12),
                     const Text('FATURA INDIVIDUAL',
                         style: TextStyle(
                           color: TituloAzul,
@@ -104,12 +113,34 @@ class CompradorDetalheScreen extends StatelessWidget {
                         )),
                     const SizedBox(height: 8),
                     Text(
-                      formatarMoeda(fatura),
+                      formatarMoeda(faturaBruta),
                       style: const TextStyle(
                         color: Branco,
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                       ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Text(
+                          'Restante a receber',
+                          style: TextStyle(
+                            color: Branco54,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          formatarMoeda(faturaRestante),
+                          style: const TextStyle(
+                            color: Branco,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
@@ -154,17 +185,18 @@ class CompradorDetalheScreen extends StatelessWidget {
                           child: GrupoCard(
                             banco: grupo.banco,
                             compras: grupo.compras,
-                            onRemove: (compra) =>
-                                vm.removerCompra(compra.id),
+                            mes: mes,
                             onPagaChanged: (compra, paga) =>
-                                vm.marcarPagaTodos(compra.id, paga),
+                                vm.marcarPaga(compra.id, mes, paga),
                             onEdit: (compra) => mostrarMenuCompra(
                               context,
                               compra,
                               vm,
-                              jaPaga: compra.paga,
-                              onMarcarPaga: () =>
-                                  vm.marcarPagaTodos(compra.id, !compra.paga),
+                              jaPaga: compra.pagaNoMes(mes),
+                              onMarcarPaga: () => vm.marcarPaga(
+                                  compra.id,
+                                  mes,
+                                  !compra.pagaNoMes(mes)),
                             ),
                           ),
                         );
@@ -372,7 +404,7 @@ class CompradorDetalheScreen extends StatelessWidget {
 class GrupoCard extends StatelessWidget {
   final Banco banco;
   final List<Compra> compras;
-  final void Function(Compra) onRemove;
+  final Mes mes;
   final void Function(Compra, bool) onPagaChanged;
   final void Function(Compra) onEdit;
 
@@ -380,7 +412,7 @@ class GrupoCard extends StatelessWidget {
     super.key,
     required this.banco,
     required this.compras,
-    required this.onRemove,
+    required this.mes,
     required this.onPagaChanged,
     required this.onEdit,
   });
@@ -388,7 +420,7 @@ class GrupoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtotal =
-        compras.fold(0.0, (s, c) => s + c.valorPendente);
+        compras.fold(0.0, (s, c) => s + c.valorIndividual);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -438,8 +470,11 @@ class GrupoCard extends StatelessWidget {
               child: CompraItem(
                 compra: compra,
                 banco: banco,
-                paga: compra.paga,
-                onRemove: () => onRemove(compra),
+                paga: compra.pagaNoMes(mes),
+                valorExibido: compra.valorIndividual,
+                rotuloParcelaCustom: compra.quantidadeParcelas > 1
+                    ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
+                                    : 'Mensal',
                 onPagaChanged: (paga) => onPagaChanged(compra, paga),
                 onEdit: () => onEdit(compra),
               ),

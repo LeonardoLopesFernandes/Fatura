@@ -7,16 +7,16 @@ import '../../util/formatadores.dart';
 class CarouselBankCard extends StatelessWidget {
   final Banco banco;
   final double saldo;
+  final double restante;
   final double faturaInformada;
-  final double compras;
   final VoidCallback? onTap;
 
   const CarouselBankCard({
     super.key,
     required this.banco,
     required this.saldo,
+    this.restante = 0.0,
     this.faturaInformada = 0.0,
-    this.compras = 0.0,
     this.onTap,
   });
 
@@ -68,8 +68,8 @@ class CarouselBankCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               faturaInformada > 0
-                  ? 'fat ${formatarMoeda(faturaInformada)} · comp ${formatarMoeda(compras)}'
-                  : 'toque p/ fatura',
+                  ? 'inf ${formatarMoeda(faturaInformada)} · resta ${formatarMoeda(restante)}'
+                  : 'resta ${formatarMoeda(restante)}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               softWrap: false,

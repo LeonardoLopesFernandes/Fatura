@@ -11,7 +11,6 @@ class CompraItem extends StatelessWidget {
   final double? valorExibido;
   final String? rotuloParcelaCustom;
   final bool paga;
-  final VoidCallback? onRemove;
   final ValueChanged<bool>? onPagaChanged;
   final VoidCallback? onEdit;
 
@@ -22,7 +21,6 @@ class CompraItem extends StatelessWidget {
     this.valorExibido,
     this.rotuloParcelaCustom,
     this.paga = false,
-    this.onRemove,
     this.onPagaChanged,
     this.onEdit,
   });
@@ -35,30 +33,6 @@ class CompraItem extends StatelessWidget {
     final rotulo =
         rotuloParcelaCustom ?? rotuloParcela(compra.quantidadeParcelas);
 
-    Widget check() {
-      if (onPagaChanged == null) return const SizedBox.shrink();
-      return GestureDetector(
-        onTap: () => onPagaChanged!(!paga),
-        child: Container(
-          width: 24,
-          height: 24,
-          margin: const EdgeInsets.only(right: 10),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: paga ? Correto : Branco.withOpacity(0.16),
-            border: paga
-                ? null
-                : Border.all(color: Branco54, width: 1.5),
-          ),
-          child: Icon(
-            paga ? Icons.check : Icons.circle,
-            size: 14,
-            color: paga ? Branco : Colors.transparent,
-          ),
-        ),
-      );
-    }
-
     Widget card() {
       return Container(
         width: double.infinity,
@@ -70,7 +44,6 @@ class CompraItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            check(),
             BancoLogo(banco: banco, tamanho: 40, raio: 10),
             const SizedBox(width: 12),
             Expanded(
@@ -83,14 +56,11 @@ class CompraItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: paga
-                          ? corTexto.withOpacity(0.6)
-                          : corTexto,
+                      color: paga ? corTexto.withOpacity(0.6) : corTexto,
                       fontSize: 14.5,
                       fontWeight: FontWeight.bold,
-                      decoration: paga
-                          ? TextDecoration.lineThrough
-                          : null,
+                      decoration:
+                          paga ? TextDecoration.lineThrough : null,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -143,67 +113,39 @@ class CompraItem extends StatelessWidget {
       );
     }
 
-    Widget child;
-    if (onRemove == null) {
-      child = card();
-    } else {
-      child = Dismissible(
+    Widget corpo = card();
+    if (onEdit != null) {
+      corpo = GestureDetector(onLongPress: onEdit, child: corpo);
+    }
+    if (onPagaChanged != null) {
+      corpo = Dismissible(
         key: Key(compra.id),
-        direction: DismissDirection.startToEnd,
+        direction: DismissDirection.endToStart,
         background: Container(
           decoration: BoxDecoration(
-            color: LacunaVermelha,
+            color: Correto,
             borderRadius: BorderRadius.circular(14),
           ),
-          padding: const EdgeInsets.only(left: 18),
-          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(right: 18),
+          alignment: Alignment.centerRight,
           child: const Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Icon(Icons.delete_outline, color: Branco),
+              Icon(Icons.check_circle_outline, color: Branco),
               SizedBox(width: 6),
-              Text('Excluir',
-                  style: TextStyle(color: Branco, fontWeight: FontWeight.bold)),
+              Text('Paga',
+                  style:
+                      TextStyle(color: Branco, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
-        confirmDismiss: (direction) async {
-          final ok = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              backgroundColor: Superficie,
-              title: const Text('Excluir compra?',
-                  style: TextStyle(color: Branco)),
-              content: Text(
-                '${compra.descricao}\n${formatarMoeda(compra.valorTotal)} será removida da fatura.',
-                style: TextStyle(color: Branco.withOpacity(0.7)),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(false),
-                  child: Text('Cancelar',
-                      style: TextStyle(color: Branco.withOpacity(0.7))),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(true),
-                  child: const Text('Excluir',
-                      style: TextStyle(color: VermelhoExcluir)),
-                ),
-              ],
-            ),
-          );
-          if (ok == true) {
-            onRemove!();
-            return true;
-          }
+        confirmDismiss: (_) async {
+          onPagaChanged!(!paga);
           return false;
         },
-        child: card(),
+        child: corpo,
       );
     }
-
-    if (onEdit != null) {
-      child = GestureDetector(onLongPress: onEdit, child: child);
-    }
-    return child;
+    return corpo;
   }
 }

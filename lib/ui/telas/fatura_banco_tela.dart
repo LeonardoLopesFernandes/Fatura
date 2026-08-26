@@ -59,8 +59,8 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
     final faturaAtual =
         vm.faturaInformadaDoBancoNoMes(widget.bancoId, widget.mes);
     final comprasMes =
-        vm.totalComprasDoBancoNoMes(widget.bancoId, widget.mes);
-    final saldo = vm.saldoDoBancoNoMes(widget.bancoId, widget.mes);
+        vm.faturaDoBancoBrutoNoMes(widget.bancoId, widget.mes);
+    final saldo = vm.faturaDoBancoNoMes(widget.bancoId, widget.mes);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -100,7 +100,7 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Compras do mês: ${formatarMoeda(comprasMes)} · saldo: ${formatarMoeda(saldo)}',
+              'Compras do mês: ${formatarMoeda(comprasMes)} · resta: ${formatarMoeda(saldo)}',
               style: const TextStyle(color: Branco54, fontSize: 12),
             ),
             if (faturaAtual > 0)
