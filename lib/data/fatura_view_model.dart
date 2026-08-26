@@ -264,9 +264,11 @@ class FaturaViewModel extends ChangeNotifier {
         .map((b) => b.cor)
         .toSet();
     final resultado = CoresCatalogo.CORES.where((c) => !usadas.contains(c)).toList();
-    final atual = bancoPorId(ignorarBancoId!);
-    if (atual != null && !resultado.contains(atual.cor)) {
-      resultado.insert(0, atual.cor);
+    if (ignorarBancoId != null) {
+      final atual = bancoPorId(ignorarBancoId);
+      if (atual != null && !resultado.contains(atual.cor)) {
+        resultado.insert(0, atual.cor);
+      }
     }
     return resultado;
   }
