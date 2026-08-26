@@ -102,9 +102,9 @@ class CompradorDetalheScreen extends StatelessWidget {
                     Text(
                       formatarMoeda(fatura),
                       style: const TextStyle(
-                        color: CorPrimaria,
+                        color: Branco,
                         fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                     const SizedBox(height: 16),
