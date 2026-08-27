@@ -6,12 +6,13 @@ plugins {
 }
 
 val rootProj = rootProject
-val keystorePropertiesFile = rootProj.file("key.properties")
-val keystoreProperties = if (keystorePropertiesFile.exists()) {
-    java.util.Properties().apply {
-        load(java.io.FileInputStream(keystorePropertiesFile))
-    }
-} else null
+val keyFile = rootProj.file("key.properties")
+val keyProps: Map<String, String> = if (keyFile.exists()) {
+    keyFile.readLines().mapNotNull { line ->
+        val i = line.indexOf('=')
+        if (i < 0) null else line.substring(0, i).trim() to line.substring(i + 1).trim()
+    }.toMap()
+} else emptyMap()
 
 android {
     namespace = "fatura.io.fatura"
@@ -40,19 +41,19 @@ android {
     }
 
     signingConfigs {
-        if (keystoreProperties != null) {
+        if (keyProps.isNotEmpty()) {
             create("upload") {
-                storeFile = rootProj.file(keystoreProperties.getProperty("storeFile")!!)
-                storePassword = keystoreProperties.getProperty("storePassword")
-                keyAlias = keystoreProperties.getProperty("keyAlias")
-                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = rootProj.file(keyProps["storeFile"]!!)
+                storePassword = keyProps["storePassword"]
+                keyAlias = keyProps["keyAlias"]
+                keyPassword = keyProps["keyPassword"]
             }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = if (keystoreProperties != null) {
+            signingConfig = if (keyProps.isNotEmpty()) {
                 signingConfigs.getByName("upload")
             } else {
                 signingConfigs.getByName("debug")
