@@ -58,9 +58,13 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
 
     final faturaAtual =
         vm.faturaInformadaDoBancoNoMes(widget.bancoId, widget.mes);
-    final comprasMes =
+    final devedores =
         vm.faturaDoBancoBrutoNoMes(widget.bancoId, widget.mes);
-    final saldo = vm.faturaDoBancoNoMes(widget.bancoId, widget.mes);
+    final devedoresPendentes =
+        vm.faturaDoBancoNoMes(widget.bancoId, widget.mes);
+    final restante = faturaAtual > 0
+        ? (faturaAtual - devedores)
+        : devedoresPendentes;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -100,12 +104,23 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Compras do mês: ${formatarMoeda(comprasMes)} · resta: ${formatarMoeda(saldo)}',
+              'Compras dos devedores no mês: ${formatarMoeda(devedores)}',
               style: const TextStyle(color: Branco54, fontSize: 12),
             ),
             if (faturaAtual > 0)
               Text(
-                'Fatura atual informada: ${formatarMoeda(faturaAtual)}',
+                'Restante para completar a fatura: ${formatarMoeda(restante)}',
+                style: const TextStyle(
+                    color: Correto, fontSize: 13, fontWeight: FontWeight.bold),
+              )
+            else
+              Text(
+                'Restante a receber dos devedores: ${formatarMoeda(restante)}',
+                style: const TextStyle(color: Branco54, fontSize: 12),
+              ),
+            if (faturaAtual > 0)
+              Text(
+                'Fatura informada: ${formatarMoeda(faturaAtual)}',
                 style: TextStyle(color: Branco.withOpacity(0.38), fontSize: 12),
               ),
             const SizedBox(height: 4),

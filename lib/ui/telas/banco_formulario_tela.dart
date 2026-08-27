@@ -341,12 +341,19 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     const SizedBox(height: 10),
                     Builder(builder: (context) {
                       final vm = Provider.of<FaturaViewModel>(context);
-                      final comprasMes = vm.totalComprasDoBancoNoMes(
-                          widget.bancoExistente!.id, hojeMes());
-                      final saldo = vm.saldoDoBancoNoMes(
-                          widget.bancoExistente!.id, hojeMes());
+                      final mesAtual = hojeMes();
+                      final informada = vm.faturaInformadaDoBancoNoMes(
+                          widget.bancoExistente!.id, mesAtual);
+                      final devedores = vm.faturaDoBancoBrutoNoMes(
+                          widget.bancoExistente!.id, mesAtual);
+                      final restante = informada > 0
+                          ? (informada - devedores)
+                          : vm.faturaDoBancoNoMes(
+                              widget.bancoExistente!.id, mesAtual);
                       return Text(
-                        'Compras do mês: ${formatarMoeda(comprasMes)} · saldo: ${formatarMoeda(saldo)}',
+                        informada > 0
+                            ? 'Devedores: ${formatarMoeda(devedores)} · resta: ${formatarMoeda(restante)}'
+                            : 'Compras dos devedores: ${formatarMoeda(devedores)}',
                         style: const TextStyle(color: Branco54, fontSize: 12),
                       );
                     }),

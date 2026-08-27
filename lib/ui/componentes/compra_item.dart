@@ -129,43 +129,54 @@ class CompraItem extends StatelessWidget {
         direction: DismissDirection.horizontal,
         background: podeRemover
             ? Container(
-                decoration: BoxDecoration(
-                  color: LacunaVermelha,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                padding: const EdgeInsets.only(left: 18),
                 alignment: Alignment.centerLeft,
-                child: const Row(
+                padding: const EdgeInsets.only(left: 20),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.delete_outline, color: Branco),
-                    SizedBox(width: 6),
-                    Text('Excluir',
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: LacunaVermelha,
+                      ),
+                      child: const Icon(Icons.delete_outline,
+                          color: Branco, size: 22),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text('Excluir',
                         style: TextStyle(
                             color: Branco, fontWeight: FontWeight.bold)),
                   ],
                 ),
               )
-            : Container(color: Colors.transparent),
+            : Container(),
         secondaryBackground: podePaga
             ? Container(
-                decoration: BoxDecoration(
-                  color: Correto,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                padding: const EdgeInsets.only(right: 18),
                 alignment: Alignment.centerRight,
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                padding: const EdgeInsets.only(right: 20),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.check_circle_outline, color: Branco),
-                    SizedBox(width: 6),
-                    Text('Paga',
+                    const Text('Paga',
                         style: TextStyle(
                             color: Branco, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 10),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Correto,
+                      ),
+                      child: const Icon(Icons.check_circle_outline,
+                          color: Branco, size: 22),
+                    ),
                   ],
                 ),
               )
-            : Container(color: Colors.transparent),
+            : Container(),
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.startToEnd) {
             if (!podeRemover) return false;

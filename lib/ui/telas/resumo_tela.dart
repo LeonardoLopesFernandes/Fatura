@@ -102,12 +102,23 @@ class ResumoScreen extends StatelessWidget {
               child: Row(
                 spacing: 10,
                 children: vm.bancos.map((banco) {
+                  final informada =
+                      vm.faturaInformadaDoBancoNoMes(banco.id, mes);
+                  final devedores =
+                      vm.faturaDoBancoBrutoNoMes(banco.id, mes);
+                  final devedoresPendentes =
+                      vm.faturaDoBancoNoMes(banco.id, mes);
+                  final saldo = informada > 0
+                      ? (informada - devedores)
+                      : devedores;
+                  final restante = informada > 0
+                      ? (informada - devedores)
+                      : devedoresPendentes;
                   return CarouselBankCard(
                     banco: banco,
-                    saldo: vm.faturaDoBancoBrutoNoMes(banco.id, mes),
-                    restante: vm.faturaDoBancoNoMes(banco.id, mes),
-                    faturaInformada:
-                        vm.faturaInformadaDoBancoNoMes(banco.id, mes),
+                    saldo: saldo,
+                    restante: restante,
+                    faturaInformada: informada,
                     onTap: () => onEditarFaturaBanco(banco.id),
                   );
                 }).toList(),
