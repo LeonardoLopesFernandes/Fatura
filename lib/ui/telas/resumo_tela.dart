@@ -27,7 +27,7 @@ class ResumoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = Provider.of<FaturaViewModel>(context);
     final mes = vm.mesSelecionado;
-    final totalFaturas = vm.totalFaturasBrutoNoMes(mes);
+    final totalFaturas = vm.totalRestanteBancosNoMes(mes);
     final totalRestante = vm.totalCartaoNoMes(mes);
 
     return SingleChildScrollView(
@@ -47,17 +47,24 @@ class ResumoScreen extends StatelessWidget {
               const Spacer(),
               Container(
                 decoration: BoxDecoration(
-                  color: Branco.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(8),
+                  color: CorPrimaria,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: CorPrimaria.withOpacity(0.35),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: Text(
                   formatarMoeda(totalFaturas),
                   style: const TextStyle(
                     color: Branco,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ),

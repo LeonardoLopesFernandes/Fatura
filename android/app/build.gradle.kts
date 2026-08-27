@@ -5,6 +5,14 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val rootProj = rootProject
+val keystorePropertiesFile = rootProj.file("key.properties")
+val keystoreProperties = if (keystorePropertiesFile.exists()) {
+    java.util.Properties().apply {
+        load(java.io.FileInputStream(keystorePropertiesFile))
+    }
+} else null
+
 android {
     namespace = "fatura.io.fatura"
     compileSdk = flutter.compileSdkVersion
@@ -31,20 +39,23 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (keystoreProperties != null) {
+            create("upload") {
+                storeFile = rootProj.file(keystoreProperties.getProperty("storeFile")!!)
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            val keyPropsFile = rootProject.file("key.properties")
-            if (keyPropsFile.exists()) {
-                val props = java.util.Properties()
-                props.load(java.io.FileInputStream(keyPropsFile))
-                signingConfig = signingConfigs.create("upload") {
-                    storeFile = rootProject.file(props.getProperty("storeFile")!!)
-                    storePassword = props.getProperty("storePassword")
-                    keyAlias = props.getProperty("keyAlias")
-                    keyPassword = props.getProperty("keyPassword")
-                }
+            signingConfig = if (keystoreProperties != null) {
+                signingConfigs.getByName("upload")
             } else {
-                signingConfig = signingConfigs.getByName("debug")
+                signingConfigs.getByName("debug")
             }
         }
     }

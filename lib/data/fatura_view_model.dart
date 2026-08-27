@@ -332,6 +332,13 @@ class FaturaViewModel extends ChangeNotifier {
       .where((c) => c.ativaNoMes(mes))
       .fold(0.0, (s, c) => s + c.valorIndividual);
 
+  double totalRestanteBancosNoMes(Mes mes) => _bancos.fold(0.0, (s, b) {
+        final inf = faturaInformadaDoBancoNoMes(b.id, mes);
+        if (inf <= 0) return s;
+        final resta = inf - faturaDoBancoBrutoNoMes(b.id, mes);
+        return s + (resta > 0 ? resta : 0.0);
+      });
+
   double diferencaDoCompradorNoMes(String id, Mes mes) =>
       totalCartaoNoMes(mes) - faturaDoCompradorNoMes(id, mes);
 
