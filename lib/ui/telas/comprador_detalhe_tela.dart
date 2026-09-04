@@ -90,7 +90,7 @@ class CompradorDetalheScreen extends StatelessWidget {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(14),
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -357,8 +357,10 @@ class _GrupoCardState extends State<GrupoCard> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Superficie,
-        borderRadius: BorderRadius.circular(18),
+        color: Color(widget.banco.cor).withOpacity(0.12),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+            color: Color(widget.banco.cor).withOpacity(0.3), width: 1),
       ),
       child: Column(
         children: [
@@ -366,53 +368,55 @@ class _GrupoCardState extends State<GrupoCard> {
             onTap: () => setState(() => _expandido = !_expandido),
             behavior: HitTestBehavior.opaque,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               child: Row(
                 children: [
-                  BancoLogo(banco: widget.banco, tamanho: 34, raio: 10),
-                  const SizedBox(width: 10),
+                  BancoLogo(banco: widget.banco, tamanho: 22, raio: 6),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      widget.banco.nome,
+                      widget.banco.nome.toUpperCase(),
                       style: const TextStyle(
                         color: Branco,
-                        fontSize: 15,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(widget.banco.cor),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    child: Text(
-                      formatarMoeda(subtotal),
-                      style: TextStyle(
-                        color: contrastePara(widget.banco.cor),
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
                   Icon(
                     _expandido
                         ? Icons.keyboard_arrow_up
                         : Icons.keyboard_arrow_down,
                     color: Branco54,
-                    size: 20,
+                    size: 16,
                   ),
                 ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Color(widget.banco.cor).withOpacity(0.35),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                formatarMoeda(subtotal),
+                style: TextStyle(
+                  color: contrastePara(widget.banco.cor),
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
           if (_expandido)
             ...widget.compras.map((compra) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
                 child: CompraItem(
                   compra: compra,
                   banco: widget.banco,
@@ -420,14 +424,13 @@ class _GrupoCardState extends State<GrupoCard> {
                   valorExibido: compra.valorIndividual,
                   rotuloParcelaCustom: compra.quantidadeParcelas > 1
                       ? 'Parcela ${compra.parcelaNoMes(widget.mes)} de ${compra.quantidadeParcelas}'
-                                      : 'Mensal',
+                      : 'Mensal',
                   onPagaChanged: (paga) => widget.onPagaChanged(compra, paga),
                   onRemove: () => widget.onRemove(compra),
                   onEdit: () => widget.onEdit(compra),
                 ),
               );
             }).toList(),
-          if (_expandido) const SizedBox(height: 12),
         ],
       ),
     );
@@ -457,7 +460,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(14),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -505,10 +508,10 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
             final expandido = _expandidos.contains(grupo.banco.id);
             return Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: 6),
               decoration: BoxDecoration(
                 color: Color(grupo.banco.cor).withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                     color: Color(grupo.banco.cor).withOpacity(0.5), width: 1),
               ),
@@ -527,49 +530,60 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
                       child: Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                          Icon(
+                            Icons.account_balance,
+                            color: Branco54,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
                             child: Text(
                               grupo.banco.nome.toUpperCase(),
                               style: const TextStyle(
                                 color: Branco,
-                                fontSize: 12,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                          const Spacer(),
-                          Text(
-                            formatarMoeda(subtotal),
-                            style: const TextStyle(
-                              color: Branco,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
                           Icon(
                             expandido
                                 ? Icons.keyboard_arrow_up
                                 : Icons.keyboard_arrow_down,
                             color: Branco54,
-                            size: 20,
+                            size: 16,
                           ),
                         ],
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        formatarMoeda(subtotal),
+                        style: const TextStyle(
+                          color: Branco,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                   if (expandido) ...[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
                       child: Column(
                         children: [
                           ...grupo.compras.map((compra) {

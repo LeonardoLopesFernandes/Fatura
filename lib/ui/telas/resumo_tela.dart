@@ -208,10 +208,10 @@ class _ResumoScreenState extends State<ResumoScreen> {
                               _expandidos.contains('${comprador.id}_${grupo.banco.id}');
                           return Container(
                             width: double.infinity,
-                            margin: const EdgeInsets.only(bottom: 8),
+                            margin: const EdgeInsets.only(bottom: 6),
                             decoration: BoxDecoration(
                               color: Color(grupo.banco.cor).withOpacity(0.12),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                               border: Border.all(
                                   color: Color(grupo.banco.cor).withOpacity(0.3),
                                   width: 1),
@@ -233,48 +233,59 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                   behavior: HitTestBehavior.opaque,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 10),
+                                        horizontal: 10, vertical: 6),
                                     child: Row(
                                       children: [
                                         BancoLogo(
                                             banco: grupo.banco,
-                                            tamanho: 26,
-                                            raio: 7),
-                                        const SizedBox(width: 8),
+                                            tamanho: 22,
+                                            raio: 6),
+                                        const SizedBox(width: 6),
                                         Expanded(
                                           child: Text(
                                             grupo.banco.nome.toUpperCase(),
                                             style: const TextStyle(
                                               color: Branco,
-                                              fontSize: 12,
+                                              fontSize: 11,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
-                                        Text(
-                                          formatarMoeda(subtotal),
-                                          style: const TextStyle(
-                                            color: Branco,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 6),
                                         Icon(
                                           grupoExpandido
                                               ? Icons.keyboard_arrow_up
                                               : Icons.keyboard_arrow_down,
                                           color: Branco54,
-                                          size: 18,
+                                          size: 16,
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: Color(grupo.banco.cor).withOpacity(0.35),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      formatarMoeda(subtotal),
+                                      style: const TextStyle(
+                                        color: Branco,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
                                 if (grupoExpandido)
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(
-                                        12, 0, 12, 10),
+                                        10, 0, 10, 6),
                                     child: Column(
                                       children: [
                                         ...grupo.compras.map((compra) {
