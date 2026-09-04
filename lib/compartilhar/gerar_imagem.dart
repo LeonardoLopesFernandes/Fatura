@@ -1,13 +1,9 @@
 import 'dart:io';
 import 'dart:ui' as ui;
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../models/grupo.dart';
-import '../../models/banco.dart';
 import '../../data/icones_compra.dart';
-import '../../data/recursos_banco.dart';
 import '../../util/formatadores.dart';
 
 Future<String?> gerarImagem({
@@ -98,7 +94,6 @@ Future<String?> gerarImagem({
       final banco = g.banco;
       final corBanco = Color(banco.cor);
       final corBancoBg = corBanco.withOpacity(0.15);
-      final subtotal = g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
       
       final cardHeight = 80.0 + g.compras.length * 72.0;
       desenharRetangulo(40, y, largura - 80, cardHeight, corBancoBg, 16);
@@ -114,10 +109,6 @@ Future<String?> gerarImagem({
       double itemY = headerY + 56;
 
       for (final c in g.compras) {
-        final icone = c.iconeChave != null
-            ? IconesCompra.iconePorChave(c.iconeChave)
-            : IconesCompra.iconePorDescricao(c.descricao);
-        
         desenharRetangulo(60, itemY, 40, 40, Colors.white.withOpacity(0.1), 8);
         
         desenhar(c.descricao, 112, itemY + 10, 20, const Color(0xFFE0E0E0));

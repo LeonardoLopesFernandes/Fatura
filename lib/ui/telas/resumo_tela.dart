@@ -40,7 +40,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
     final totalRestante = vm.totalCartaoNoMes(mes);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 12, bottom: 110),
+      padding: const EdgeInsets.only(left: 14, right: 14, top: 8, bottom: 100),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -49,7 +49,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
             () => vm.definirMesSelecionado(mes.maisMeses(-1)),
             () => vm.definirMesSelecionado(mes.maisMeses(1)),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           Row(
             children: [
               const TituloSecao('Faturas no Cartão'),
@@ -79,7 +79,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Row(
             children: [
               const Text(
@@ -109,7 +109,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           if (vm.bancos.isEmpty)
             const MensagemVazia('Nenhum banco cadastrado.')
           else
@@ -140,7 +140,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                 }).toList(),
               ),
             ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 14),
           if (vm.compradores.isEmpty)
             const MensagemVazia(
                 'Nenhum devedor cadastrado.\nAdicione na aba Devedores.')
@@ -153,15 +153,15 @@ class _ResumoScreenState extends State<ResumoScreen> {
               final grupos = vm.agruparPorBanco(comprasMes);
               final expandido = _expandidos.contains(comprador.id);
               return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.only(bottom: 10),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Branco.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(14),
                     border:
                         Border.all(color: Branco.withOpacity(0.1)),
                   ),
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

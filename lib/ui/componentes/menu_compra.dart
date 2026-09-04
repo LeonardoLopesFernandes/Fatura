@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
 import '../../models/compra.dart';
 import '../../ui/tema.dart';

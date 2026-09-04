@@ -49,13 +49,12 @@ Future<String?> gerarPdf({
 
           for (final g in grupos) {
             final bancoCor = PdfColor.fromInt(g.banco.cor);
-            final bancoCorBg = PdfColor.fromInt(g.banco.cor).copy();
             final subtotal = g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
             
             widgets.add(pw.Container(
               padding: pw.EdgeInsets.all(16),
               decoration: pw.BoxDecoration(
-                color: bancoCorBg,
+                color: bancoCor,
                 borderRadius: pw.BorderRadius.circular(12),
                 border: pw.Border.all(color: bancoCor, width: 1),
               ),
@@ -65,7 +64,7 @@ Future<String?> gerarPdf({
                   pw.Container(
                     padding: pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: pw.BoxDecoration(
-                      color: PdfColor.fromInt(0xFFFFFFFF).copy(alpha: 0.1),
+                      color: const PdfColor(0.95, 0.95, 0.95),
                       borderRadius: pw.BorderRadius.circular(20),
                     ),
                     child: pw.Text(g.banco.nome.toUpperCase(),

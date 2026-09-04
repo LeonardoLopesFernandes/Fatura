@@ -706,7 +706,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                 Navigator.of(context).pop();
                 Share.share(
                   _montarTexto(),
-                  subject: 'Fatura - $nome',
+                  subject: 'Fatura - ${widget.nome}',
                 );
               },
             ),
@@ -723,12 +723,12 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                       '${(await getTemporaryDirectory()).path}/compartilhamento');
                   await dir.create(recursive: true);
                   final arquivo = File(
-                      '${dir.path}/fatura_${limparNome(nome)}.csv');
+                      '${dir.path}/fatura_${limparNome(widget.nome)}.csv');
                   await arquivo.writeAsString(_montarCsv());
                   if (context.mounted) {
                     await Share.shareXFiles(
                       [XFile(arquivo.path, mimeType: 'text/csv')],
-                      subject: 'Fatura - $nome',
+                      subject: 'Fatura - ${widget.nome}',
                     );
                   }
                 } catch (_) {
