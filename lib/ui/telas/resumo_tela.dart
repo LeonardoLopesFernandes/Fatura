@@ -93,7 +93,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
               const Spacer(),
               Container(
                 decoration: BoxDecoration(
-                  color: CorPrimaria.withOpacity(0.18),
+                  color: VermelhoBotao.withOpacity(0.22),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding:
@@ -101,7 +101,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                 child: Text(
                   formatarMoeda(totalRestante),
                   style: const TextStyle(
-                    color: Branco,
+                    color: VermelhoBotao,
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
@@ -202,8 +202,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                       const SizedBox(height: 10),
                       if (grupos.isNotEmpty)
                         ...grupos.map((grupo) {
-                          final subtotal = grupo.compras.fold(
-                              0.0, (s, c) => s + c.valorIndividual);
+                          final qtd = grupo.compras.length;
                           final grupoExpandido =
                               _expandidos.contains('${comprador.id}_${grupo.banco.id}');
                           return Container(
@@ -251,6 +250,15 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                             ),
                                           ),
                                         ),
+                                        if (!grupoExpandido)
+                                          Text(
+                                            '$qtd compra${qtd != 1 ? 's' : ''}',
+                                            style: const TextStyle(
+                                              color: Branco54,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        const SizedBox(width: 4),
                                         Icon(
                                           grupoExpandido
                                               ? Icons.keyboard_arrow_up
@@ -259,26 +267,6 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                           size: 16,
                                         ),
                                       ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                      color: Color(grupo.banco.cor).withOpacity(0.35),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      formatarMoeda(subtotal),
-                                      style: const TextStyle(
-                                        color: Branco,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
                                     ),
                                   ),
                                 ),

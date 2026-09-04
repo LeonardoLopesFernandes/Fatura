@@ -135,12 +135,20 @@ class CompradorDetalheScreen extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        Text(
-                          formatarMoeda(faturaRestante),
-                          style: const TextStyle(
-                            color: Branco,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: VermelhoBotao.withOpacity(0.22),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          child: Text(
+                            formatarMoeda(faturaRestante),
+                            style: const TextStyle(
+                              color: VermelhoBotao,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -232,6 +240,138 @@ class CompradorDetalheScreen extends StatelessWidget {
         fatura: fatura,
         grupos: grupos,
         mes: vm.mesSelecionado,
+        onCompartilhar: () => _mostrarOpcoes(context, nome, fatura, grupos),
+      ),
+    );
+  }
+
+  void _mostrarOpcoes(
+    BuildContext context,
+    String nome,
+    double fatura,
+    List<Grupo> grupos,
+  ) {
+    final mes = Provider.of<FaturaViewModel>(context, listen: false).mesSelecionado;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Superficie,
+      builder: (sheetContext) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Compartilhar como',
+                style: TextStyle(
+                    color: Branco,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            ListTile(
+              leading: const Icon(Icons.image, color: Branco),
+              title: const Text('Imagem (PNG)',
+                  style: TextStyle(color: Branco)),
+              subtitle: const Text('Captura visual da fatura',
+                  style: TextStyle(color: Branco54)),
+              onTap: () async {
+                Navigator.of(sheetContext).pop();
+                final caminho = await gerarImagem(
+                    nome: nome, fatura: fatura, grupos: grupos);
+                if (sheetContext.mounted) {
+                  compartilharArquivo(
+                      sheetContext, caminho, 'image/png', nome);
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.picture_as_pdf, color: Branco),
+              title:
+                  const Text('PDF', style: TextStyle(color: Branco)),
+              subtitle: const Text('Documento formatado',
+                  style: TextStyle(color: Branco54)),
+              onTap: () async {
+                Navigator.of(sheetContext).pop();
+                final caminho = await gerarPdf(
+                    nome: nome, fatura: fatura, grupos: grupos);
+                if (sheetContext.mounted) {
+                  compartilharArquivo(
+                      sheetContext, caminho, 'application/pdf', nome);
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.text_snippet, color: Branco),
+              title:
+                  const Text('Texto', style: TextStyle(color: Branco)),
+              subtitle: const Text('Compartilhar como mensagem',
+                  style: TextStyle(color: Branco54)),
+              onTap: () {
+                Navigator.of(sheetContext).pop();
+                final texto = StringBuffer();
+                texto.writeln('Fatura - $nome');
+                texto.writeln('Mês: ${rotuloMesLongo(mes)}');
+                texto.writeln('');
+                for (final g in grupos) {
+                  final subtotal = g.compras.fold(
+                      0.0, (s, c) => s + c.valorIndividual);
+                  texto.writeln('${g.banco.nome} (${formatarMoeda(subtotal)}):');
+                  for (final c in g.compras) {
+                    texto.writeln(
+                        '  - ${c.descricao}: ${formatarMoeda(c.valorIndividual)}');
+                  }
+                  texto.writeln('');
+                }
+                texto.writeln('Total: ${formatarMoeda(fatura)}');
+                Share.share(
+                  texto.toString(),
+                  subject: 'Fatura - $nome',
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.table_chart, color: Branco),
+              title:
+                  const Text('CSV', style: TextStyle(color: Branco)),
+              subtitle: const Text('Planilha separada por vírgulas',
+                  style: TextStyle(color: Branco54)),
+              onTap: () async {
+                Navigator.of(sheetContext).pop();
+                try {
+                  final dir = Directory(
+                      '${(await getTemporaryDirectory()).path}/compartilhamento');
+                  await dir.create(recursive: true);
+                  final csv = StringBuffer();
+                  csv.writeln('banco,descricao,valor');
+                  for (final g in grupos) {
+                    for (final c in g.compras) {
+                      csv.writeln(
+                          '"${g.banco.nome.replaceAll('"', "'")}",'
+                          '"${c.descricao.replaceAll('"', "'")}",'
+                          '${c.valorIndividual.toStringAsFixed(2).replaceAll('.', ',')}');
+                    }
+                  }
+                  final arquivo = File(
+                      '${dir.path}/fatura_${limparNome(nome)}.csv');
+                  await arquivo.writeAsString(csv.toString());
+                  if (sheetContext.mounted) {
+                    await Share.shareXFiles(
+                      [XFile(arquivo.path, mimeType: 'text/csv')],
+                      subject: 'Fatura - $nome',
+                    );
+                  }
+                } catch (_) {
+                  if (sheetContext.mounted) {
+                    ScaffoldMessenger.of(sheetContext).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('Não foi possível gerar o CSV.')),
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -352,8 +492,7 @@ class _GrupoCardState extends State<GrupoCard> {
 
   @override
   Widget build(BuildContext context) {
-    final subtotal =
-        widget.compras.fold(0.0, (s, c) => s + c.valorIndividual);
+    final qtd = widget.compras.length;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -383,6 +522,15 @@ class _GrupoCardState extends State<GrupoCard> {
                       ),
                     ),
                   ),
+                  if (!_expandido)
+                    Text(
+                      '$qtd compra${qtd != 1 ? 's' : ''}',
+                      style: const TextStyle(
+                        color: Branco54,
+                        fontSize: 10,
+                      ),
+                    ),
+                  const SizedBox(width: 4),
                   Icon(
                     _expandido
                         ? Icons.keyboard_arrow_up
@@ -391,25 +539,6 @@ class _GrupoCardState extends State<GrupoCard> {
                     size: 16,
                   ),
                 ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: Color(widget.banco.cor).withOpacity(0.35),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                formatarMoeda(subtotal),
-                style: TextStyle(
-                  color: contrastePara(widget.banco.cor),
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
             ),
           ),
@@ -442,12 +571,14 @@ class _PreviewCompartilhar extends StatefulWidget {
   final double fatura;
   final List<Grupo> grupos;
   final Mes mes;
+  final VoidCallback? onCompartilhar;
 
   const _PreviewCompartilhar({
     required this.nome,
     required this.fatura,
     required this.grupos,
     required this.mes,
+    this.onCompartilhar,
   });
 
   @override
@@ -643,7 +774,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
             child: ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _mostrarOpcoes(context);
+                widget.onCompartilhar?.call();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: CorPrimaria,
@@ -660,140 +791,5 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
         ],
       ),
     );
-  }
-
-  void _mostrarOpcoes(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Superficie,
-      builder: (_) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Compartilhar como',
-                style: TextStyle(
-                    color: Branco,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            ListTile(
-              leading: const Icon(Icons.image, color: Branco),
-              title: const Text('Imagem (PNG)',
-                  style: TextStyle(color: Branco)),
-              subtitle: const Text('Captura visual da fatura',
-                  style: TextStyle(color: Branco54)),
-              onTap: () async {
-                Navigator.of(context).pop();
-                final caminho = await gerarImagem(
-                    nome: widget.nome, fatura: widget.fatura, grupos: widget.grupos);
-                if (context.mounted) {
-                  compartilharArquivo(
-                      context, caminho, 'image/png', widget.nome);
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.picture_as_pdf, color: Branco),
-              title:
-                  const Text('PDF', style: TextStyle(color: Branco)),
-              subtitle: const Text('Documento formatado',
-                  style: TextStyle(color: Branco54)),
-              onTap: () async {
-                Navigator.of(context).pop();
-                final caminho = await gerarPdf(
-                    nome: widget.nome, fatura: widget.fatura, grupos: widget.grupos);
-                if (context.mounted) {
-                  compartilharArquivo(
-                      context, caminho, 'application/pdf', widget.nome);
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.text_snippet, color: Branco),
-              title:
-                  const Text('Texto', style: TextStyle(color: Branco)),
-              subtitle: const Text('Compartilhar como mensagem',
-                  style: TextStyle(color: Branco54)),
-              onTap: () {
-                Navigator.of(context).pop();
-                Share.share(
-                  _montarTexto(),
-                  subject: 'Fatura - ${widget.nome}',
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.table_chart, color: Branco),
-              title:
-                  const Text('CSV', style: TextStyle(color: Branco)),
-              subtitle: const Text('Planilha separada por vírgulas',
-                  style: TextStyle(color: Branco54)),
-              onTap: () async {
-                Navigator.of(context).pop();
-                try {
-                  final dir = Directory(
-                      '${(await getTemporaryDirectory()).path}/compartilhamento');
-                  await dir.create(recursive: true);
-                  final arquivo = File(
-                      '${dir.path}/fatura_${limparNome(widget.nome)}.csv');
-                  await arquivo.writeAsString(_montarCsv());
-                  if (context.mounted) {
-                    await Share.shareXFiles(
-                      [XFile(arquivo.path, mimeType: 'text/csv')],
-                      subject: 'Fatura - ${widget.nome}',
-                    );
-                  }
-                } catch (_) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text('Não foi possível gerar o CSV.')),
-                    );
-                  }
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _montarTexto() {
-    final buffer = StringBuffer();
-    buffer.writeln('Fatura - ${widget.nome}');
-    buffer.writeln('');
-    if (widget.grupos.isEmpty) {
-      buffer.writeln('Nenhuma compra neste mês.');
-    }
-    for (final g in widget.grupos) {
-      final subtotal =
-          g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
-      buffer.writeln('${g.banco.nome} (${formatarMoeda(subtotal)}):');
-      for (final c in g.compras) {
-        buffer.writeln(
-            '  - ${c.descricao}: ${formatarMoeda(c.valorIndividual)}');
-      }
-      buffer.writeln('');
-    }
-    buffer.writeln('Total: ${formatarMoeda(widget.fatura)}');
-    return buffer.toString();
-  }
-
-  String _montarCsv() {
-    final buffer = StringBuffer();
-    buffer.writeln('banco,descricao,valor');
-    for (final g in widget.grupos) {
-      for (final c in g.compras) {
-        buffer.writeln(
-            '"${g.banco.nome.replaceAll('"', "'")}",'
-            '"${c.descricao.replaceAll('"', "'")}",'
-            '${c.valorIndividual.toStringAsFixed(2).replaceAll('.', ',')}');
-      }
-    }
-    return buffer.toString();
   }
 }
