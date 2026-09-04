@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../models/grupo.dart';
 import '../../data/icones_compra.dart';
+import '../../data/recursos_banco.dart';
 import '../../util/formatadores.dart';
 
 Future<String?> gerarImagem({
@@ -100,10 +102,43 @@ Future<String?> gerarImagem({
       desenharBordaRetangulo(40, y, largura - 80, cardHeight, corBanco, 16, 2);
 
       double headerY = y + 20;
+
+      // Desenhar ícone do banco
+      final iconSize = 36.0;
+      double iconX = 60;
+      if (banco.iconeArquivo != null && File(banco.iconeArquivo!).existsSync()) {
+        try {
+          final bytes = await File(banco.iconeArquivo!).readAsBytes();
+          final codec = await ui.instantiateImageCodec(bytes.buffer.asUint8List());
+          final frame = await codec.getNextFrame();
+          final image = frame.image;
+          final src = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
+          final dst = Rect.fromLTWH(iconX, headerY, iconSize, iconSize);
+          canvas.drawImageRect(image, src, dst, Paint());
+          image.dispose();
+          iconX += iconSize + 8;
+        } catch (_) {
+          // Fallback
+        }
+      } else if (banco.iconeRes != null) {
+        final asset = RecursosBanco.DRAWABLES[banco.iconeRes];
+        if (asset != null && asset.endsWith('.png')) {
+          try {
+            final data = await rootBundle.load(asset);
+            final bytes = data.buffer.asUint8List();
+            final codec = await ui.instantiateImageCodec(bytes);
+            final frame = await codec.getNextFrame();
+            final image = frame.image;
+            final src = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
+            final dst = Rect.fromLTWH(iconX, headerY, iconSize, iconSize);
+            canvas.drawImageRect(image, src, dst, Paint());
+            image.dispose();
+            iconX += iconSize + 8;
+          } catch (_) {}
+        }
+      }
       
-      desenharRetangulo(60, headerY, g.banco.nome.toUpperCase().length * 14.0 + 60, 36, Colors.white.withOpacity(0.1), 18);
-      
-      desenhar(g.banco.nome.toUpperCase(), 80, headerY + 8, 18, Colors.white,
+      desenhar(g.banco.nome.toUpperCase(), iconX, headerY + 8, 18, Colors.white,
           peso: FontWeight.bold);
 
       double itemY = headerY + 56;

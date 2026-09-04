@@ -49,7 +49,6 @@ Future<String?> gerarPdf({
 
           for (final g in grupos) {
             final bancoCor = PdfColor.fromInt(g.banco.cor);
-            final subtotal = g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
             
             widgets.add(pw.Container(
               padding: pw.EdgeInsets.all(16),
@@ -61,19 +60,35 @@ Future<String?> gerarPdf({
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Container(
-                    padding: pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: pw.BoxDecoration(
-                      color: const PdfColor(0.95, 0.95, 0.95),
-                      borderRadius: pw.BorderRadius.circular(20),
-                    ),
-                    child: pw.Text(g.banco.nome.toUpperCase(),
-                        style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontSize: 14,
-                            fontWeight: pw.FontWeight.bold)),
+                  pw.Row(
+                    children: [
+                      pw.Container(
+                        width: 28,
+                        height: 28,
+                        decoration: pw.BoxDecoration(
+                          color: PdfColors.white,
+                          borderRadius: pw.BorderRadius.circular(8),
+                        ),
+                        child: pw.Center(
+                          child: pw.Text(
+                            g.banco.nome.substring(0, 1).toUpperCase(),
+                            style: pw.TextStyle(
+                              color: bancoCor,
+                              fontSize: 14,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      pw.SizedBox(width: 8),
+                      pw.Text(g.banco.nome.toUpperCase(),
+                          style: pw.TextStyle(
+                              color: PdfColors.white,
+                              fontSize: 14,
+                              fontWeight: pw.FontWeight.bold)),
+                    ],
                   ),
-                  pw.SizedBox(height: 16),
+                  pw.SizedBox(height: 12),
                   for (final c in g.compras)
                     pw.Padding(
                       padding: pw.EdgeInsets.only(bottom: 12),

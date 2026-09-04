@@ -137,7 +137,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                         const Spacer(),
                         Container(
                           decoration: BoxDecoration(
-                            color: VermelhoBotao.withOpacity(0.22),
+                            color: Branco,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           padding: const EdgeInsets.symmetric(
@@ -274,10 +274,10 @@ class CompradorDetalheScreen extends StatelessWidget {
               subtitle: const Text('Captura visual da fatura',
                   style: TextStyle(color: Branco54)),
               onTap: () async {
-                Navigator.of(sheetContext).pop();
                 final caminho = await gerarImagem(
                     nome: nome, fatura: fatura, grupos: grupos);
                 if (sheetContext.mounted) {
+                  Navigator.of(sheetContext).pop();
                   compartilharArquivo(
                       sheetContext, caminho, 'image/png', nome);
                 }
@@ -290,10 +290,10 @@ class CompradorDetalheScreen extends StatelessWidget {
               subtitle: const Text('Documento formatado',
                   style: TextStyle(color: Branco54)),
               onTap: () async {
-                Navigator.of(sheetContext).pop();
                 final caminho = await gerarPdf(
                     nome: nome, fatura: fatura, grupos: grupos);
                 if (sheetContext.mounted) {
+                  Navigator.of(sheetContext).pop();
                   compartilharArquivo(
                       sheetContext, caminho, 'application/pdf', nome);
                 }
@@ -306,7 +306,6 @@ class CompradorDetalheScreen extends StatelessWidget {
               subtitle: const Text('Compartilhar como mensagem',
                   style: TextStyle(color: Branco54)),
               onTap: () {
-                Navigator.of(sheetContext).pop();
                 final texto = StringBuffer();
                 texto.writeln('Fatura - $nome');
                 texto.writeln('Mês: ${rotuloMesLongo(mes)}');
@@ -322,6 +321,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                   texto.writeln('');
                 }
                 texto.writeln('Total: ${formatarMoeda(fatura)}');
+                Navigator.of(sheetContext).pop();
                 Share.share(
                   texto.toString(),
                   subject: 'Fatura - $nome',
@@ -335,7 +335,6 @@ class CompradorDetalheScreen extends StatelessWidget {
               subtitle: const Text('Planilha separada por vírgulas',
                   style: TextStyle(color: Branco54)),
               onTap: () async {
-                Navigator.of(sheetContext).pop();
                 try {
                   final dir = Directory(
                       '${(await getTemporaryDirectory()).path}/compartilhamento');
@@ -354,6 +353,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                       '${dir.path}/fatura_${limparNome(nome)}.csv');
                   await arquivo.writeAsString(csv.toString());
                   if (sheetContext.mounted) {
+                    Navigator.of(sheetContext).pop();
                     await Share.shareXFiles(
                       [XFile(arquivo.path, mimeType: 'text/csv')],
                       subject: 'Fatura - $nome',
@@ -591,7 +591,8 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 8),
+      height: MediaQuery.of(context).size.height * 0.75,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -602,8 +603,12 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
           const SizedBox(height: 4),
           Text(widget.nome,
               style: const TextStyle(color: Branco54, fontSize: 13)),
-          const SizedBox(height: 16),
-          Container(
+          const SizedBox(height: 12),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -767,7 +772,10 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
               ),
             );
           }).toList(),
-          const SizedBox(height: 16),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             height: 48,

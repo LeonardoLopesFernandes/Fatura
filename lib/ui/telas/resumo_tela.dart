@@ -93,7 +93,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
               const Spacer(),
               Container(
                 decoration: BoxDecoration(
-                  color: VermelhoBotao.withOpacity(0.22),
+                  color: Branco,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding:
