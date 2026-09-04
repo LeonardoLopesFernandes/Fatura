@@ -12,9 +12,9 @@ Future<String?> gerarPdf({
 }) async {
   try {
     final doc = pw.Document();
-    final fundo = PdfColor.fromInt(0xFF15244D);
-    final corTitulo = PdfColor.fromInt(0xFF9DB2E8);
-    final corTexto = PdfColor.fromInt(0xFFE6ECF8);
+    final fundo = PdfColor.fromInt(0xFF0D1B2A);
+    final corTitulo = PdfColor.fromInt(0xFFA0B0C0);
+    final corTexto = PdfColor.fromInt(0xFFE0E0E0);
 
     doc.addPage(
       pw.MultiPage(
@@ -33,38 +33,73 @@ Future<String?> gerarPdf({
         ),
         build: (_) {
           final widgets = <pw.Widget>[];
-          widgets.add(pw.Text(nome,
+          
+          widgets.add(pw.Text('FATURA INDIVIDUAL',
               style: pw.TextStyle(
                   color: corTitulo,
-                  fontSize: 22,
+                  fontSize: 12,
                   fontWeight: pw.FontWeight.bold)));
-          widgets.add(pw.SizedBox(height: 16));
-          widgets.add(pw.Text('Fatura individual: ${formatarMoeda(fatura)}',
-              style: pw.TextStyle(color: corTexto, fontSize: 14)));
-          widgets.add(pw.SizedBox(height: 18));
+          widgets.add(pw.SizedBox(height: 8));
+          widgets.add(pw.Text(formatarMoeda(fatura),
+              style: pw.TextStyle(
+                  color: PdfColors.white,
+                  fontSize: 28,
+                  fontWeight: pw.FontWeight.bold)));
+          widgets.add(pw.SizedBox(height: 24));
+
           for (final g in grupos) {
-            widgets.add(pw.Text(g.banco.nome.toUpperCase(),
-                style: pw.TextStyle(
-                    color: corTitulo,
-                    fontSize: 22,
-                    fontWeight: pw.FontWeight.bold)));
-            widgets.add(pw.SizedBox(height: 8));
-            for (final c in g.compras) {
-              widgets.add(pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            final bancoCor = PdfColor.fromInt(g.banco.cor);
+            final bancoCorBg = PdfColor.fromInt(g.banco.cor).copy();
+            final subtotal = g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
+            
+            widgets.add(pw.Container(
+              padding: pw.EdgeInsets.all(16),
+              decoration: pw.BoxDecoration(
+                color: bancoCorBg,
+                borderRadius: pw.BorderRadius.circular(12),
+                border: pw.Border.all(color: bancoCor, width: 1),
+              ),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Expanded(
-                    child: pw.Text(c.descricao,
-                        style: pw.TextStyle(color: corTexto, fontSize: 12)),
+                  pw.Container(
+                    padding: pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColor.fromInt(0xFFFFFFFF).copy(alpha: 0.1),
+                      borderRadius: pw.BorderRadius.circular(20),
+                    ),
+                    child: pw.Text(g.banco.nome.toUpperCase(),
+                        style: pw.TextStyle(
+                            color: PdfColors.white,
+                            fontSize: 14,
+                            fontWeight: pw.FontWeight.bold)),
                   ),
-                  pw.Text(formatarMoeda(c.valorTotal),
-                      style: pw.TextStyle(color: corTexto, fontSize: 12)),
+                  pw.SizedBox(height: 16),
+                  for (final c in g.compras)
+                    pw.Padding(
+                      padding: pw.EdgeInsets.only(bottom: 12),
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Expanded(
+                            child: pw.Text(c.descricao,
+                                style: pw.TextStyle(
+                                    color: corTexto, fontSize: 12)),
+                          ),
+                          pw.Text(formatarMoeda(c.valorIndividual),
+                              style: pw.TextStyle(
+                                  color: PdfColors.white,
+                                  fontSize: 12,
+                                  fontWeight: pw.FontWeight.bold)),
+                        ],
+                      ),
+                    ),
                 ],
-              ));
-              widgets.add(pw.SizedBox(height: 6));
-            }
-            widgets.add(pw.SizedBox(height: 12));
+              ),
+            ));
+            widgets.add(pw.SizedBox(height: 16));
           }
+
           return widgets;
         },
       ),

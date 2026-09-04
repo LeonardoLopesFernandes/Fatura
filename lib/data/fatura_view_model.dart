@@ -449,6 +449,7 @@ class FaturaViewModel extends ChangeNotifier {
     required double valorIndividual,
     required int quantidadeParcelas,
     required Mes data,
+    String? iconeChave,
   }) {
     _compras.add(Compra(
       id: novoId('compra'),
@@ -458,6 +459,7 @@ class FaturaViewModel extends ChangeNotifier {
       valorIndividual: valorIndividual,
       quantidadeParcelas: quantidadeParcelas,
       data: data,
+      iconeChave: iconeChave,
     ));
     _alterado();
   }

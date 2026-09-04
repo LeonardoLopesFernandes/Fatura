@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../data/fatura_view_model.dart';
+import '../../data/icones_compra.dart';
 import '../../models/banco.dart';
 import '../../models/compra.dart';
 import '../../models/grupo.dart';
@@ -226,100 +227,11 @@ class CompradorDetalheScreen extends StatelessWidget {
       context: context,
       backgroundColor: Superficie,
       isScrollControlled: true,
-      builder: (_) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Compartilhar como',
-                style: TextStyle(
-                    color: Branco, fontSize: 17, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            ListTile(
-              leading:
-                  const Icon(Icons.image, color: Branco),
-              title: const Text('Imagem (PNG)',
-                  style: TextStyle(color: Branco)),
-              subtitle: const Text('Captura da tela do devedor',
-                  style: TextStyle(color: Branco54)),
-              onTap: () async {
-                Navigator.of(context).pop();
-                final caminho = await gerarImagem(
-                    nome: nome, fatura: fatura, grupos: grupos);
-                if (context.mounted) {
-                  compartilharArquivo(
-                      context, caminho, 'image/png', nome);
-                }
-              },
-            ),
-            ListTile(
-              leading:
-                  const Icon(Icons.picture_as_pdf, color: Branco),
-              title:
-                  const Text('PDF', style: TextStyle(color: Branco)),
-              subtitle: const Text('Resumo das compras em texto',
-                  style: TextStyle(color: Branco54)),
-              onTap: () async {
-                Navigator.of(context).pop();
-                final caminho = await gerarPdf(
-                    nome: nome, fatura: fatura, grupos: grupos);
-                if (context.mounted) {
-                  compartilharArquivo(
-                      context, caminho, 'application/pdf', nome);
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.text_snippet, color: Branco),
-              title:
-                  const Text('Texto', style: TextStyle(color: Branco)),
-              subtitle: const Text('Compartilhar como mensagem',
-                  style: TextStyle(color: Branco54)),
-              onTap: () {
-                Navigator.of(context).pop();
-                Share.share(
-                  _montarTexto(vm, nome, fatura, grupos),
-                  subject: 'Fatura - $nome',
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.table_chart, color: Branco),
-              title: const Text('CSV', style: TextStyle(color: Branco)),
-              subtitle: const Text('Planilha separada por vírgulas',
-                  style: TextStyle(color: Branco54)),
-              onTap: () async {
-                Navigator.of(context).pop();
-                try {
-                  final dir = Directory(
-                      '${(await getTemporaryDirectory()).path}/compartilhamento');
-                  await dir.create(recursive: true);
-                  final arquivo =
-                      File('${dir.path}/fatura_${limparNome(nome)}.csv');
-                  await arquivo.writeAsString(_montarCsv(vm, nome, grupos));
-                  if (context.mounted) {
-                    await Share.shareXFiles(
-                      [
-                        XFile(arquivo.path,
-                            mimeType: 'text/csv'),
-                      ],
-                      subject: 'Fatura - $nome',
-                    );
-                  }
-                } catch (_) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text('Não foi possível gerar o CSV.')),
-                    );
-                  }
-                }
-              },
-            ),
-          ],
-        ),
+      builder: (_) => _PreviewCompartilhar(
+        nome: nome,
+        fatura: fatura,
+        grupos: grupos,
+        mes: vm.mesSelecionado,
       ),
     );
   }
@@ -405,13 +317,14 @@ class CompradorDetalheScreen extends StatelessWidget {
   }
 }
 
-class GrupoCard extends StatelessWidget {
+class GrupoCard extends StatefulWidget {
   final Banco banco;
   final List<Compra> compras;
   final Mes mes;
   final void Function(Compra) onRemove;
   final void Function(Compra, bool) onPagaChanged;
   final void Function(Compra) onEdit;
+  final bool initiallyExpanded;
 
   const GrupoCard({
     super.key,
@@ -421,12 +334,26 @@ class GrupoCard extends StatelessWidget {
     required this.onRemove,
     required this.onPagaChanged,
     required this.onEdit,
+    this.initiallyExpanded = true,
   });
+
+  @override
+  State<GrupoCard> createState() => _GrupoCardState();
+}
+
+class _GrupoCardState extends State<GrupoCard> {
+  late bool _expandido;
+
+  @override
+  void initState() {
+    super.initState();
+    _expandido = widget.initiallyExpanded;
+  }
 
   @override
   Widget build(BuildContext context) {
     final subtotal =
-        compras.fold(0.0, (s, c) => s + c.valorIndividual);
+        widget.compras.fold(0.0, (s, c) => s + c.valorIndividual);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -435,61 +362,424 @@ class GrupoCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                BancoLogo(banco: banco, tamanho: 34, raio: 10),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    banco.nome,
-                    style: const TextStyle(
-                      color: Branco,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
+          GestureDetector(
+            onTap: () => setState(() => _expandido = !_expandido),
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  BancoLogo(banco: widget.banco, tamanho: 34, raio: 10),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      widget.banco.nome,
+                      style: const TextStyle(
+                        color: Branco,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(widget.banco.cor),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    child: Text(
+                      formatarMoeda(subtotal),
+                      style: TextStyle(
+                        color: contrastePara(widget.banco.cor),
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    _expandido
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: Branco54,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (_expandido)
+            ...widget.compras.map((compra) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: CompraItem(
+                  compra: compra,
+                  banco: widget.banco,
+                  paga: compra.pagaNoMes(widget.mes),
+                  valorExibido: compra.valorIndividual,
+                  rotuloParcelaCustom: compra.quantidadeParcelas > 1
+                      ? 'Parcela ${compra.parcelaNoMes(widget.mes)} de ${compra.quantidadeParcelas}'
+                                      : 'Mensal',
+                  onPagaChanged: (paga) => widget.onPagaChanged(compra, paga),
+                  onRemove: () => widget.onRemove(compra),
+                  onEdit: () => widget.onEdit(compra),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(banco.cor),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  child: Text(
-                    formatarMoeda(subtotal),
+              );
+            }).toList(),
+          if (_expandido) const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+}
+
+class _PreviewCompartilhar extends StatefulWidget {
+  final String nome;
+  final double fatura;
+  final List<Grupo> grupos;
+  final Mes mes;
+
+  const _PreviewCompartilhar({
+    required this.nome,
+    required this.fatura,
+    required this.grupos,
+    required this.mes,
+  });
+
+  @override
+  State<_PreviewCompartilhar> createState() => _PreviewCompartilharState();
+}
+
+class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
+  final Set<String> _expandidos = {};
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Preview da Fatura',
+              style: TextStyle(
+                  color: Branco, fontSize: 17, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(widget.nome,
+              style: const TextStyle(color: Branco54, fontSize: 13)),
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0D1B2A),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('FATURA INDIVIDUAL',
                     style: TextStyle(
-                      color: contrastePara(banco.cor),
-                      fontSize: 13,
+                      color: Color(0xFFA0B0C0),
+                      fontSize: 10,
                       fontWeight: FontWeight.bold,
-                    ),
+                      letterSpacing: 1,
+                    )),
+                const SizedBox(height: 4),
+                Text(
+                  formatarMoeda(widget.fatura),
+                  style: const TextStyle(
+                    color: Branco,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ],
             ),
           ),
-          ...compras.map((compra) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: CompraItem(
-                compra: compra,
-                banco: banco,
-                paga: compra.pagaNoMes(mes),
-                valorExibido: compra.valorIndividual,
-                rotuloParcelaCustom: compra.quantidadeParcelas > 1
-                    ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
-                                    : 'Mensal',
-                onPagaChanged: (paga) => onPagaChanged(compra, paga),
-                onRemove: () => onRemove(compra),
-                onEdit: () => onEdit(compra),
+          const SizedBox(height: 12),
+          ...widget.grupos.map((grupo) {
+            final subtotal = grupo.compras.fold(
+                0.0, (s, c) => s + c.valorIndividual);
+            final expandido = _expandidos.contains(grupo.banco.id);
+            return Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: Color(grupo.banco.cor).withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: Color(grupo.banco.cor).withOpacity(0.5), width: 1),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (expandido) {
+                          _expandidos.remove(grupo.banco.id);
+                        } else {
+                          _expandidos.add(grupo.banco.id);
+                        }
+                      });
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              grupo.banco.nome.toUpperCase(),
+                              style: const TextStyle(
+                                color: Branco,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            formatarMoeda(subtotal),
+                            style: const TextStyle(
+                              color: Branco,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            expandido
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: Branco54,
+                            size: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (expandido) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      child: Column(
+                        children: [
+                          ...grupo.compras.map((compra) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Icon(
+                                      compra.iconeChave != null
+                                          ? IconesCompra.iconePorChave(compra.iconeChave)
+                                          : IconesCompra.iconePorDescricao(compra.descricao),
+                                      color: Branco54,
+                                      size: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      compra.descricao,
+                                      style: const TextStyle(
+                                        color: Color(0xFFE0E0E0),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    formatarMoeda(compra.valorIndividual),
+                                    style: const TextStyle(
+                                      color: Branco,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
               ),
             );
           }).toList(),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _mostrarOpcoes(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: CorPrimaria,
+                foregroundColor: Branco,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+              child: const Text('Compartilhar',
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          const SizedBox(height: 8),
         ],
       ),
     );
+  }
+
+  void _mostrarOpcoes(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Superficie,
+      builder: (_) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Compartilhar como',
+                style: TextStyle(
+                    color: Branco,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            ListTile(
+              leading: const Icon(Icons.image, color: Branco),
+              title: const Text('Imagem (PNG)',
+                  style: TextStyle(color: Branco)),
+              subtitle: const Text('Captura visual da fatura',
+                  style: TextStyle(color: Branco54)),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final caminho = await gerarImagem(
+                    nome: widget.nome, fatura: widget.fatura, grupos: widget.grupos);
+                if (context.mounted) {
+                  compartilharArquivo(
+                      context, caminho, 'image/png', widget.nome);
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.picture_as_pdf, color: Branco),
+              title:
+                  const Text('PDF', style: TextStyle(color: Branco)),
+              subtitle: const Text('Documento formatado',
+                  style: TextStyle(color: Branco54)),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final caminho = await gerarPdf(
+                    nome: widget.nome, fatura: widget.fatura, grupos: widget.grupos);
+                if (context.mounted) {
+                  compartilharArquivo(
+                      context, caminho, 'application/pdf', widget.nome);
+                }
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.text_snippet, color: Branco),
+              title:
+                  const Text('Texto', style: TextStyle(color: Branco)),
+              subtitle: const Text('Compartilhar como mensagem',
+                  style: TextStyle(color: Branco54)),
+              onTap: () {
+                Navigator.of(context).pop();
+                Share.share(
+                  _montarTexto(),
+                  subject: 'Fatura - $nome',
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.table_chart, color: Branco),
+              title:
+                  const Text('CSV', style: TextStyle(color: Branco)),
+              subtitle: const Text('Planilha separada por vírgulas',
+                  style: TextStyle(color: Branco54)),
+              onTap: () async {
+                Navigator.of(context).pop();
+                try {
+                  final dir = Directory(
+                      '${(await getTemporaryDirectory()).path}/compartilhamento');
+                  await dir.create(recursive: true);
+                  final arquivo = File(
+                      '${dir.path}/fatura_${limparNome(nome)}.csv');
+                  await arquivo.writeAsString(_montarCsv());
+                  if (context.mounted) {
+                    await Share.shareXFiles(
+                      [XFile(arquivo.path, mimeType: 'text/csv')],
+                      subject: 'Fatura - $nome',
+                    );
+                  }
+                } catch (_) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('Não foi possível gerar o CSV.')),
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _montarTexto() {
+    final buffer = StringBuffer();
+    buffer.writeln('Fatura - ${widget.nome}');
+    buffer.writeln('');
+    if (widget.grupos.isEmpty) {
+      buffer.writeln('Nenhuma compra neste mês.');
+    }
+    for (final g in widget.grupos) {
+      final subtotal =
+          g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
+      buffer.writeln('${g.banco.nome} (${formatarMoeda(subtotal)}):');
+      for (final c in g.compras) {
+        buffer.writeln(
+            '  - ${c.descricao}: ${formatarMoeda(c.valorIndividual)}');
+      }
+      buffer.writeln('');
+    }
+    buffer.writeln('Total: ${formatarMoeda(widget.fatura)}');
+    return buffer.toString();
+  }
+
+  String _montarCsv() {
+    final buffer = StringBuffer();
+    buffer.writeln('banco,descricao,valor');
+    for (final g in widget.grupos) {
+      for (final c in g.compras) {
+        buffer.writeln(
+            '"${g.banco.nome.replaceAll('"', "'")}",'
+            '"${c.descricao.replaceAll('"', "'")}",'
+            '${c.valorIndividual.toStringAsFixed(2).replaceAll('.', ',')}');
+      }
+    }
+    return buffer.toString();
   }
 }

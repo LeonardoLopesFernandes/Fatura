@@ -1,8 +1,13 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../models/grupo.dart';
+import '../../models/banco.dart';
+import '../../data/icones_compra.dart';
+import '../../data/recursos_banco.dart';
 import '../../util/formatadores.dart';
 
 Future<String?> gerarImagem({
@@ -13,11 +18,11 @@ Future<String?> gerarImagem({
   try {
     const int largura = 1080;
     final int altura =
-        220 + grupos.fold<int>(0, (s, g) => s + 140 + g.compras.length * 64) + 80;
+        300 + grupos.fold<int>(0, (s, g) => s + 180 + g.compras.length * 72) + 100;
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
-    final fundo = Paint()..color = const Color(0xFF15244D);
+    final fundo = Paint()..color = const Color(0xFF0D1B2A);
     canvas.drawRect(
       Rect.fromLTWH(0, 0, largura.toDouble(), altura.toDouble()),
       fundo,
@@ -44,25 +49,85 @@ Future<String?> gerarImagem({
       tp.paint(canvas, Offset(dx, y));
     }
 
-    double y = 80;
-    desenhar('FATURA INDIVIDUAL', 60, y, 30, const Color(0xFF9DB2E8),
+    void desenharRetangulo(
+      double x,
+      double y,
+      double w,
+      double h,
+      Color cor,
+      double raio,
+    ) {
+      final paint = Paint()..color = cor;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(x, y, w, h),
+        Radius.circular(raio),
+      );
+      canvas.drawRRect(rrect, paint);
+    }
+
+    void desenharBordaRetangulo(
+      double x,
+      double y,
+      double w,
+      double h,
+      Color cor,
+      double raio,
+      double espessura,
+    ) {
+      final paint = Paint()
+        ..color = cor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = espessura;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(x, y, w, h),
+        Radius.circular(raio),
+      );
+      canvas.drawRRect(rrect, paint);
+    }
+
+    double y = 60;
+
+    desenhar('FATURA INDIVIDUAL', 60, y, 28, const Color(0xFFA0B0C0),
+        peso: FontWeight.bold);
+    y += 60;
+    desenhar(formatarMoeda(fatura), 60, y, 64, Colors.white,
         peso: FontWeight.bold);
     y += 100;
-    desenhar(formatarMoeda(fatura), 60, y, 70, Colors.white,
-        peso: FontWeight.bold);
-    y += 120;
+
     for (final g in grupos) {
-      desenhar(g.banco.nome.toUpperCase(), 60, y, 40, Colors.white,
+      final banco = g.banco;
+      final corBanco = Color(banco.cor);
+      final corBancoBg = corBanco.withOpacity(0.15);
+      final subtotal = g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
+      
+      final cardHeight = 80.0 + g.compras.length * 72.0;
+      desenharRetangulo(40, y, largura - 80, cardHeight, corBancoBg, 16);
+      desenharBordaRetangulo(40, y, largura - 80, cardHeight, corBanco, 16, 2);
+
+      double headerY = y + 20;
+      
+      desenharRetangulo(60, headerY, g.banco.nome.toUpperCase().length * 14.0 + 60, 36, Colors.white.withOpacity(0.1), 18);
+      
+      desenhar(g.banco.nome.toUpperCase(), 80, headerY + 8, 18, Colors.white,
           peso: FontWeight.bold);
-      y += 64;
+
+      double itemY = headerY + 56;
+
       for (final c in g.compras) {
-        desenhar(c.descricao, 84, y, 34, const Color(0xFFE6ECF8));
-        desenhar(formatarMoeda(c.valorTotal), (largura - 60).toDouble(), y, 34,
-            Colors.white,
-            right: true);
-        y += 56;
+        final icone = c.iconeChave != null
+            ? IconesCompra.iconePorChave(c.iconeChave)
+            : IconesCompra.iconePorDescricao(c.descricao);
+        
+        desenharRetangulo(60, itemY, 40, 40, Colors.white.withOpacity(0.1), 8);
+        
+        desenhar(c.descricao, 112, itemY + 10, 20, const Color(0xFFE0E0E0));
+        desenhar(formatarMoeda(c.valorIndividual), (largura - 60).toDouble(), itemY + 10, 20,
+            Colors.white, right: true, peso: FontWeight.w600);
+        
+        itemY += 72;
       }
-      y += 44;
+
+      y += cardHeight + 20;
     }
 
     final picture = recorder.endRecording();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
+import '../../data/icones_compra.dart';
 import '../../models/mes.dart';
 import '../../ui/tema.dart';
 import '../../ui/componentes/banco_logo.dart';
@@ -35,6 +36,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
   final _focoValor = FocusNode();
   final _focoParcelas = FocusNode();
   String? _bancoId;
+  String? _iconeChave;
   late Mes _mes;
   String? _aviso;
 
@@ -243,6 +245,46 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                   ),
                   const SizedBox(height: 14),
                   Campo(
+                    'Ícone da compra',
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 6,
+                        children: [
+                          ...IconesCompra.DISPONIVEIS.map((item) {
+                            final selecionado = item['chave'] == _iconeChave;
+                            return GestureDetector(
+                              onTap: () => setState(
+                                  () => _iconeChave = item['chave'] as String),
+                              child: Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: selecionado
+                                      ? CorPrimaria
+                                      : SuperficieElevada,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: selecionado
+                                        ? Branco
+                                        : Branco.withOpacity(0.12),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Icon(
+                                  item['icone'] as IconData,
+                                  color: Branco,
+                                  size: 20,
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Campo(
                     'Mês de referência',
                     DropdownButtonFormField<Mes>(
                       value: _mes,
@@ -286,6 +328,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                 valorIndividual: v / p,
                                 quantidadeParcelas: p,
                                 data: _mes,
+                                iconeChave: _iconeChave,
                               );
                               if (_devedor.text.trim().toLowerCase() !=
                                   (widget.nomePadrao?.trim().toLowerCase())) {

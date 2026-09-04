@@ -3,15 +3,17 @@ import 'package:provider/provider.dart';
 import '../../models/comprador.dart';
 import '../../models/banco.dart';
 import '../../models/compra.dart';
+import '../../models/grupo.dart';
 import '../../data/fatura_view_model.dart';
 import '../../ui/tema.dart';
 import '../../ui/componentes/elementos.dart';
 import '../../ui/componentes/compra_item.dart';
+import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/menu_compra.dart';
 import '../../ui/componentes/carousel_bank_card.dart';
 import '../../util/formatadores.dart';
 
-class ResumoScreen extends StatelessWidget {
+class ResumoScreen extends StatefulWidget {
   final void Function(String?) onAdicionarCompra;
   final void Function(String) onDetalharComprador;
   final void Function(String) onEditarFaturaBanco;
@@ -22,6 +24,13 @@ class ResumoScreen extends StatelessWidget {
     required this.onDetalharComprador,
     required this.onEditarFaturaBanco,
   });
+
+  @override
+  State<ResumoScreen> createState() => _ResumoScreenState();
+}
+
+class _ResumoScreenState extends State<ResumoScreen> {
+  final Set<String> _expandidos = {};
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +135,7 @@ class ResumoScreen extends StatelessWidget {
                     saldo: saldo,
                     restante: restante,
                     faturaInformada: informada,
-                    onTap: () => onEditarFaturaBanco(banco.id),
+                    onTap: () => widget.onEditarFaturaBanco(banco.id),
                   );
                 }).toList(),
               ),
@@ -141,6 +150,8 @@ class ResumoScreen extends StatelessWidget {
                   vm.faturaDoCompradorNoMes(comprador.id, mes);
               final comprasMes =
                   vm.comprasDoCompradorNoMes(comprador.id, mes);
+              final grupos = vm.agruparPorBanco(comprasMes);
+              final expandido = _expandidos.contains(comprador.id);
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Container(
@@ -155,8 +166,8 @@ class ResumoScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap: () => onAdicionarCompra(comprador.nome),
-                        onLongPress: () => onDetalharComprador(comprador.id),
+                        onTap: () => widget.onAdicionarCompra(comprador.nome),
+                        onLongPress: () => widget.onDetalharComprador(comprador.id),
                         child: Row(
                           children: [
                             Expanded(
@@ -189,55 +200,132 @@ class ResumoScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Text(
-                        'DETALHAMENTO',
-                        style: TextStyle(
-                          color: TituloAzul,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      if (comprasMes.isEmpty)
+                      if (grupos.isNotEmpty)
+                        ...grupos.map((grupo) {
+                          final subtotal = grupo.compras.fold(
+                              0.0, (s, c) => s + c.valorIndividual);
+                          final grupoExpandido =
+                              _expandidos.contains('${comprador.id}_${grupo.banco.id}');
+                          return Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.only(bottom: 8),
+                            decoration: BoxDecoration(
+                              color: Color(grupo.banco.cor).withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: Color(grupo.banco.cor).withOpacity(0.3),
+                                  width: 1),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      final chave = '${comprador.id}_${grupo.banco.id}';
+                                      if (grupoExpandido) {
+                                        _expandidos.remove(chave);
+                                      } else {
+                                        _expandidos.add(chave);
+                                      }
+                                    });
+                                  },
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 10),
+                                    child: Row(
+                                      children: [
+                                        BancoLogo(
+                                            banco: grupo.banco,
+                                            tamanho: 26,
+                                            raio: 7),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            grupo.banco.nome.toUpperCase(),
+                                            style: const TextStyle(
+                                              color: Branco,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          formatarMoeda(subtotal),
+                                          style: const TextStyle(
+                                            color: Branco,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Icon(
+                                          grupoExpandido
+                                              ? Icons.keyboard_arrow_up
+                                              : Icons.keyboard_arrow_down,
+                                          color: Branco54,
+                                          size: 18,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (grupoExpandido)
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        12, 0, 12, 10),
+                                    child: Column(
+                                      children: [
+                                        ...grupo.compras.map((compra) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 8),
+                                            child: CompraItem(
+                                              compra: compra,
+                                              banco: grupo.banco,
+                                              paga: compra.pagaNoMes(mes),
+                                              valorExibido:
+                                                  compra.valorIndividual,
+                                              rotuloParcelaCustom:
+                                                  compra.quantidadeParcelas > 1
+                                                      ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
+                                                      : 'Mensal',
+                                              onPagaChanged: (paga) => vm
+                                                  .marcarPaga(
+                                                      compra.id, mes, paga),
+                                              onRemove: () =>
+                                                  vm.removerCompra(compra.id),
+                                              onEdit: () => mostrarMenuCompra(
+                                                context,
+                                                compra,
+                                                vm,
+                                                jaPaga:
+                                                    compra.pagaNoMes(mes),
+                                                onMarcarPaga: () =>
+                                                    vm.marcarPaga(
+                                                        compra.id,
+                                                        mes,
+                                                        !compra.pagaNoMes(
+                                                            mes)),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ],
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        }),
+                      if (grupos.isEmpty)
                         Text(
                           'Sem compras em ${rotuloMesLongo(mes)}.',
                           style: const TextStyle(
                             color: Branco54,
                             fontSize: 13,
                           ),
-                        )
-                      else
-                        Column(
-                          children: comprasMes.map((compra) {
-                            final banco = vm.bancoPorId(compra.bancoId);
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: CompraItem(
-                                compra: compra,
-                                banco: banco!,
-                                paga: compra.pagaNoMes(mes),
-                                valorExibido: compra.valorIndividual,
-                                rotuloParcelaCustom:
-                                    compra.quantidadeParcelas > 1
-                                        ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
-                                        : 'Mensal',
-                                onPagaChanged: (paga) =>
-                                    vm.marcarPaga(compra.id, mes, paga),
-                                onRemove: () => vm.removerCompra(compra.id),
-                                onEdit: () => mostrarMenuCompra(
-                                  context,
-                                  compra,
-                                  vm,
-                                  jaPaga: compra.pagaNoMes(mes),
-                                  onMarcarPaga: () => vm.marcarPaga(
-                                      compra.id,
-                                      mes,
-                                      !compra.pagaNoMes(mes)),
-                                ),
-                              ),
-                            );
-                          }).toList(),
                         ),
                     ],
                   ),
