@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/banco.dart';
 import '../../models/compra.dart';
+import '../../data/icones_compra.dart';
 import '../../ui/tema.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../util/formatadores.dart';
@@ -46,7 +47,21 @@ class CompraItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            BancoLogo(banco: banco, tamanho: 40, raio: 10),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Branco.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                compra.iconeChave != null
+                    ? IconesCompra.iconePorChave(compra.iconeChave)
+                    : IconesCompra.iconePorDescricao(compra.descricao),
+                color: contrastePara(banco.cor),
+                size: 20,
+              ),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
