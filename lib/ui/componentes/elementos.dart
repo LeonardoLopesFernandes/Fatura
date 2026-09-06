@@ -34,7 +34,7 @@ class MensagemVazia extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Branco.withOpacity(0.08)),
       ),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       child: Text(
         texto,
         textAlign: TextAlign.center,
@@ -74,13 +74,15 @@ class CabecalhoMes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final eAtual = mes == hojeMes();
+    const corDestaque = Color(0xFF60A5FA);
     return Container(
       decoration: BoxDecoration(
         color: Superficie.withOpacity(0.55),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Branco.withOpacity(0.08)),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -88,10 +90,10 @@ class CabecalhoMes extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                const Text(
-                  'MÊS',
+                Text(
+                  eAtual ? 'MÊS ATUAL' : 'MÊS',
                   style: TextStyle(
-                    color: TituloAzul,
+                    color: eAtual ? corDestaque : TituloAzul,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
@@ -101,8 +103,8 @@ class CabecalhoMes extends StatelessWidget {
                 Text(
                   rotuloMesLongo(mes).toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Branco,
+                  style: TextStyle(
+                    color: eAtual ? corDestaque : Branco,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.5,

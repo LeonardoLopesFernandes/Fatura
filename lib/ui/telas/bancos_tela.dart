@@ -23,7 +23,7 @@ class BancosScreen extends StatelessWidget {
       children: [
         Padding(
           padding:
-              const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 8),
+              const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -58,9 +58,9 @@ class BancosScreen extends StatelessWidget {
                 )
               : ListView.separated(
                   padding:
-                      const EdgeInsets.only(left: 20, right: 20, top: 4, bottom: 16),
+                      const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 12),
                   itemCount: vm.bancos.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final banco = vm.bancos[index];
                     final possuiCompras =
@@ -100,7 +100,7 @@ class BancosScreen extends StatelessWidget {
                             color: Color(banco.cor),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(12),
                           child: Row(
                             children: [
                               Expanded(
@@ -123,7 +123,7 @@ class BancosScreen extends StatelessWidget {
                 ),
         ),
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(12),
           child: SizedBox(
             width: double.infinity,
             height: 52,
@@ -206,7 +206,7 @@ class BancoListCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         BancoLogo(banco: banco, tamanho: 46, raio: 12),
-        const SizedBox(width: 14),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

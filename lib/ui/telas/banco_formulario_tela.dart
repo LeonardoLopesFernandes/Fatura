@@ -162,7 +162,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -178,14 +178,14 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     hint: 'Ex.: Nubank, PicPay…',
                     focusNode: _focoNome,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   const Text('Logo do banco',
                       style: TextStyle(
                         color: Branco70,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       )),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
                       if (temImagem) ...[
@@ -195,7 +195,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                           height: 56,
                           fit: BoxFit.cover,
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 8),
                         IconButton(
                           onPressed: () =>
                               setState(() => _imagemSelecionada = null),
@@ -221,22 +221,22 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     ],
                   ),
                   if (!temImagem) ...[
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     const Text('Ícone (sem repetições)',
                         style: TextStyle(
                           color: Branco70,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         )),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     if (_iconesDisponiveis.isEmpty)
                       const Text(
                           'Todos os ícones disponíveis já foram usados.',
                           style: TextStyle(color: Branco54, fontSize: 13))
                     else
                       Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
+                        spacing: 6,
+                        runSpacing: 6,
                         children: _iconesDisponiveis.map((chave) {
                           final selecionado = chave == _iconeSelecionado;
                           final icone = IconesCatalogo.iconePorChave(chave);
@@ -272,14 +272,14 @@ class _BancoFormularioState extends State<BancoFormulario> {
                         }).toList(),
                       ),
                   ],
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   const Text('Cor característica',
                       style: TextStyle(
                         color: Branco70,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       )),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   if (_coresDisponiveis.isEmpty)
                     const Text(
                         'Todas as cores disponíveis já foram usadas.',
@@ -313,7 +313,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                       }).toList(),
                     ),
                   if (_editando) ...[
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     const Text('FATURA DO MÊS ATUAL',
                         style: TextStyle(
                           color: TituloAzul,
@@ -321,7 +321,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                         )),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Campo(
                       'Valor total da fatura (R\$)',
                       TextField(
@@ -338,7 +338,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                       hint: 'R\$ 0,00',
                       focusNode: _focoFatura,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Builder(builder: (context) {
                       final vm = Provider.of<FaturaViewModel>(context);
                       final mesAtual = hojeMes();
@@ -358,7 +358,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                       );
                     }),
                   ],
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 14),
                   SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -381,7 +381,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     ),
                   ),
                   if (_aviso != null) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     Text(_aviso!,
                         style: TextStyle(color: Branco70, fontSize: 13)),
                   ],

@@ -233,14 +233,16 @@ class _AppNavegacaoState extends State<AppNavegacao> {
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 centerTitle: true,
-                title: Text(
-                  _tituloAba,
-                  style: const TextStyle(
-                    color: Branco,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                title: _indice == 0
+                    ? Text(
+                        _tituloAba,
+                        style: const TextStyle(
+                          color: Branco,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : null,
                 actions: [
                   IconButton(
                     onPressed: () => _push('configuracoes'),

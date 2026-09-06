@@ -88,7 +88,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -105,7 +105,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     hint: 'Nome da compra',
                     focusNode: _focoDescricao,
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   Campo(
                     'Nome do devedor',
                     TextField(
@@ -118,7 +118,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     hint: 'Quem pagou esta compra',
                     focusNode: _focoDevedor,
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
                       Expanded(
@@ -139,7 +139,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           focusNode: _focoValor,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Campo(
                           'Parcelas',
@@ -159,7 +159,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   Campo(
                     'Cartão do lançamento',
                     vm.bancos.isEmpty
@@ -189,7 +189,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                         ),
                                       ),
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 8),
+                                          horizontal: 10, vertical: 6),
                                       child: Row(
                                         children: [
                                           BancoLogo(
@@ -224,7 +224,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                       ),
                                     ),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 8),
+                                        horizontal: 10, vertical: 6),
                                     child: const Row(
                                       children: [
                                         Icon(Icons.add,
@@ -243,7 +243,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                             ),
                           ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   Campo(
                     'Ícone da compra',
                     SingleChildScrollView(
@@ -283,7 +283,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   Campo(
                     'Mês de referência',
                     DropdownButtonFormField<Mes>(
@@ -300,7 +300,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                       decoration: campoCores(''),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 14),
                   SizedBox(
                     width: double.infinity,
                     height: 52,
@@ -351,7 +351,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     ),
                   ),
                   if (_aviso != null) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     Text(_aviso!,
                         style:
                             TextStyle(color: Branco70, fontSize: 13)),

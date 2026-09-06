@@ -81,11 +81,11 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
                 color: Branco, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 14),
             Campo(
               'Valor total da fatura (R\$)',
               TextField(
@@ -102,7 +102,7 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
               hint: 'R\$ 0,00',
               focusNode: _focoValor,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
               'Compras dos devedores no mês: ${formatarMoeda(devedores)}',
               style: const TextStyle(color: Branco54, fontSize: 12),
@@ -141,7 +141,7 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
                   ],
                 ),
               ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
               height: 52,

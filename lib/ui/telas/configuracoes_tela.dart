@@ -28,7 +28,7 @@ class ConfiguracoesScreen extends StatelessWidget {
       ),
       body: AppBackground(
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(14),
           children: [
             _Secao('Dados'),
             _Item(
@@ -134,7 +134,7 @@ class ConfiguracoesScreen extends StatelessWidget {
               'Controle de faturas compartilhadas entre devedores.',
               style: TextStyle(color: Branco54),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text('Versão: $versao',
                 style: const TextStyle(color: Branco)),
           ],
@@ -157,7 +157,7 @@ class _Secao extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 18, bottom: 8),
+      padding: const EdgeInsets.only(top: 12, bottom: 6),
       child: Text(
         titulo.toUpperCase(),
         style: const TextStyle(
@@ -189,7 +189,7 @@ class _Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Superficie.withOpacity(0.5),
         borderRadius: BorderRadius.circular(14),

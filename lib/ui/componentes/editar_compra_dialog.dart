@@ -87,7 +87,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
               hint: 'Nome da compra',
               focusNode: _focoDescricao,
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
@@ -108,7 +108,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                     focusNode: _focoValor,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Campo(
                     'Parcelas',
@@ -128,7 +128,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
             Campo(
               'Cartão do lançamento',
               vm.bancos.isEmpty
@@ -157,7 +157,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                                 ),
                               ),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
+                                  horizontal: 10, vertical: 6),
                               child: Row(
                                 children: [
                                   BancoLogo(
@@ -183,7 +183,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                       ),
                     ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
             Campo(
               'Mês de referência',
               DropdownButtonFormField<Mes>(

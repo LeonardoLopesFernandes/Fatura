@@ -40,7 +40,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
     final totalRestante = vm.totalCartaoNoMes(mes);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 8, bottom: 100),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 80),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -49,7 +49,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
             () => vm.definirMesSelecionado(mes.maisMeses(-1)),
             () => vm.definirMesSelecionado(mes.maisMeses(1)),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Row(
             children: [
               const TituloSecao('Faturas no Cartão'),
@@ -109,14 +109,14 @@ class _ResumoScreenState extends State<ResumoScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           if (vm.bancos.isEmpty)
             const MensagemVazia('Nenhum banco cadastrado.')
           else
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                spacing: 10,
+                spacing: 8,
                 children: vm.bancos.map((banco) {
                   final informada =
                       vm.faturaInformadaDoBancoNoMes(banco.id, mes);
@@ -140,7 +140,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                 }).toList(),
               ),
             ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           if (vm.compradores.isEmpty)
             const MensagemVazia(
                 'Nenhum devedor cadastrado.\nAdicione na aba Devedores.')
@@ -153,7 +153,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
               final grupos = vm.agruparPorBanco(comprasMes);
               final expandido = _expandidos.contains(comprador.id);
               return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Branco.withOpacity(0.05),
@@ -161,7 +161,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                     border:
                         Border.all(color: Branco.withOpacity(0.1)),
                   ),
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -186,7 +186,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
+                                  horizontal: 12, vertical: 6),
                               child: Text(
                                 formatarMoeda(faturaDoMes),
                                 style: const TextStyle(
@@ -199,7 +199,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 10),
+          const SizedBox(height: 6),
                       if (grupos.isNotEmpty)
                         ...grupos.map((grupo) {
                           final qtd = grupo.compras.length;
@@ -212,7 +212,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                               _expandidos.contains('${comprador.id}_${grupo.banco.id}');
                           return Container(
                             width: double.infinity,
-                            margin: const EdgeInsets.only(bottom: 6),
+                            margin: const EdgeInsets.only(bottom: 4),
                             decoration: BoxDecoration(
                               color: Color(grupo.banco.cor).withOpacity(0.12),
                               borderRadius: BorderRadius.circular(10),
@@ -237,7 +237,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                   behavior: HitTestBehavior.opaque,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 6),
+                                        horizontal: 8, vertical: 4),
                                     child: Row(
                                       children: [
                                         BancoLogo(
@@ -308,13 +308,13 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                 if (grupoExpandido)
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(
-                                        10, 0, 10, 6),
+                                        8, 0, 8, 4),
                                     child: Column(
                                       children: [
                                         ...grupo.compras.map((compra) {
                                           return Padding(
                                             padding: const EdgeInsets.only(
-                                                bottom: 8),
+                                                bottom: 6),
                                             child: CompraItem(
                                               compra: compra,
                                               banco: grupo.banco,

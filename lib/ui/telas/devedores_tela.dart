@@ -28,10 +28,10 @@ class _NovoDevedorSheetState extends State<NovoDevedorSheet> {
     return Container(
       color: Superficie,
       padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        left: 14,
+        right: 14,
+        top: 14,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 14,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -40,7 +40,7 @@ class _NovoDevedorSheetState extends State<NovoDevedorSheet> {
           const Text('Novo Devedor',
               style: TextStyle(
                   color: Branco, fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           TextField(
             controller: _controller,
             style: const TextStyle(color: Branco, fontSize: 16),
@@ -49,7 +49,7 @@ class _NovoDevedorSheetState extends State<NovoDevedorSheet> {
             textCapitalization: TextCapitalization.words,
             onSubmitted: (_) => _confirmar(vm, context),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -114,7 +114,7 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
       children: [
         Padding(
           padding:
-              const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 8),
+              const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -128,7 +128,7 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                 'Cadastre quem usa o cartão e consulte as faturas individuais.',
                 style: TextStyle(color: Branco.withOpacity(0.6), fontSize: 14),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               TextField(
                 controller: _filtro,
                 onChanged: (_) => setState(() {}),
@@ -156,9 +156,9 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                 )
               : ListView.separated(
                   padding:
-                      const EdgeInsets.only(left: 20, right: 20, top: 4, bottom: 16),
+                      const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 12),
                   itemCount: compradores.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final comprador = compradores[index];
                     final banco = vm.bancoPrincipalDoComprador(comprador.id);
@@ -178,7 +178,7 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                           color: fundo,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(12),
                         child: Row(
                           children: [
                             if (banco != null)
@@ -246,7 +246,7 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                 ),
         ),
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(12),
           child: SizedBox(
             width: double.infinity,
             height: 52,

@@ -38,12 +38,12 @@ class CarouselBankCard extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             BancoLogo(banco: banco, tamanho: 34, raio: 9),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               banco.nome,
               maxLines: 1,

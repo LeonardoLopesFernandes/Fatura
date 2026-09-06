@@ -90,14 +90,14 @@ class CompradorDetalheScreen extends StatelessWidget {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(10),
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Superficie,
                   borderRadius: BorderRadius.circular(18),
                 ),
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -106,7 +106,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                       () => vm.definirMesSelecionado(mes.maisMeses(-1)),
                       () => vm.definirMesSelecionado(mes.maisMeses(1)),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     const Text('FATURA INDIVIDUAL',
                         style: TextStyle(
                           color: TituloAzul,
@@ -114,7 +114,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                         )),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Text(
                       formatarMoeda(faturaBruta),
                       style: const TextStyle(
@@ -153,7 +153,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     SizedBox(
                       width: double.infinity,
                       height: 48,
@@ -183,7 +183,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     if (grupos.isEmpty)
                       const Text(
                         'Nenhuma compra registrada para este devedor.',
@@ -192,7 +192,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                     else
                       ...grupos.map((grupo) {
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 8),
                           child: GrupoCard(
                             banco: grupo.banco,
                             compras: grupo.compras,
@@ -256,7 +256,7 @@ class CompradorDetalheScreen extends StatelessWidget {
       context: context,
       backgroundColor: Superficie,
       builder: (sheetContext) => Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +266,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                     color: Branco,
                     fontSize: 17,
                     fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             ListTile(
               leading: const Icon(Icons.image, color: Branco),
               title: const Text('Imagem (PNG)',
@@ -511,7 +511,7 @@ class _GrupoCardState extends State<GrupoCard> {
             onTap: () => setState(() => _expandido = !_expandido),
             behavior: HitTestBehavior.opaque,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
                 children: [
                   BancoLogo(banco: widget.banco, tamanho: 22, raio: 6),
@@ -578,7 +578,7 @@ class _GrupoCardState extends State<GrupoCard> {
           if (_expandido)
             ...widget.compras.map((compra) {
               return Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+                padding: const EdgeInsets.fromLTRB(6, 0, 6, 3),
                 child: CompraItem(
                   compra: compra,
                   banco: widget.banco,
@@ -624,7 +624,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 8),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 6),
       height: MediaQuery.of(context).size.height * 0.75,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -636,14 +636,14 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
           const SizedBox(height: 4),
           Text(widget.nome,
               style: const TextStyle(color: Branco54, fontSize: 13)),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Flexible(
             child: ListView(
               shrinkWrap: true,
               children: [
                 Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: const Color(0xFF0D1B2A),
               borderRadius: BorderRadius.circular(12),
@@ -670,7 +670,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           ...widget.grupos.map((grupo) {
             final subtotal = grupo.compras.fold(
                 0.0, (s, c) => s + c.valorIndividual);
@@ -679,7 +679,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
             final expandido = _expandidos.contains(grupo.banco.id);
             return Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(bottom: 6),
+              margin: const EdgeInsets.only(bottom: 4),
               decoration: BoxDecoration(
                 color: Color(grupo.banco.cor).withOpacity(0.15),
                 borderRadius: BorderRadius.circular(10),
@@ -702,7 +702,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                     behavior: HitTestBehavior.opaque,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
+                          horizontal: 8, vertical: 4),
                       child: Row(
                         children: [
                           Container(
@@ -771,11 +771,11 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
+                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -792,12 +792,12 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                   ),
                   if (expandido) ...[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 6),
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
                       child: Column(
                         children: [
                           ...grupo.compras.map((compra) {
                             return Padding(
-                              padding: const EdgeInsets.only(bottom: 6),
+                              padding: const EdgeInsets.only(bottom: 4),
                               child: Row(
                                 children: [
                                   Container(
@@ -848,7 +848,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -868,7 +868,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                       fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
         ],
       ),
     );

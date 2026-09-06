@@ -54,7 +54,7 @@ class _CampoState extends State<Campo> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         widget.child,
       ],
     );
@@ -97,6 +97,6 @@ InputDecoration campoCores(
       borderSide: BorderSide.none,
     ),
     contentPadding:
-        const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
   );
 }
