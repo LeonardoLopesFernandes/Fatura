@@ -20,6 +20,7 @@ class FaturaViewModel extends ChangeNotifier {
   List<Banco> _bancos = [];
   List<Comprador> _compradores = [];
   List<Compra> _compras = [];
+  List<Compra> _fixas = [];
   Map<String, double> _faturas = {};
 
   int _sequencia = 0;
@@ -28,10 +29,12 @@ class FaturaViewModel extends ChangeNotifier {
   List<Banco> get bancos => _bancos;
   List<Comprador> get compradores => _compradores;
   List<Compra> get compras => _compras;
+  List<Compra> get fixas => _fixas;
   Map<String, double> get faturas => _faturas;
 
   void definirMesSelecionado(Mes mes) {
     _mesSelecionado = mes;
+    materializarFixas(mes);
     notifyListeners();
   }
 
@@ -64,12 +67,16 @@ class FaturaViewModel extends ChangeNotifier {
       _compras = (json['compras'] as List? ?? [])
           .map((e) => Compra.fromJson(e as Map<String, dynamic>))
           .toList();
+      _fixas = (json['fixas'] as List? ?? [])
+          .map((e) => Compra.fromJson(e as Map<String, dynamic>))
+          .toList();
       _faturas = {};
       final fat = json['faturas'] as Map<String, dynamic>? ?? {};
       fat.forEach((k, v) => _faturas[k] = (v as num).toDouble());
     } catch (_) {
       _bancos = _bancosPadrao();
     }
+    materializarFixas(hojeMes());
     notifyListeners();
   }
 
@@ -163,6 +170,7 @@ class FaturaViewModel extends ChangeNotifier {
       'bancos': _bancos.map((b) => b.toJson()).toList(),
       'compradores': _compradores.map((c) => c.toJson()).toList(),
       'compras': _compras.map((c) => c.toJson()).toList(),
+      'fixas': _fixas.map((c) => c.toJson()).toList(),
       'faturas': _faturas,
     };
   }
@@ -182,6 +190,9 @@ class FaturaViewModel extends ChangeNotifier {
           .map((e) => Comprador.fromJson(e as Map<String, dynamic>))
           .toList();
       _compras = (json['compras'] as List? ?? [])
+          .map((e) => Compra.fromJson(e as Map<String, dynamic>))
+          .toList();
+      _fixas = (json['fixas'] as List? ?? [])
           .map((e) => Compra.fromJson(e as Map<String, dynamic>))
           .toList();
       _faturas = {};
@@ -356,6 +367,8 @@ class FaturaViewModel extends ChangeNotifier {
     required int cor,
     String? iconeChave,
     String? caminhoImagem,
+    String? chavePix,
+    int? diaVencimento,
   }) {
     if (_bancos.any((b) => b.iconeChave == iconeChave && iconeChave != null)) {
       throw ArgumentError('Ícone já utilizado');
@@ -363,17 +376,23 @@ class FaturaViewModel extends ChangeNotifier {
     if (_bancos.any((b) => b.cor == cor)) {
       throw ArgumentError('Cor já utilizada');
     }
+    final pix = chavePix?.trim();
     final banco = Banco(
       id: novoId('banco'),
       nome: nome,
       cor: cor,
       iconeChave: iconeChave,
       iconeArquivo: caminhoImagem,
+      chavePix: (pix == null || pix.isEmpty) ? null : pix,
+      diaVencimento: _diaValido(diaVencimento),
     );
     _bancos.add(banco);
     _alterado();
     return banco;
   }
+
+  int? _diaValido(int? dia) =>
+      (dia != null && dia >= 1 && dia <= 31) ? dia : null;
 
   bool removerBanco(String id) {
     if (comprasDoBanco(id).isNotEmpty) return false;
@@ -388,6 +407,8 @@ class FaturaViewModel extends ChangeNotifier {
     required int cor,
     String? iconeChave,
     String? caminhoImagem,
+    String? chavePix,
+    int? diaVencimento,
   }) {
     final atual = bancoPorId(id);
     if (atual == null) return;
@@ -398,15 +419,19 @@ class FaturaViewModel extends ChangeNotifier {
     if (_bancos.any((b) => b.id != id && b.cor == cor)) {
       throw ArgumentError('Cor já utilizada');
     }
+    final pix = chavePix?.trim();
     _bancos = _bancos.map((b) {
       if (b.id != id) return b;
-      return b.copyWith(
+      return Banco(
+        id: b.id,
         nome: nome,
         cor: cor,
         iconeChave: iconeChave,
-        iconeArquivo: caminhoImagem ?? atual.iconeArquivo,
         iconeRes: atual.iconeRes,
+        iconeArquivo: caminhoImagem ?? atual.iconeArquivo,
         corDoIcone: atual.corDoIcone,
+        chavePix: (pix == null || pix.isEmpty) ? null : pix,
+        diaVencimento: _diaValido(diaVencimento),
       );
     }).toList();
     _alterado();
@@ -450,7 +475,23 @@ class FaturaViewModel extends ChangeNotifier {
     required int quantidadeParcelas,
     required Mes data,
     String? iconeChave,
+    bool fixaMensal = false,
   }) {
+    if (fixaMensal) {
+      _fixas.add(Compra(
+        id: novoId('fixa'),
+        compradorId: compradorId,
+        bancoId: bancoId,
+        descricao: descricao,
+        valorIndividual: valorIndividual,
+        quantidadeParcelas: 1,
+        data: data,
+        iconeChave: iconeChave,
+      ));
+      materializarFixas(_mesSelecionado);
+      _alterado();
+      return;
+    }
     _compras.add(Compra(
       id: novoId('compra'),
       compradorId: compradorId,
@@ -462,6 +503,40 @@ class FaturaViewModel extends ChangeNotifier {
       iconeChave: iconeChave,
     ));
     _alterado();
+  }
+
+  void materializarFixas(Mes mes) {
+    var mudou = false;
+    for (final fixa in _fixas) {
+      if (fixa.data.indice() > mes.indice()) continue;
+      final existe = _compras.any((c) =>
+          c.origemFixaId == fixa.id &&
+          c.data.indice() == mes.indice());
+      if (!existe) {
+        _compras.add(Compra(
+          id: novoId('compra'),
+          compradorId: fixa.compradorId,
+          bancoId: fixa.bancoId,
+          descricao: fixa.descricao,
+          valorIndividual: fixa.valorIndividual,
+          quantidadeParcelas: 1,
+          data: mes,
+          iconeChave: fixa.iconeChave,
+          origemFixaId: fixa.id,
+        ));
+        mudou = true;
+      }
+    }
+    if (mudou) _alterado();
+  }
+
+  bool removerFixa(String id) {
+    _fixas.removeWhere((f) => f.id == id);
+    final hoje = hojeMes().indice();
+    _compras.removeWhere(
+        (c) => c.origemFixaId == id && c.data.indice() >= hoje);
+    _alterado();
+    return true;
   }
 
   void removerCompra(String id) {
@@ -494,8 +569,13 @@ class FaturaViewModel extends ChangeNotifier {
   }
 
   void marcarPaga(String id, Mes mes, bool paga) {
+    marcarPagas([id], mes, paga);
+  }
+
+  void marcarPagas(Iterable<String> ids, Mes mes, bool paga) {
+    final set = ids.toSet();
     _compras = _compras.map((c) {
-      if (c.id != id) return c;
+      if (!set.contains(c.id)) return c;
       final conjunto = Set<int>.from(c.pagasPorMes);
       if (paga) {
         conjunto.add(mes.indice());
@@ -522,8 +602,30 @@ class FaturaViewModel extends ChangeNotifier {
     _bancos = [];
     _compradores = [];
     _compras = [];
+    _fixas = [];
     _faturas = {};
     _alterado();
+  }
+
+  List<Banco> vencimentosProximos({int dias = 3}) {
+    final hoje = DateTime.now();
+    final resultado = <Banco>[];
+    for (final banco in _bancos) {
+      final dia = banco.diaVencimento;
+      if (dia == null) continue;
+      var venc = DateTime(hoje.year, hoje.month, dia > 28 ? 28 : dia);
+      if (!venc.isAfter(hoje)) {
+        final prox = hoje.month == 12
+            ? DateTime(hoje.year + 1, 1, dia > 28 ? 28 : dia)
+            : DateTime(hoje.year, hoje.month + 1, dia > 28 ? 28 : dia);
+        venc = prox;
+      }
+      if (venc.difference(hoje).inDays <= dias &&
+          faturaDoBancoNoMes(banco.id, hojeMes()) > 0) {
+        resultado.add(banco);
+      }
+    }
+    return resultado;
   }
 
   bool _lembretesAtivos = false;

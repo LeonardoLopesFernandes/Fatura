@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
 import '../../ui/tema.dart';
 import '../../util/backup.dart';
+import '../../util/formatadores.dart';
 import '../../util/notificacoes.dart';
 
 class ConfiguracoesScreen extends StatelessWidget {
@@ -58,7 +59,7 @@ class ConfiguracoesScreen extends StatelessWidget {
               title: const Text('Lembretes de fatura',
                   style: TextStyle(color: Branco, fontSize: 15)),
               subtitle: const Text(
-                'Notificação diária para conferir as faturas',
+                'Aviso diário e alerta de vencimento dos bancos',
                 style: TextStyle(color: Branco54, fontSize: 12),
               ),
               value: vm.lembretesAtivos,
@@ -68,6 +69,45 @@ class ConfiguracoesScreen extends StatelessWidget {
                 agendarLembretes(valor);
               },
             ),
+            _Secao('Contas fixas'),
+            if (vm.fixas.isEmpty)
+              const Text(
+                'Nenhuma conta fixa cadastrada.\nAtive "Repetir todo mês" na nova compra.',
+                style: TextStyle(color: Branco54, fontSize: 13),
+              )
+            else
+              ...vm.fixas.map((fixa) {
+                final banco = vm.bancoPorId(fixa.bancoId);
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: Superficie.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.repeat,
+                      color: banco != null
+                          ? Color(banco.cor)
+                          : Branco,
+                    ),
+                    title: Text(fixa.descricao,
+                        style:
+                            const TextStyle(color: Branco, fontSize: 15)),
+                    subtitle: Text(
+                      '${banco?.nome ?? ''} · ${formatarMoeda(fixa.valorIndividual)}/mês',
+                      style: const TextStyle(
+                          color: Branco54, fontSize: 12),
+                    ),
+                    trailing: IconButton(
+                      onPressed: () => _confirmarRemoverFixa(
+                          context, vm, fixa.id, fixa.descricao),
+                      icon: const Icon(Icons.delete_outline,
+                          color: VermelhoExcluir),
+                    ),
+                  ),
+                );
+              }),
             _Secao('Sobre'),
             _Item(
               icone: Icons.info_outline,
@@ -77,6 +117,40 @@ class ConfiguracoesScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmarRemoverFixa(
+    BuildContext context,
+    FaturaViewModel vm,
+    String id,
+    String descricao,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Superficie,
+        title: const Text('Remover conta fixa?',
+            style: TextStyle(color: Branco)),
+        content: Text(
+          '"$descricao" não será mais lançada nos próximos meses. Lançamentos futuros pendentes serão apagados.',
+          style: const TextStyle(color: Branco54),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancelar', style: TextStyle(color: Branco54)),
+          ),
+          TextButton(
+            onPressed: () {
+              vm.removerFixa(id);
+              Navigator.of(ctx).pop();
+            },
+            child: const Text('Remover',
+                style: TextStyle(color: VermelhoExcluir)),
+          ),
+        ],
       ),
     );
   }

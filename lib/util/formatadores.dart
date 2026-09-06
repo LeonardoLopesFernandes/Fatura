@@ -18,6 +18,20 @@ const List<String> MESES = [
 
 String nomeMes(int mes) => MESES[mes - 1];
 
+String nomeMesCurto(int mes) =>
+    MESES[mes - 1].substring(0, 3).toUpperCase();
+
+String formatarMoedaAbrev(double valor) {
+  if (valor >= 1000) {
+    final k = valor / 1000;
+    final texto = k >= 100
+        ? k.toStringAsFixed(0)
+        : k.toStringAsFixed(1).replaceAll('.', ',');
+    return 'R\$ ${texto}k';
+  }
+  return formatarMoeda(valor);
+}
+
 String rotuloMes(Mes data) =>
     '${nomeMes(data.mes).toUpperCase()} ${data.ano % 100}';
 

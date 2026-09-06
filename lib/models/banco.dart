@@ -6,6 +6,8 @@ class Banco {
   final String? iconeRes;
   final String? iconeArquivo;
   final int? corDoIcone;
+  final String? chavePix;
+  final int? diaVencimento;
 
   Banco({
     required this.id,
@@ -15,6 +17,8 @@ class Banco {
     this.iconeRes,
     this.iconeArquivo,
     this.corDoIcone,
+    this.chavePix,
+    this.diaVencimento,
   });
 
   bool temLogo() => iconeRes != null || iconeArquivo != null;
@@ -27,6 +31,8 @@ class Banco {
     String? iconeRes,
     String? iconeArquivo,
     int? corDoIcone,
+    String? chavePix,
+    int? diaVencimento,
   }) {
     return Banco(
       id: id ?? this.id,
@@ -36,6 +42,8 @@ class Banco {
       iconeRes: iconeRes ?? this.iconeRes,
       iconeArquivo: iconeArquivo ?? this.iconeArquivo,
       corDoIcone: corDoIcone ?? this.corDoIcone,
+      chavePix: chavePix ?? this.chavePix,
+      diaVencimento: diaVencimento ?? this.diaVencimento,
     );
   }
 
@@ -47,6 +55,8 @@ class Banco {
         if (iconeRes != null) 'iconeRes': iconeRes,
         if (iconeArquivo != null) 'iconeArquivo': iconeArquivo,
         if (corDoIcone != null) 'corDoIcone': corDoIcone,
+        if (chavePix != null) 'chavePix': chavePix,
+        if (diaVencimento != null) 'diaVencimento': diaVencimento,
       };
 
   factory Banco.fromJson(Map<String, dynamic> json) => Banco(
@@ -57,5 +67,7 @@ class Banco {
         iconeRes: json['iconeRes'],
         iconeArquivo: json['iconeArquivo'],
         corDoIcone: json['corDoIcone'],
+        chavePix: json['chavePix'],
+        diaVencimento: json['diaVencimento'],
       );
 }

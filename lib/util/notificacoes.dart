@@ -45,3 +45,28 @@ Future<void> agendarLembretes(bool ativo) async {
 }
 
 Future<void> cancelarLembretes() => agendarLembretes(false);
+
+Future<void> notificarVencimentos(List<String> linhas) async {
+  try {
+    if (linhas.isEmpty) return;
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidImpl?.requestNotificationsPermission();
+    await _plugin.show(
+      1,
+      'Vencimento próximo',
+      linhas.join('\n'),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _canalId,
+          _canalNome,
+          channelDescription: 'Avisos sobre as faturas cadastradas',
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+          styleInformation: BigTextStyleInformation(''),
+        ),
+      ),
+    );
+  } catch (_) {}
+}

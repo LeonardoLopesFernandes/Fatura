@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'data/fatura_view_model.dart';
 import 'ui/navegacao/app.dart';
 import 'ui/tema.dart';
+import 'util/formatadores.dart';
 import 'util/notificacoes.dart';
 
 void main() async {
@@ -13,6 +14,13 @@ void main() async {
   await inicializarNotificacoes();
   if (vm.lembretesAtivos) {
     await agendarLembretes(true);
+    final proximos = vm.vencimentosProximos();
+    if (proximos.isNotEmpty) {
+      await notificarVencimentos([
+        for (final b in proximos)
+          '${b.nome} vence dia ${b.diaVencimento}: ${formatarMoeda(vm.faturaDoBancoNoMes(b.id, vm.mesSelecionado))}',
+      ]);
+    }
   }
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: StatusBar,

@@ -14,5 +14,15 @@ class CoresCatalogo {
     0xFFE11D48, // rosa profundo
     0xFF7C3AED, // roxo
     0xFF059669, // esmeralda escura
+    0xFF92400E, // marrom
+    0xFF65A30D, // lima
+    0xFF0E7490, // ciano escuro
+    0xFF4F46E5, // índigo
+    0xFFA21CAF, // fúcsia
+    0xFFC2410C, // laranja queimado
+    0xFF3F6212, // musgo
+    0xFF155E75, // petróleo
+    0xFF881337, // bordô
+    0xFF475569, // chumbo
   ];
 }

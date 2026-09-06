@@ -10,6 +10,7 @@ class Compra {
   final Mes data;
   final Set<int> pagasPorMes;
   final String? iconeChave;
+  final String? origemFixaId;
 
   Compra({
     required this.id,
@@ -21,6 +22,7 @@ class Compra {
     required this.data,
     Set<int>? pagasPorMes,
     this.iconeChave,
+    this.origemFixaId,
   }) : pagasPorMes = pagasPorMes ?? {};
 
   double get valorTotal => valorIndividual * quantidadeParcelas;
@@ -64,6 +66,7 @@ class Compra {
     Mes? data,
     Set<int>? pagasPorMes,
     String? iconeChave,
+    String? origemFixaId,
   }) =>
       Compra(
         id: id ?? this.id,
@@ -75,6 +78,7 @@ class Compra {
         data: data ?? this.data,
         pagasPorMes: pagasPorMes ?? this.pagasPorMes,
         iconeChave: iconeChave ?? this.iconeChave,
+        origemFixaId: origemFixaId ?? this.origemFixaId,
       );
 
   Map<String, dynamic> toJson() => {
@@ -89,6 +93,7 @@ class Compra {
         'pagasPorMes': pagasPorMes.toList(),
         'paga': paga,
         if (iconeChave != null) 'iconeChave': iconeChave,
+        if (origemFixaId != null) 'origemFixaId': origemFixaId,
       };
 
   factory Compra.fromJson(Map<String, dynamic> json) {
@@ -112,6 +117,7 @@ class Compra {
       data: Mes(json['ano'], json['mes']),
       pagasPorMes: pagas,
       iconeChave: json['iconeChave'],
+      origemFixaId: json['origemFixaId'],
     );
   }
 }

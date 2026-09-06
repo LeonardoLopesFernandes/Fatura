@@ -12,26 +12,15 @@ import '../../ui/telas/nova_compra_tela.dart';
 import '../../ui/telas/fatura_banco_tela.dart';
 import '../../ui/telas/banco_formulario_tela.dart';
 import '../../ui/telas/configuracoes_tela.dart';
+import '../../ui/telas/estatisticas_tela.dart';
 
 Route<dynamic> _rotaAnimada(RouteSettings settings, WidgetBuilder builder) {
   return PageRouteBuilder(
     settings: settings,
-    pageBuilder: (context, animation, secondaryAnimation) => builder(context),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0.0, 0.06);
-      const end = Offset.zero;
-      const curve = Curves.easeOutCubic;
-      final tween =
-          Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-      return FadeTransition(
-        opacity: animation,
-        child: SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        ),
-      );
-    },
-    transitionDuration: const Duration(milliseconds: 260),
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        builder(context),
+    transitionDuration: Duration.zero,
+    reverseTransitionDuration: Duration.zero,
   );
 }
 
@@ -218,6 +207,13 @@ class _AppNavegacaoState extends State<AppNavegacao> {
           settings,
           (_) => const ConfiguracoesScreen(),
         );
+      case 'estatisticas':
+        return _rotaAnimada(
+          settings,
+          (_) => EstatisticasScreen(
+            onVoltar: () => _navigatorKey.currentState!.pop(),
+          ),
+        );
       default:
         return _rotaAnimada(
           settings,
@@ -252,6 +248,11 @@ class _AppNavegacaoState extends State<AppNavegacao> {
                   ),
                 ),
                 actions: [
+                  IconButton(
+                    onPressed: () => _push('estatisticas'),
+                    icon:
+                        const Icon(Icons.bar_chart, color: Branco54),
+                  ),
                   IconButton(
                     onPressed: () => _push('configuracoes'),
                     icon: const Icon(Icons.settings, color: Branco54),

@@ -30,8 +30,12 @@ class BancoFormulario extends StatefulWidget {
 class _BancoFormularioState extends State<BancoFormulario> {
   final _nome = TextEditingController();
   final _fatura = TextEditingController();
+  final _pix = TextEditingController();
+  final _vencimento = TextEditingController();
   final _focoNome = FocusNode();
   final _focoFatura = FocusNode();
+  final _focoPix = FocusNode();
+  final _focoVencimento = FocusNode();
   String? _iconeSelecionado;
   int _corSelecionada = 0;
   String? _imagemSelecionada;
@@ -51,6 +55,9 @@ class _BancoFormularioState extends State<BancoFormulario> {
     super.initState();
     _editando = widget.bancoExistente != null;
     _nome.text = widget.bancoExistente?.nome ?? '';
+    _pix.text = widget.bancoExistente?.chavePix ?? '';
+    final dia = widget.bancoExistente?.diaVencimento;
+    _vencimento.text = dia != null ? '$dia' : '';
     _iconeSelecionado = widget.bancoExistente?.iconeChave;
     _corSelecionada = widget.bancoExistente?.cor ?? 0;
     _imagemSelecionada = widget.bancoExistente?.iconeArquivo;
@@ -71,8 +78,12 @@ class _BancoFormularioState extends State<BancoFormulario> {
   void dispose() {
     _nome.dispose();
     _fatura.dispose();
+    _pix.dispose();
+    _vencimento.dispose();
     _focoNome.dispose();
     _focoFatura.dispose();
+    _focoPix.dispose();
+    _focoVencimento.dispose();
     super.dispose();
   }
 
@@ -114,6 +125,8 @@ class _BancoFormularioState extends State<BancoFormulario> {
           cor: _corSelecionada,
           iconeChave: _iconeSelecionado,
           caminhoImagem: _imagemSelecionada,
+          chavePix: _pix.text,
+          diaVencimento: int.tryParse(_vencimento.text.trim()),
         );
         final v = valorDeEntradaBr(_fatura.text);
         if (v > 0) {
@@ -126,6 +139,8 @@ class _BancoFormularioState extends State<BancoFormulario> {
           cor: _corSelecionada,
           iconeChave: _iconeSelecionado,
           caminhoImagem: _imagemSelecionada,
+          chavePix: _pix.text,
+          diaVencimento: int.tryParse(_vencimento.text.trim()),
         );
       }
       widget.onVoltar();
@@ -243,35 +258,82 @@ class _BancoFormularioState extends State<BancoFormulario> {
                           return GestureDetector(
                             onTap: () =>
                                 setState(() => _iconeSelecionado = chave),
-                            child: Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: selecionado
-                                    ? CorPrimaria
-                                    : SuperficieElevada,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: selecionado
-                                      ? CorPrimaria
-                                      : Branco.withOpacity(0.12),
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Center(
-                                child: icone != null
-                                    ? Icon(icone,
+                            child: SizedBox(
+                              width: 60,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color: selecionado
+                                          ? CorPrimaria
+                                          : SuperficieElevada,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
                                         color: selecionado
-                                            ? Branco
-                                            : Branco70,
-                                        size: 22)
-                                    : null,
+                                            ? CorPrimaria
+                                            : Branco.withOpacity(0.12),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: icone != null
+                                          ? Icon(icone,
+                                              color: selecionado
+                                                  ? Branco
+                                                  : Branco70,
+                                              size: 22)
+                                          : null,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    IconesCatalogo.rotulo(chave),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: selecionado ? Branco : Branco54,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
                         }).toList(),
                       ),
                   ],
+                  const SizedBox(height: 12),
+                  Campo(
+                    'Chave Pix (para cobrança)',
+                    TextField(
+                      controller: _pix,
+                      focusNode: _focoPix,
+                      style: const TextStyle(color: Branco, fontSize: 16),
+                      keyboardType: TextInputType.text,
+                      decoration: campoCores(''),
+                    ),
+                    hint: 'CPF, e-mail, telefone ou aleatória',
+                    focusNode: _focoPix,
+                  ),
+                  const SizedBox(height: 12),
+                  Campo(
+                    'Dia do vencimento',
+                    TextField(
+                      controller: _vencimento,
+                      focusNode: _focoVencimento,
+                      style: const TextStyle(color: Branco, fontSize: 16),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      decoration: campoCores(''),
+                    ),
+                    hint: 'Ex.: 10',
+                    focusNode: _focoVencimento,
+                  ),
                   const SizedBox(height: 12),
                   const Text('Cor característica',
                       style: TextStyle(

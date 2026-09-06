@@ -39,6 +39,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
   String? _iconeChave;
   late Mes _mes;
   String? _aviso;
+  bool _fixa = false;
 
   @override
   void initState() {
@@ -146,6 +147,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           TextField(
                             controller: _parcelas,
                             focusNode: _focoParcelas,
+                            enabled: !_fixa,
                             style: const TextStyle(color: Branco, fontSize: 16),
                             keyboardType: TextInputType.number,
                             inputFormatters: [
@@ -158,6 +160,29 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: SuperficieElevada,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: SwitchListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 2),
+                      title: const Text('Repetir todo mês',
+                          style: TextStyle(
+                              color: Branco,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
+                      subtitle: const Text(
+                          'Conta fixa: lança sozinha nos próximos meses',
+                          style:
+                              TextStyle(color: Branco54, fontSize: 12)),
+                      value: _fixa,
+                      activeColor: CorPrimaria,
+                      onChanged: (v) => setState(() => _fixa = v),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Campo(
@@ -256,25 +281,46 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                             return GestureDetector(
                               onTap: () => setState(
                                   () => _iconeChave = item['chave'] as String),
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: selecionado
-                                      ? CorPrimaria
-                                      : SuperficieElevada,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: selecionado
-                                        ? Branco
-                                        : Branco.withOpacity(0.12),
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: Icon(
-                                  item['icone'] as IconData,
-                                  color: Branco,
-                                  size: 20,
+                              child: SizedBox(
+                                width: 60,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 44,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: selecionado
+                                            ? CorPrimaria
+                                            : SuperficieElevada,
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: selecionado
+                                              ? Branco
+                                              : Branco.withOpacity(0.12),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        item['icone'] as IconData,
+                                        color: Branco,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      item['label'] as String,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: selecionado
+                                            ? Branco
+                                            : Branco54,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );
@@ -305,20 +351,22 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: vm.bancos.isEmpty
-                          ? null
-                          : () {
-                              final v = valorDeEntradaBr(_valor.text);
-                              final p = int.tryParse(_parcelas.text) ?? 0;
-                              if (_descricao.text.trim().isEmpty ||
-                                  _devedor.text.trim().isEmpty ||
-                                  v <= 0 ||
-                                  p < 1 ||
-                                  _bancoId == null) {
-                                setState(() => _aviso =
-                                    'Preencha descrição, nome do devedor, valor e parcelas.');
-                                return;
-                              }
+                        onPressed: vm.bancos.isEmpty
+                            ? null
+                            : () {
+                                final v = valorDeEntradaBr(_valor.text);
+                                final p = _fixa
+                                    ? 1
+                                    : (int.tryParse(_parcelas.text) ?? 0);
+                                if (_descricao.text.trim().isEmpty ||
+                                    _devedor.text.trim().isEmpty ||
+                                    v <= 0 ||
+                                    (!_fixa && p < 1) ||
+                                    _bancoId == null) {
+                                  setState(() => _aviso =
+                                      'Preencha descrição, nome do devedor, valor e parcelas.');
+                                  return;
+                                }
                               final comprador = vm.obterOuCriarComprador(
                                   nome: _devedor.text.trim());
                               vm.adicionarCompra(
@@ -329,6 +377,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                 quantidadeParcelas: p,
                                 data: _mes,
                                 iconeChave: _iconeChave,
+                                fixaMensal: _fixa,
                               );
                               if (_devedor.text.trim().toLowerCase() !=
                                   (widget.nomePadrao?.trim().toLowerCase())) {

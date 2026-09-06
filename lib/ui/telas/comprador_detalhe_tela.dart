@@ -14,6 +14,7 @@ import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/compra_item.dart';
 import '../../ui/componentes/elementos.dart';
 import '../../ui/componentes/menu_compra.dart';
+import '../../ui/componentes/pix_sheet.dart';
 import '../../util/formatadores.dart';
 import '../../compartilhar/gerar_imagem.dart';
 import '../../compartilhar/gerar_pdf.dart';
@@ -541,6 +542,20 @@ class _GrupoCardState extends State<GrupoCard> {
                       ),
                     ),
                   const SizedBox(width: 6),
+                  IconButton(
+                    onPressed: () => mostrarCobrancaPix(
+                      context,
+                      banco: widget.banco,
+                      valor: subtotal,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(
+                      Icons.pix,
+                      color: Branco54,
+                      size: 18,
+                    ),
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,

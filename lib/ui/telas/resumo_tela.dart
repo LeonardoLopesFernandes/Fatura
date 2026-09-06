@@ -7,9 +7,11 @@ import '../../models/grupo.dart';
 import '../../data/fatura_view_model.dart';
 import '../../ui/tema.dart';
 import '../../ui/componentes/elementos.dart';
+import '../../ui/componentes/campo.dart';
 import '../../ui/componentes/compra_item.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/menu_compra.dart';
+import '../../ui/componentes/pix_sheet.dart';
 import '../../ui/componentes/carousel_bank_card.dart';
 import '../../util/formatadores.dart';
 
@@ -31,6 +33,8 @@ class ResumoScreen extends StatefulWidget {
 
 class _ResumoScreenState extends State<ResumoScreen> {
   final Set<String> _expandidos = {};
+  final Map<String, Set<String>> _selecao = {};
+  String _busca = '';
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +42,20 @@ class _ResumoScreenState extends State<ResumoScreen> {
     final mes = vm.mesSelecionado;
     final totalFaturas = vm.totalRestanteBancosNoMes(mes);
     final totalRestante = vm.totalCartaoNoMes(mes);
+    final termo = _busca.trim().toLowerCase();
+    final comMovimento = vm.compradores
+        .where((c) => vm.comprasDoCompradorNoMes(c.id, mes).isNotEmpty)
+        .toList();
+    final listaFiltrada = termo.isEmpty
+        ? comMovimento
+        : comMovimento.where((c) {
+            if (c.nome.toLowerCase().contains(termo)) return true;
+            return vm.comprasDoCompradorNoMes(c.id, mes).any((cp) {
+              final b = vm.bancoPorId(cp.bancoId);
+              return cp.descricao.toLowerCase().contains(termo) ||
+                  (b?.nome.toLowerCase().contains(termo) ?? false);
+            });
+          }).toList();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 80),
@@ -110,6 +128,15 @@ class _ResumoScreenState extends State<ResumoScreen> {
             ],
           ),
           const SizedBox(height: 6),
+          TextField(
+            onChanged: (v) => setState(() => _busca = v),
+            style: const TextStyle(color: Branco, fontSize: 15),
+            decoration: campoCores('', hint: 'Buscar devedor ou compra')
+                .copyWith(
+              prefixIcon: const Icon(Icons.search, color: CinzaClaro),
+            ),
+          ),
+          const SizedBox(height: 6),
           if (vm.bancos.isEmpty)
             const MensagemVazia('Nenhum banco cadastrado.')
           else
@@ -144,14 +171,12 @@ class _ResumoScreenState extends State<ResumoScreen> {
           if (vm.compradores.isEmpty)
             const MensagemVazia(
                 'Nenhum devedor cadastrado.\nAdicione na aba Devedores.')
-          else if (vm.compradores.every((c) =>
-              vm.comprasDoCompradorNoMes(c.id, mes).isEmpty))
-            MensagemVazia('Sem compras em ${rotuloMesLongo(mes)}.')
+          else if (listaFiltrada.isEmpty)
+            MensagemVazia(termo.isEmpty
+                ? 'Sem compras em ${rotuloMesLongo(mes)}.'
+                : 'Nada encontrado para "$_busca".')
           else
-            ...vm.compradores
-                .where((c) =>
-                    vm.comprasDoCompradorNoMes(c.id, mes).isNotEmpty)
-                .map((comprador) {
+            ...listaFiltrada.map((comprador) {
               final faturaDoMes =
                   vm.faturaDoCompradorNoMes(comprador.id, mes);
               final comprasMes =
@@ -214,8 +239,16 @@ class _ResumoScreenState extends State<ResumoScreen> {
                           final todasPagas = grupo.compras.isNotEmpty &&
                               grupo.compras
                                   .every((c) => c.pagaNoMes(mes));
-                          final grupoExpandido =
-                              _expandidos.contains('${comprador.id}_${grupo.banco.id}');
+                          final grupoExpandido = termo.isNotEmpty
+                              ? true
+                              : _expandidos.contains(
+                                  '${comprador.id}_${grupo.banco.id}');
+                          final chaveGrupo =
+                              '${comprador.id}_${grupo.banco.id}';
+                          final selecionando =
+                              _selecao.containsKey(chaveGrupo);
+                          final marcados =
+                              _selecao[chaveGrupo] ?? <String>{};
                           return Container(
                             width: double.infinity,
                             margin: const EdgeInsets.only(bottom: 4),
@@ -276,6 +309,48 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                             ),
                                           ),
                                         const SizedBox(width: 6),
+                                        IconButton(
+                                          onPressed: () =>
+                                              mostrarCobrancaPix(
+                                            context,
+                                            banco: grupo.banco,
+                                            valor: subtotal,
+                                          ),
+                                          padding: EdgeInsets.zero,
+                                          constraints:
+                                              const BoxConstraints(),
+                                          icon: const Icon(
+                                            Icons.pix,
+                                            color: Branco54,
+                                            size: 18,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              if (selecionando) {
+                                                _selecao.remove(chaveGrupo);
+                                              } else {
+                                                _selecao[chaveGrupo] =
+                                                    <String>{};
+                                                _expandidos.add(chaveGrupo);
+                                              }
+                                            });
+                                          },
+                                          padding: EdgeInsets.zero,
+                                          constraints:
+                                              const BoxConstraints(),
+                                          icon: Icon(
+                                            selecionando
+                                                ? Icons.check_box
+                                                : Icons
+                                                    .check_box_outline_blank,
+                                            color: selecionando
+                                                ? CorPrimaria
+                                                : Branco54,
+                                            size: 18,
+                                          ),
+                                        ),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
@@ -318,40 +393,112 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                     child: Column(
                                       children: [
                                         ...grupo.compras.map((compra) {
+                                          final item = CompraItem(
+                                            compra: compra,
+                                            banco: grupo.banco,
+                                            paga: compra.pagaNoMes(mes),
+                                            valorExibido:
+                                                compra.valorIndividual,
+                                            rotuloParcelaCustom:
+                                                compra.quantidadeParcelas > 1
+                                                    ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
+                                                    : 'Mensal',
+                                            onPagaChanged: (paga) => vm
+                                                .marcarPaga(
+                                                    compra.id, mes, paga),
+                                            onRemove: () =>
+                                                vm.removerCompra(compra.id),
+                                            onEdit: () => mostrarMenuCompra(
+                                              context,
+                                              compra,
+                                              vm,
+                                              jaPaga:
+                                                  compra.pagaNoMes(mes),
+                                              onMarcarPaga: () =>
+                                                  vm.marcarPaga(
+                                                      compra.id,
+                                                      mes,
+                                                      !compra.pagaNoMes(
+                                                          mes)),
+                                            ),
+                                          );
+                                          if (!selecionando) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.only(
+                                                      bottom: 6),
+                                              child: item,
+                                            );
+                                          }
+                                          final marcado =
+                                              marcados.contains(compra.id);
                                           return Padding(
                                             padding: const EdgeInsets.only(
                                                 bottom: 6),
-                                            child: CompraItem(
-                                              compra: compra,
-                                              banco: grupo.banco,
-                                              paga: compra.pagaNoMes(mes),
-                                              valorExibido:
-                                                  compra.valorIndividual,
-                                              rotuloParcelaCustom:
-                                                  compra.quantidadeParcelas > 1
-                                                      ? 'Parcela ${compra.parcelaNoMes(mes)} de ${compra.quantidadeParcelas}'
-                                                      : 'Mensal',
-                                              onPagaChanged: (paga) => vm
-                                                  .marcarPaga(
-                                                      compra.id, mes, paga),
-                                              onRemove: () =>
-                                                  vm.removerCompra(compra.id),
-                                              onEdit: () => mostrarMenuCompra(
-                                                context,
-                                                compra,
-                                                vm,
-                                                jaPaga:
-                                                    compra.pagaNoMes(mes),
-                                                onMarcarPaga: () =>
-                                                    vm.marcarPaga(
-                                                        compra.id,
-                                                        mes,
-                                                        !compra.pagaNoMes(
-                                                            mes)),
-                                              ),
+                                            child: Row(
+                                              children: [
+                                                Checkbox(
+                                                  value: marcado,
+                                                  activeColor: CorPrimaria,
+                                                  materialTapTargetSize:
+                                                      MaterialTapTargetSize
+                                                          .shrinkWrap,
+                                                  onChanged: (v) {
+                                                    setState(() {
+                                                      if (v == true) {
+                                                        _selecao[chaveGrupo]!
+                                                            .add(compra.id);
+                                                      } else {
+                                                        _selecao[chaveGrupo]!
+                                                            .remove(compra.id);
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                                Expanded(child: item),
+                                              ],
                                             ),
                                           );
                                         }).toList(),
+                                        if (selecionando &&
+                                            marcados.isNotEmpty)
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 2),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  '${marcados.length} selecionada(s)',
+                                                  style: const TextStyle(
+                                                    color: Branco54,
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
+                                                const Spacer(),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    vm.marcarPagas(
+                                                        marcados, mes, true);
+                                                    setState(() => _selecao
+                                                        .remove(chaveGrupo));
+                                                  },
+                                                  child: const Text(
+                                                      'Marcar pagas',
+                                                      style: TextStyle(
+                                                          color:
+                                                              CorPrimaria)),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => setState(
+                                                      () => _selecao.remove(
+                                                          chaveGrupo)),
+                                                  child: const Text('Limpar',
+                                                      style: TextStyle(
+                                                          color: Branco54)),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),

@@ -42,4 +42,28 @@ class IconesCatalogo {
 
   static IconData? iconePorChave(String? chave) =>
       chave == null ? null : CHAVE_PARA_ICONE[chave];
+
+  static const Map<String, String> ROTULOS = {
+    'account_balance_wallet': 'Carteira',
+    'credit_card': 'Cartão',
+    'rocket_launch': 'Foguete',
+    'diamond': 'Diamante',
+    'storefront': 'Loja',
+    'savings': 'Cofre',
+    'shopping_bag': 'Compras',
+    'currency_bitcoin': 'Bitcoin',
+    'flight_takeoff': 'Viagem',
+    'local_gas_station': 'Posto',
+    'set_meal': 'Comida',
+    'agriculture': 'Fazenda',
+    'pets': 'Pet',
+    'bolt': 'Energia',
+    'account_balance': 'Banco',
+    'wifi': 'Wi-Fi',
+    'lightbulb': 'Luz',
+    'water_drop': 'Água',
+    'home_work': 'Casa',
+  };
+
+  static String rotulo(String chave) => ROTULOS[chave] ?? chave;
 }
