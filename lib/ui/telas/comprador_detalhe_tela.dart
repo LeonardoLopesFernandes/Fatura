@@ -77,6 +77,11 @@ class CompradorDetalheScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            onPressed: () => cobrarTotalDevedor(
+                context, grupos: grupos, valorTotal: faturaBruta),
+            icon: const Icon(Icons.pix, color: Branco54),
+          ),
+          IconButton(
             onPressed: () => _mostrarCompartilhar(
                 context, vm, comprador.nome, faturaBruta, grupos),
             icon: const Icon(Icons.share, color: Branco54),
@@ -542,20 +547,6 @@ class _GrupoCardState extends State<GrupoCard> {
                       ),
                     ),
                   const SizedBox(width: 6),
-                  IconButton(
-                    onPressed: () => mostrarCobrancaPix(
-                      context,
-                      banco: widget.banco,
-                      valor: subtotal,
-                    ),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: const Icon(
-                      Icons.pix,
-                      color: Branco54,
-                      size: 18,
-                    ),
-                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,

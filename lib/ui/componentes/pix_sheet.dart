@@ -2,9 +2,79 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/banco.dart';
+import '../../models/grupo.dart';
 import '../../ui/tema.dart';
 import '../../util/formatadores.dart';
 import '../../util/pix.dart';
+
+void cobrarTotalDevedor(
+  BuildContext context, {
+  required List<Grupo> grupos,
+  required double valorTotal,
+}) {
+  final comChave = grupos
+      .where((g) => (g.banco.chavePix?.trim() ?? '').isNotEmpty)
+      .toList();
+  if (comChave.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text('Cadastre a chave Pix na edição do banco.')),
+    );
+    return;
+  }
+  if (comChave.length == 1) {
+    mostrarCobrancaPix(context,
+        banco: comChave.first.banco, valor: valorTotal);
+    return;
+  }
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Superficie,
+    builder: (sheetContext) => Container(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              'Cobrar ${formatarMoeda(valorTotal)} via Pix. Qual chave usar?',
+              style: const TextStyle(
+                  color: Branco, fontSize: 15, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          ...comChave.map((g) => ListTile(
+                leading: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    g.banco.nome.trim().isNotEmpty
+                        ? g.banco.nome.trim().substring(0, 1).toUpperCase()
+                        : '?',
+                    style: TextStyle(
+                      color: Color(g.banco.cor),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                title: Text(g.banco.nome,
+                    style: const TextStyle(color: Branco)),
+                subtitle: Text(g.banco.chavePix!.trim(),
+                    style: const TextStyle(color: Branco54, fontSize: 12)),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  mostrarCobrancaPix(context,
+                      banco: g.banco, valor: valorTotal);
+                },
+              )),
+        ],
+      ),
+    ),
+  );
+}
 
 void mostrarCobrancaPix(
   BuildContext context, {

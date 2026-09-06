@@ -211,6 +211,23 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                 ),
                               ),
                             ),
+                            IconButton(
+                              onPressed: () => cobrarTotalDevedor(
+                                context,
+                                grupos: grupos,
+                                valorTotal:
+                                    vm.faturaDoCompradorBrutoNoMes(
+                                        comprador.id, mes),
+                              ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              icon: const Icon(
+                                Icons.pix,
+                                color: Branco54,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
                             Container(
                               decoration: BoxDecoration(
                                 color: Correto,
@@ -309,22 +326,6 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                             ),
                                           ),
                                         const SizedBox(width: 6),
-                                        IconButton(
-                                          onPressed: () =>
-                                              mostrarCobrancaPix(
-                                            context,
-                                            banco: grupo.banco,
-                                            valor: subtotal,
-                                          ),
-                                          padding: EdgeInsets.zero,
-                                          constraints:
-                                              const BoxConstraints(),
-                                          icon: const Icon(
-                                            Icons.pix,
-                                            color: Branco54,
-                                            size: 18,
-                                          ),
-                                        ),
                                         IconButton(
                                           onPressed: () {
                                             setState(() {
