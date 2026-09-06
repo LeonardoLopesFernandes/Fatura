@@ -144,8 +144,14 @@ class _ResumoScreenState extends State<ResumoScreen> {
           if (vm.compradores.isEmpty)
             const MensagemVazia(
                 'Nenhum devedor cadastrado.\nAdicione na aba Devedores.')
+          else if (vm.compradores.every((c) =>
+              vm.comprasDoCompradorNoMes(c.id, mes).isEmpty))
+            MensagemVazia('Sem compras em ${rotuloMesLongo(mes)}.')
           else
-            ...vm.compradores.map((comprador) {
+            ...vm.compradores
+                .where((c) =>
+                    vm.comprasDoCompradorNoMes(c.id, mes).isNotEmpty)
+                .map((comprador) {
               final faturaDoMes =
                   vm.faturaDoCompradorNoMes(comprador.id, mes);
               final comprasMes =
