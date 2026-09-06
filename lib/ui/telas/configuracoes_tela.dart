@@ -137,6 +137,9 @@ class ConfiguracoesScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text('Versão: $versao',
                 style: const TextStyle(color: Branco)),
+            const SizedBox(height: 4),
+            const Text('Desenvolvedor: Leonardo Lopes',
+                style: TextStyle(color: Branco)),
           ],
         ),
         actions: [
