@@ -58,7 +58,9 @@ Future<String?> gerarPdf({
             final subtotal =
                 g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
 
-            widgets.add(pw.Container(
+            widgets.add(pw.Padding(
+              padding: pw.EdgeInsets.symmetric(horizontal: 24),
+              child: pw.Container(
               padding: pw.EdgeInsets.all(16),
               decoration: pw.BoxDecoration(
                 color: bancoCor,
@@ -146,6 +148,7 @@ Future<String?> gerarPdf({
                       ),
                     ),
                 ],
+              ),
               ),
             ));
             widgets.add(pw.SizedBox(height: 16));
