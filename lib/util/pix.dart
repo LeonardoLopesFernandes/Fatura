@@ -44,7 +44,7 @@ String gerarPixCopiaECola({
   String txid = 'FATURA',
 }) {
   final chaveLimpa = chave.trim();
-  final merchant = _campo('00', 'br') + _campo('01', chaveLimpa);
+  final merchant = _campo('00', 'br.gov.bcb.pix') + _campo('01', chaveLimpa);
   final payload = _campo('00', '01') +
       _campo('26', merchant) +
       _campo('52', '0000') +
