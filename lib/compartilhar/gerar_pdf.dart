@@ -5,6 +5,12 @@ import 'package:path_provider/path_provider.dart';
 import '../../models/grupo.dart';
 import '../../util/formatadores.dart';
 
+PdfColor _misturar(PdfColor base, PdfColor sobre, double t) => PdfColor(
+      base.red + (sobre.red - base.red) * t,
+      base.green + (sobre.green - base.green) * t,
+      base.blue + (sobre.blue - base.blue) * t,
+    );
+
 Future<String?> gerarPdf({
   required String nome,
   required double fatura,
@@ -57,15 +63,23 @@ Future<String?> gerarPdf({
             final bancoCor = PdfColor.fromInt(g.banco.cor);
             final subtotal =
                 g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
+            final cardBg = _misturar(fundo, bancoCor, 0.15);
+            final brilho = _misturar(fundo, bancoCor, 0.35);
 
             widgets.add(pw.Padding(
               padding: pw.EdgeInsets.symmetric(horizontal: 24),
               child: pw.Container(
+              decoration: pw.BoxDecoration(
+                color: brilho,
+                borderRadius: pw.BorderRadius.circular(14),
+              ),
+              padding: pw.EdgeInsets.all(2),
+              child: pw.Container(
               padding: pw.EdgeInsets.all(16),
               decoration: pw.BoxDecoration(
-                color: bancoCor,
+                color: cardBg,
                 borderRadius: pw.BorderRadius.circular(12),
-                border: pw.Border.all(color: bancoCor, width: 1),
+                border: pw.Border.all(color: bancoCor, width: 1.5),
               ),
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -148,6 +162,7 @@ Future<String?> gerarPdf({
                       ),
                     ),
                 ],
+              ),
               ),
               ),
             ));
