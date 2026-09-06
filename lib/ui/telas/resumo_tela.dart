@@ -205,6 +205,9 @@ class _ResumoScreenState extends State<ResumoScreen> {
                           final qtd = grupo.compras.length;
                           final subtotal = grupo.compras.fold(
                               0.0, (s, c) => s + c.valorIndividual);
+                          final todasPagas = grupo.compras.isNotEmpty &&
+                              grupo.compras
+                                  .every((c) => c.pagaNoMes(mes));
                           final grupoExpandido =
                               _expandidos.contains('${comprador.id}_${grupo.banco.id}');
                           return Container(
@@ -252,6 +255,21 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                             ),
                                           ),
                                         ),
+                                        if (todasPagas)
+                                          Container(
+                                            width: 22,
+                                            height: 22,
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Correto,
+                                            ),
+                                            child: const Icon(
+                                              Icons.check,
+                                              color: Branco,
+                                              size: 14,
+                                            ),
+                                          ),
+                                        const SizedBox(width: 6),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,

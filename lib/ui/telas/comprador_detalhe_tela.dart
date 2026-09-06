@@ -495,6 +495,8 @@ class _GrupoCardState extends State<GrupoCard> {
     final qtd = widget.compras.length;
     final subtotal =
         widget.compras.fold(0.0, (s, c) => s + c.valorIndividual);
+    final todasPagas = widget.compras.isNotEmpty &&
+        widget.compras.every((c) => c.pagaNoMes(widget.mes));
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -524,6 +526,21 @@ class _GrupoCardState extends State<GrupoCard> {
                       ),
                     ),
                   ),
+                  if (todasPagas)
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Correto,
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        color: Branco,
+                        size: 14,
+                      ),
+                    ),
+                  const SizedBox(width: 6),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
@@ -657,6 +674,8 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
           ...widget.grupos.map((grupo) {
             final subtotal = grupo.compras.fold(
                 0.0, (s, c) => s + c.valorIndividual);
+            final todasPagas = grupo.compras.isNotEmpty &&
+                grupo.compras.every((c) => c.pagaNoMes(widget.mes));
             final expandido = _expandidos.contains(grupo.banco.id);
             return Container(
               width: double.infinity,
@@ -716,6 +735,21 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                               ),
                             ),
                           ),
+                          if (todasPagas)
+                            Container(
+                              width: 22,
+                              height: 22,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color(0xFF00C853),
+                              ),
+                              child: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 14,
+                              ),
+                            ),
+                          const SizedBox(width: 6),
                           Text(
                             formatarMoeda(subtotal),
                             style: const TextStyle(
