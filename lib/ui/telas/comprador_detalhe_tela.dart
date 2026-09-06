@@ -493,6 +493,8 @@ class _GrupoCardState extends State<GrupoCard> {
   @override
   Widget build(BuildContext context) {
     final qtd = widget.compras.length;
+    final subtotal =
+        widget.compras.fold(0.0, (s, c) => s + c.valorIndividual);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -522,14 +524,28 @@ class _GrupoCardState extends State<GrupoCard> {
                       ),
                     ),
                   ),
-                  if (!_expandido)
-                    Text(
-                      '$qtd compra${qtd != 1 ? 's' : ''}',
-                      style: const TextStyle(
-                        color: Branco54,
-                        fontSize: 10,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        formatarMoeda(subtotal),
+                        style: const TextStyle(
+                          color: Branco,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
+                      if (!_expandido)
+                        Text(
+                          '$qtd compra${qtd != 1 ? 's' : ''}',
+                          style: const TextStyle(
+                            color: Branco54,
+                            fontSize: 10,
+                          ),
+                        ),
+                    ],
+                  ),
                   const SizedBox(width: 4),
                   Icon(
                     _expandido
@@ -670,10 +686,24 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                           horizontal: 10, vertical: 6),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.account_balance,
-                            color: Branco54,
-                            size: 16,
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              grupo.banco.nome.trim().isNotEmpty
+                                  ? grupo.banco.nome.trim().substring(0, 1).toUpperCase()
+                                  : '?',
+                              style: TextStyle(
+                                color: Color(grupo.banco.cor),
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 6),
                           Expanded(
@@ -686,6 +716,15 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                               ),
                             ),
                           ),
+                          Text(
+                            formatarMoeda(subtotal),
+                            style: const TextStyle(
+                              color: Branco,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
                           Icon(
                             expandido
                                 ? Icons.keyboard_arrow_up

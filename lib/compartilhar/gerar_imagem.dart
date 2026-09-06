@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../models/grupo.dart';
 import '../../data/icones_compra.dart';
-import '../../data/recursos_banco.dart';
 import '../../util/formatadores.dart';
 
 Future<String?> gerarImagem({
@@ -15,14 +13,16 @@ Future<String?> gerarImagem({
 }) async {
   try {
     const int largura = 1080;
-    final int altura =
-        300 + grupos.fold<int>(0, (s, g) => s + 180 + g.compras.length * 72) + 100;
+    const double escala = 3.0;
+    final int alturaLogica =
+        400 + grupos.fold<int>(0, (s, g) => s + 132 + g.compras.length * 72) + 120;
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
+    canvas.scale(escala);
     final fundo = Paint()..color = const Color(0xFF0D1B2A);
     canvas.drawRect(
-      Rect.fromLTWH(0, 0, largura.toDouble(), altura.toDouble()),
+      Rect.fromLTWH(0, 0, largura.toDouble(), alturaLogica.toDouble()),
       fundo,
     );
 
@@ -83,73 +83,108 @@ Future<String?> gerarImagem({
       canvas.drawRRect(rrect, paint);
     }
 
+    void desenharAvatarLetra(
+      String letra,
+      double cx,
+      double cy,
+      double diametro,
+      Color corLetra,
+    ) {
+      canvas.drawCircle(
+        Offset(cx, cy),
+        diametro / 2,
+        Paint()..color = Colors.white,
+      );
+      final tp = TextPainter(
+        text: TextSpan(
+          text: letra,
+          style: TextStyle(
+            fontSize: diametro * 0.52,
+            color: corLetra,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+      );
+      tp.layout(maxWidth: diametro);
+      tp.paint(
+        canvas,
+        Offset(cx - tp.width / 2, cy - tp.height / 2),
+      );
+    }
+
+    void desenharIconeCompra(IconData icone, double boxX, double boxY) {
+      const box = 44.0;
+      final tp = TextPainter(
+        text: TextSpan(
+          text: String.fromCharCode(icone.codePoint),
+          style: TextStyle(
+            fontSize: 26,
+            color: const Color(0xFFE0E0E0),
+            fontFamily: icone.fontFamily,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      tp.layout();
+      tp.paint(
+        canvas,
+        Offset(boxX + (box - tp.width) / 2, boxY + (box - tp.height) / 2),
+      );
+    }
+
     double y = 60;
 
+    desenhar(nome.toUpperCase(), 60, y, 44, Colors.white,
+        peso: FontWeight.w900);
+    y += 72;
     desenhar('FATURA INDIVIDUAL', 60, y, 28, const Color(0xFFA0B0C0),
         peso: FontWeight.bold);
     y += 60;
     desenhar(formatarMoeda(fatura), 60, y, 64, Colors.white,
         peso: FontWeight.bold);
-    y += 100;
+    y += 110;
 
     for (final g in grupos) {
       final banco = g.banco;
       final corBanco = Color(banco.cor);
       final corBancoBg = corBanco.withOpacity(0.15);
-      
-      final cardHeight = 80.0 + g.compras.length * 72.0;
-      desenharRetangulo(40, y, largura - 80, cardHeight, corBancoBg, 16);
-      desenharBordaRetangulo(40, y, largura - 80, cardHeight, corBanco, 16, 2);
+      final subtotal =
+          g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
 
-      double headerY = y + 20;
+      final cardHeight = 112.0 + g.compras.length * 72.0;
+      desenharRetangulo(40, y, largura - 80, cardHeight, corBancoBg, 20);
+      desenharBordaRetangulo(40, y, largura - 80, cardHeight, corBanco, 20, 2);
 
-      // Desenhar ícone do banco
-      final iconSize = 36.0;
-      double iconX = 60;
-      if (banco.iconeArquivo != null && File(banco.iconeArquivo!).existsSync()) {
-        try {
-          final bytes = await File(banco.iconeArquivo!).readAsBytes();
-          final codec = await ui.instantiateImageCodec(bytes.buffer.asUint8List());
-          final frame = await codec.getNextFrame();
-          final image = frame.image;
-          final src = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
-          final dst = Rect.fromLTWH(iconX, headerY, iconSize, iconSize);
-          canvas.drawImageRect(image, src, dst, Paint());
-          image.dispose();
-          iconX += iconSize + 8;
-        } catch (_) {
-          // Fallback
-        }
-      } else if (banco.iconeRes != null) {
-        final asset = RecursosBanco.DRAWABLES[banco.iconeRes];
-        if (asset != null && asset.endsWith('.png')) {
-          try {
-            final data = await rootBundle.load(asset);
-            final bytes = data.buffer.asUint8List();
-            final codec = await ui.instantiateImageCodec(bytes);
-            final frame = await codec.getNextFrame();
-            final image = frame.image;
-            final src = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
-            final dst = Rect.fromLTWH(iconX, headerY, iconSize, iconSize);
-            canvas.drawImageRect(image, src, dst, Paint());
-            image.dispose();
-            iconX += iconSize + 8;
-          } catch (_) {}
-        }
-      }
-      
-      desenhar(g.banco.nome.toUpperCase(), iconX, headerY + 8, 18, Colors.white,
+      final headerY = y + 20;
+      const avatarD = 56.0;
+      final letra = banco.nome.trim().isNotEmpty
+          ? banco.nome.trim().substring(0, 1).toUpperCase()
+          : '?';
+      desenharAvatarLetra(
+          letra, 60 + avatarD / 2, headerY + avatarD / 2, avatarD, corBanco);
+
+      desenhar(banco.nome.toUpperCase(), 132, headerY + 8, 22, Colors.white,
           peso: FontWeight.bold);
+      desenhar(formatarMoeda(subtotal), (largura - 60).toDouble(),
+          headerY + 6, 24, Colors.white,
+          right: true, peso: FontWeight.bold);
 
-      double itemY = headerY + 56;
+      double itemY = headerY + 76;
 
       for (final c in g.compras) {
-        desenharRetangulo(60, itemY, 40, 40, Colors.white.withOpacity(0.1), 8);
-        
-        desenhar(c.descricao, 112, itemY + 10, 20, const Color(0xFFE0E0E0));
-        desenhar(formatarMoeda(c.valorIndividual), (largura - 60).toDouble(), itemY + 10, 20,
-            Colors.white, right: true, peso: FontWeight.w600);
-        
+        desenharRetangulo(60, itemY, 44, 44, Colors.white.withOpacity(0.12), 10);
+        final icone = c.iconeChave != null
+            ? IconesCompra.iconePorChave(c.iconeChave)
+            : IconesCompra.iconePorDescricao(c.descricao);
+        desenharIconeCompra(icone, 60, itemY);
+
+        desenhar(c.descricao, 118, itemY + 10, 20, const Color(0xFFE0E0E0));
+        desenhar(formatarMoeda(c.valorIndividual),
+            (largura - 60).toDouble(), itemY + 10, 20, Colors.white,
+            right: true, peso: FontWeight.w600);
+
         itemY += 72;
       }
 
@@ -157,7 +192,10 @@ Future<String?> gerarImagem({
     }
 
     final picture = recorder.endRecording();
-    final image = await picture.toImage(largura, altura);
+    final image = await picture.toImage(
+      (largura * escala).round(),
+      (alturaLogica * escala).round(),
+    );
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     final dir = Directory(
         '${(await getTemporaryDirectory()).path}/compartilhamento');

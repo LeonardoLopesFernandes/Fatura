@@ -203,6 +203,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                       if (grupos.isNotEmpty)
                         ...grupos.map((grupo) {
                           final qtd = grupo.compras.length;
+                          final subtotal = grupo.compras.fold(
+                              0.0, (s, c) => s + c.valorIndividual);
                           final grupoExpandido =
                               _expandidos.contains('${comprador.id}_${grupo.banco.id}');
                           return Container(
@@ -250,14 +252,29 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                             ),
                                           ),
                                         ),
-                                        if (!grupoExpandido)
-                                          Text(
-                                            '$qtd compra${qtd != 1 ? 's' : ''}',
-                                            style: const TextStyle(
-                                              color: Branco54,
-                                              fontSize: 10,
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              formatarMoeda(subtotal),
+                                              style: const TextStyle(
+                                                color: Branco,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
+                                            if (!grupoExpandido)
+                                              Text(
+                                                '$qtd compra${qtd != 1 ? 's' : ''}',
+                                                style: const TextStyle(
+                                                  color: Branco54,
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                         const SizedBox(width: 4),
                                         Icon(
                                           grupoExpandido

@@ -34,6 +34,12 @@ Future<String?> gerarPdf({
         build: (_) {
           final widgets = <pw.Widget>[];
           
+          widgets.add(pw.Text(nome.toUpperCase(),
+              style: pw.TextStyle(
+                  color: PdfColors.white,
+                  fontSize: 24,
+                  fontWeight: pw.FontWeight.bold)));
+          widgets.add(pw.SizedBox(height: 4));
           widgets.add(pw.Text('FATURA INDIVIDUAL',
               style: pw.TextStyle(
                   color: corTitulo,
@@ -49,7 +55,9 @@ Future<String?> gerarPdf({
 
           for (final g in grupos) {
             final bancoCor = PdfColor.fromInt(g.banco.cor);
-            
+            final subtotal =
+                g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
+
             widgets.add(pw.Container(
               padding: pw.EdgeInsets.all(16),
               decoration: pw.BoxDecoration(
@@ -63,25 +71,34 @@ Future<String?> gerarPdf({
                   pw.Row(
                     children: [
                       pw.Container(
-                        width: 28,
-                        height: 28,
-                        decoration: pw.BoxDecoration(
+                        width: 32,
+                        height: 32,
+                        decoration: const pw.BoxDecoration(
                           color: PdfColors.white,
-                          borderRadius: pw.BorderRadius.circular(8),
+                          shape: pw.BoxShape.circle,
                         ),
                         child: pw.Center(
                           child: pw.Text(
-                            g.banco.nome.substring(0, 1).toUpperCase(),
+                            g.banco.nome.trim().isNotEmpty
+                                ? g.banco.nome.trim().substring(0, 1).toUpperCase()
+                                : '?',
                             style: pw.TextStyle(
                               color: bancoCor,
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: pw.FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
                       pw.SizedBox(width: 8),
-                      pw.Text(g.banco.nome.toUpperCase(),
+                      pw.Expanded(
+                        child: pw.Text(g.banco.nome.toUpperCase(),
+                            style: pw.TextStyle(
+                                color: PdfColors.white,
+                                fontSize: 14,
+                                fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.Text(formatarMoeda(subtotal),
                           style: pw.TextStyle(
                               color: PdfColors.white,
                               fontSize: 14,
@@ -93,8 +110,28 @@ Future<String?> gerarPdf({
                     pw.Padding(
                       padding: pw.EdgeInsets.only(bottom: 12),
                       child: pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
+                          pw.Container(
+                            width: 26,
+                            height: 26,
+                            decoration: const pw.BoxDecoration(
+                              color: PdfColors.white,
+                              shape: pw.BoxShape.circle,
+                            ),
+                            child: pw.Center(
+                              child: pw.Text(
+                                c.descricao.trim().isNotEmpty
+                                    ? c.descricao.trim().substring(0, 1).toUpperCase()
+                                    : '?',
+                                style: pw.TextStyle(
+                                  color: bancoCor,
+                                  fontSize: 12,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          pw.SizedBox(width: 10),
                           pw.Expanded(
                             child: pw.Text(c.descricao,
                                 style: pw.TextStyle(
