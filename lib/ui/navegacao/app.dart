@@ -148,17 +148,27 @@ class _AppNavegacaoState extends State<AppNavegacao> {
       case 'devedores':
         return _rotaAnimada(
           settings,
-          (_) => DevedoresScreen(
-            onAdicionarCompra: (nome) => _push('novaCompra', arguments: nome),
-            onDetalharComprador: (id) => _push('detalhe', arguments: id),
+          (_) => SafeArea(
+            top: true,
+            bottom: false,
+            child: DevedoresScreen(
+              onAdicionarCompra: (nome) => _push('novaCompra', arguments: nome),
+              onDetalharComprador: (id) => _push('detalhe', arguments: id),
+              onConfiguracoes: () => _push('configuracoes'),
+            ),
           ),
         );
       case 'bancos':
         return _rotaAnimada(
           settings,
-          (_) => BancosScreen(
-            onNovoBanco: () => _push('novoBanco'),
-            onEditarBanco: (id) => _push('editarBanco', arguments: id),
+          (_) => SafeArea(
+            top: true,
+            bottom: false,
+            child: BancosScreen(
+              onNovoBanco: () => _push('novoBanco'),
+              onEditarBanco: (id) => _push('editarBanco', arguments: id),
+              onConfiguracoes: () => _push('configuracoes'),
+            ),
           ),
         );
       case 'detalhe':
@@ -227,22 +237,20 @@ class _AppNavegacaoState extends State<AppNavegacao> {
       onPopInvokedWithResult: _aoTentarVoltar,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: _ehAba(_rotaAtual)
+        appBar: _rotaAtual == 'resumo'
             ? AppBar(
                 backgroundColor: FundoInicio,
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 centerTitle: true,
-                title: _indice == 0
-                    ? Text(
-                        _tituloAba,
-                        style: const TextStyle(
-                          color: Branco,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    : null,
+                title: Text(
+                  _tituloAba,
+                  style: const TextStyle(
+                    color: Branco,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 actions: [
                   IconButton(
                     onPressed: () => _push('configuracoes'),

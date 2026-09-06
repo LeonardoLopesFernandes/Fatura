@@ -81,11 +81,13 @@ class _NovoDevedorSheetState extends State<NovoDevedorSheet> {
 class DevedoresScreen extends StatefulWidget {
   final void Function(String) onAdicionarCompra;
   final void Function(String) onDetalharComprador;
+  final VoidCallback onConfiguracoes;
 
   const DevedoresScreen({
     super.key,
     required this.onAdicionarCompra,
     required this.onDetalharComprador,
+    required this.onConfiguracoes,
   });
 
   @override
@@ -114,15 +116,25 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
       children: [
         Padding(
           padding:
-              const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 6),
+              const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Devedores',
-                  style: TextStyle(
-                      color: Branco,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800)),
+              Row(
+                children: [
+                  const Expanded(
+                    child: Text('Devedores',
+                        style: TextStyle(
+                            color: Branco,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800)),
+                  ),
+                  IconButton(
+                    onPressed: widget.onConfiguracoes,
+                    icon: const Icon(Icons.settings, color: Branco54),
+                  ),
+                ],
+              ),
               const SizedBox(height: 4),
               Text(
                 'Cadastre quem usa o cartão e consulte as faturas individuais.',

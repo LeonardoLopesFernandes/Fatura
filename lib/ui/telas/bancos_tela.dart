@@ -9,11 +9,13 @@ import '../../util/formatadores.dart';
 class BancosScreen extends StatelessWidget {
   final VoidCallback onNovoBanco;
   final void Function(String) onEditarBanco;
+  final VoidCallback onConfiguracoes;
 
   const BancosScreen({
     super.key,
     required this.onNovoBanco,
     required this.onEditarBanco,
+    required this.onConfiguracoes,
   });
 
   @override
@@ -23,7 +25,7 @@ class BancosScreen extends StatelessWidget {
       children: [
         Padding(
           padding:
-              const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 6),
+              const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -35,6 +37,10 @@ class BancosScreen extends StatelessWidget {
                             color: Branco,
                             fontSize: 28,
                             fontWeight: FontWeight.w800)),
+                  ),
+                  IconButton(
+                    onPressed: onConfiguracoes,
+                    icon: const Icon(Icons.settings, color: Branco54),
                   ),
                 ],
               ),
