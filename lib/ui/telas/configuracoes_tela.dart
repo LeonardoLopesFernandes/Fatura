@@ -7,6 +7,8 @@ import '../../util/backup.dart';
 import '../../util/formatadores.dart';
 import '../../util/notificacoes.dart';
 
+const String kVersaoApp = '1.0.27';
+
 class ConfiguracoesScreen extends StatelessWidget {
   const ConfiguracoesScreen({super.key});
 
@@ -185,14 +187,6 @@ class ConfiguracoesScreen extends StatelessWidget {
   }
 
   Future<void> _mostrarSobre(BuildContext context) async {
-    String versao = '1.0.0';
-    try {
-      final conteudo = await rootBundle.loadString('pubspec.yaml');
-      final match =
-          RegExp(r'^version:\s*([0-9]+\.[0-9]+\.[0-9]+)')
-              .firstMatch(conteudo);
-      if (match != null) versao = match.group(1)!;
-    } catch (_) {}
     if (!context.mounted) return;
     showDialog(
       context: context,
@@ -209,8 +203,8 @@ class ConfiguracoesScreen extends StatelessWidget {
               style: TextStyle(color: Branco54),
             ),
             const SizedBox(height: 8),
-            Text('Versão: $versao',
-                style: const TextStyle(color: Branco)),
+            const Text('Versão: $kVersaoApp',
+                style: TextStyle(color: Branco)),
             const SizedBox(height: 4),
             const Text('Desenvolvedor: Leonardo Lopes',
                 style: TextStyle(color: Branco)),
