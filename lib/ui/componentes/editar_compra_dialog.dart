@@ -30,6 +30,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
   late final FocusNode _focoParcelas;
   late String? _bancoId;
   late String? _iconeChave;
+  late bool _iconeManual;
   late Mes _mes;
 
   @override
@@ -45,6 +46,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
     _parcelas = TextEditingController(text: c.quantidadeParcelas.toString());
     _bancoId = c.bancoId;
     _iconeChave = c.iconeChave;
+    _iconeManual = c.iconeChave != null;
     _mes = c.data;
     _focoDescricao = FocusNode();
     _focoValor = FocusNode();
@@ -88,6 +90,13 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                 style: TextStyle(color: context.cores.texto, fontSize: 16),
                 textCapitalization: TextCapitalization.sentences,
                 decoration: campoCores(''),
+                onChanged: (v) {
+                  if (_iconeManual) return;
+                  final auto = IconesCompra.chavePorDescricao(v);
+                  if (auto != _iconeChave) {
+                    setState(() => _iconeChave = auto);
+                  }
+                },
               ),
               hint: 'Nome da compra',
               focusNode: _focoDescricao,
@@ -199,8 +208,10 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                     ...IconesCompra.DISPONIVEIS.map((item) {
                       final selecionado = item['chave'] == _iconeChave;
                       return GestureDetector(
-                        onTap: () => setState(
-                            () => _iconeChave = item['chave'] as String),
+                        onTap: () => setState(() {
+                          _iconeChave = item['chave'] as String;
+                          _iconeManual = true;
+                        }),
                         child: SizedBox(
                           width: 60,
                           child: Column(
@@ -256,7 +267,10 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                   final chave =
                       await mostrarSeletorIcone(context, _iconeChave);
                   if (chave != null) {
-                    setState(() => _iconeChave = chave);
+                    setState(() {
+                      _iconeChave = chave;
+                      _iconeManual = true;
+                    });
                   }
                 },
                 icon: Icon(Icons.grid_view,

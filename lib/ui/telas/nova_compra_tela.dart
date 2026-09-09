@@ -39,6 +39,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
   final _focoParcelas = FocusNode();
   String? _bancoId;
   String? _iconeChave;
+  bool _iconeManual = false;
   late Mes _mes;
   String? _aviso;
   bool _fixa = false;
@@ -104,6 +105,13 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                       keyboardType: TextInputType.text,
                       textCapitalization: TextCapitalization.sentences,
                       decoration: campoCores(''),
+                      onChanged: (v) {
+                        if (_iconeManual) return;
+                        final auto = IconesCompra.chavePorDescricao(v);
+                        if (auto != _iconeChave) {
+                          setState(() => _iconeChave = auto);
+                        }
+                      },
                     ),
                     hint: 'Nome da compra',
                     focusNode: _focoDescricao,
@@ -289,8 +297,10 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           ...IconesCompra.DISPONIVEIS.map((item) {
                             final selecionado = item['chave'] == _iconeChave;
                             return GestureDetector(
-                              onTap: () => setState(
-                                  () => _iconeChave = item['chave'] as String),
+                              onTap: () => setState(() {
+                                _iconeChave = item['chave'] as String;
+                                _iconeManual = true;
+                              }),
                               child: SizedBox(
                                 width: 60,
                                 child: Column(
@@ -346,7 +356,10 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                         final chave = await mostrarSeletorIcone(
                             context, _iconeChave);
                         if (chave != null) {
-                          setState(() => _iconeChave = chave);
+                          setState(() {
+                            _iconeChave = chave;
+                            _iconeManual = true;
+                          });
                         }
                       },
                         icon: Icon(Icons.grid_view,

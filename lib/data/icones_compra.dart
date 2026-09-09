@@ -67,6 +67,8 @@ class IconesCompra {
     {'chave': 'dinheiro', 'icone': Icons.payments, 'label': 'Dinheiro'},
     {'chave': 'cosern', 'icone': Icons.bolt, 'label': 'COSERN'},
     {'chave': 'caern', 'icone': Icons.water_drop, 'label': 'CAERN'},
+    {'chave': 'fogao', 'icone': Icons.kitchen, 'label': 'Fogão'},
+    {'chave': 'geladeira', 'icone': Icons.kitchen, 'label': 'Geladeira'},
   ];
 
   static final Map<String, IconData> _mapa = {
@@ -136,6 +138,9 @@ class IconesCompra {
     'dinheiro': Icons.payments,
     'cosern': Icons.bolt,
     'caern': Icons.water_drop,
+    'fogao': Icons.kitchen,
+    'geladeira': Icons.kitchen,
+    'forno': Icons.kitchen,
   };
 
   static IconData iconePorChave(String? chave) {
