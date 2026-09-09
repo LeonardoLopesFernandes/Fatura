@@ -259,10 +259,10 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                   }
                 },
                 icon: const Icon(Icons.grid_view,
-                    color: CorPrimaria, size: 16),
+                    color: AzulClaro, size: 16),
                 label: const Text('Ver todos',
                     style:
-                        TextStyle(color: CorPrimaria, fontSize: 13)),
+                        TextStyle(color: AzulClaro, fontSize: 13)),
               ),
             ),
             const SizedBox(height: 10),
@@ -315,7 +315,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                   Navigator.of(context).pop();
                 },
           child: const Text('Salvar',
-              style: TextStyle(color: CorPrimaria)),
+              style: TextStyle(color: AzulClaro)),
         ),
       ],
     );

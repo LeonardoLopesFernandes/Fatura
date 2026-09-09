@@ -46,7 +46,7 @@ Future<void> importarBackup(
         ),
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(true),
-          child: const Text('Importar', style: TextStyle(color: CorPrimaria)),
+          child: const Text('Importar', style: TextStyle(color: AzulClaro)),
         ),
       ],
     ),

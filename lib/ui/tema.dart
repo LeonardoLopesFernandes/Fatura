@@ -5,6 +5,7 @@ const Color FundoInicio = Color(0xFF0A1128);
 const Color FundoMeio = Color(0xFF0F1E3A);
 const Color FundoFim = Color(0xFF1C305C);
 const Color CorPrimaria = Color(0xFF2563EB);
+const Color AzulClaro = Color(0xFF60A5FA);
 const Color CorTextoEscura = Color(0xFF0B1226);
 const Color Correto = Color(0xFF00C853);
 const Color Superficie = Color(0xFF15244D);

@@ -430,7 +430,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                               children: [
                                                 Checkbox(
                                                   value: marcado,
-                                                  activeColor: CorPrimaria,
+                                                  activeColor: AzulClaro,
+                                                  checkColor: Branco,
                                                   materialTapTargetSize:
                                                       MaterialTapTargetSize
                                                           .shrinkWrap,
@@ -477,7 +478,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                                       'Marcar pagas',
                                                       style: TextStyle(
                                                           color:
-                                                              CorPrimaria)),
+                                                              AzulClaro)),
                                                 ),
                                                 TextButton(
                                                   onPressed: () => setState(

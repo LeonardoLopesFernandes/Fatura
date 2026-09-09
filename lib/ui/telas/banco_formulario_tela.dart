@@ -43,6 +43,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
   String? _imagemSelecionada;
   String? _aviso;
   bool _extraindoCor = false;
+  bool _pickerAberto = false;
   late final bool _editando;
 
   List<String> get _iconesDisponiveis =>
@@ -143,38 +144,44 @@ class _BancoFormularioState extends State<BancoFormulario> {
   }
 
   Future<void> _abrirPickerCor() async {
-    Color temp = Color(_corSelecionada);
-    final escolhida = await showDialog<Color>(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: Superficie,
-        title: const Text('Cor personalizada',
-            style: TextStyle(color: Branco)),
-        content: SingleChildScrollView(
-          child: ColorPicker(
-            pickerColor: temp,
-            onColorChanged: (c) => temp = c,
-            enableAlpha: false,
-            labelTypes: const [],
-            pickerAreaHeightPercent: 0.7,
+    if (_pickerAberto) return;
+    _pickerAberto = true;
+    try {
+      Color temp = Color(_corSelecionada);
+      final escolhida = await showDialog<Color>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          backgroundColor: Superficie,
+          title: const Text('Cor personalizada',
+              style: TextStyle(color: Branco)),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: temp,
+              onColorChanged: (c) => temp = c,
+              enableAlpha: false,
+              labelTypes: const [],
+              pickerAreaHeightPercent: 0.7,
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child:
+                  const Text('Cancelar', style: TextStyle(color: Branco54)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(temp),
+          child: const Text('Usar cor',
+                style: TextStyle(color: AzulClaro)),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child:
-                const Text('Cancelar', style: TextStyle(color: Branco54)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(temp),
-            child: const Text('Usar cor',
-                style: TextStyle(color: CorPrimaria)),
-          ),
-        ],
-      ),
-    );
-    if (escolhida != null) {
-      setState(() => _corSelecionada = escolhida.toARGB32());
+      );
+      if (escolhida != null && mounted) {
+        setState(() => _corSelecionada = escolhida.toARGB32());
+      }
+    } finally {
+      _pickerAberto = false;
     }
   }
 
@@ -474,21 +481,21 @@ class _BancoFormularioState extends State<BancoFormulario> {
                                   height: 14,
                                   child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: CorPrimaria),
+                                      color: AzulClaro),
                                 )
                               : const Icon(Icons.auto_awesome,
-                                  color: CorPrimaria, size: 16),
+                                  color: AzulClaro, size: 16),
                           label: const Text('Cor do logo',
                               style: TextStyle(
-                                  color: CorPrimaria, fontSize: 13)),
+                                  color: AzulClaro, fontSize: 13)),
                         ),
-                      TextButton.icon(
-                        onPressed: _abrirPickerCor,
-                        icon: const Icon(Icons.palette,
-                            color: CorPrimaria, size: 16),
-                        label: const Text('Personalizada',
-                            style: TextStyle(
-                                color: CorPrimaria, fontSize: 13)),
+                        TextButton.icon(
+                          onPressed: _abrirPickerCor,
+                          icon: const Icon(Icons.palette,
+                              color: AzulClaro, size: 16),
+                          label: const Text('Personalizada',
+                              style: TextStyle(
+                                  color: AzulClaro, fontSize: 13)),
                       ),
                     ],
                   ),

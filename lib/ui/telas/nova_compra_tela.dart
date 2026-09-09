@@ -181,7 +181,8 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           style:
                               TextStyle(color: Branco54, fontSize: 12)),
                       value: _fixa,
-                      activeColor: CorPrimaria,
+                      activeTrackColor: AzulClaro,
+                      activeColor: Branco,
                       onChanged: (v) => setState(() => _fixa = v),
                     ),
                   ),
@@ -340,11 +341,11 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           setState(() => _iconeChave = chave);
                         }
                       },
-                      icon: const Icon(Icons.grid_view,
-                          color: CorPrimaria, size: 16),
-                      label: const Text('Ver todos',
-                          style: TextStyle(
-                              color: CorPrimaria, fontSize: 13)),
+                        icon: const Icon(Icons.grid_view,
+                            color: AzulClaro, size: 16),
+                        label: const Text('Ver todos',
+                            style: TextStyle(
+                                color: AzulClaro, fontSize: 13)),
                     ),
                   ),
                   const SizedBox(height: 10),
