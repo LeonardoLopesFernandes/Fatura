@@ -460,6 +460,28 @@ class FaturaViewModel extends ChangeNotifier {
     return comprador;
   }
 
+  void atualizarComprador(
+    String id, {
+    String? nome,
+    String? avatarChave,
+    String? avatarArquivo,
+    bool limparAvatar = false,
+  }) {
+    _compradores = _compradores.map((c) {
+      if (c.id != id) return c;
+      if (limparAvatar) return Comprador(id: c.id, nome: nome ?? c.nome);
+      return Comprador(
+        id: c.id,
+        nome: nome ?? c.nome,
+        avatarChave:
+            avatarChave ?? (avatarArquivo != null ? null : c.avatarChave),
+        avatarArquivo:
+            avatarArquivo ?? (avatarChave != null ? null : c.avatarArquivo),
+      );
+    }).toList();
+    _alterado();
+  }
+
   bool removerComprador(String id) {
     _compradores.removeWhere((c) => c.id == id);
     _compras.removeWhere((c) => c.compradorId == id);

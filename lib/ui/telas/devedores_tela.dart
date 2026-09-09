@@ -1,9 +1,14 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import '../../data/avatares.dart';
 import '../../data/fatura_view_model.dart';
+import '../../models/comprador.dart';
 import '../../ui/tema.dart';
 import '../../ui/temas.dart';
-import '../../ui/componentes/banco_logo.dart';
+import '../../ui/componentes/avatar_devedor.dart';
 import '../../ui/componentes/campo.dart';
 import '../../util/formatadores.dart';
 
@@ -104,6 +109,153 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
     super.dispose();
   }
 
+  Future<void> _escolherFoto(
+      FaturaViewModel vm, Comprador comprador) async {
+    try {
+      final picker = ImagePicker();
+      final imagem = await picker.pickImage(source: ImageSource.gallery);
+      if (imagem == null) return;
+      final dir = Directory(
+          '${(await getApplicationDocumentsDirectory()).path}/avatares');
+      await dir.create(recursive: true);
+      final ext = imagem.path.split('.').last;
+      final destino =
+          '${dir.path}/avatar_${DateTime.now().microsecondsSinceEpoch}.$ext';
+      await File(imagem.path).copy(destino);
+      vm.atualizarComprador(comprador.id, avatarArquivo: destino);
+    } catch (_) {}
+  }
+
+  void _mostrarAvatar(BuildContext context, FaturaViewModel vm,
+      Comprador comprador) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.cores.superficie,
+      builder: (sheetContext) => Container(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Avatar de ${comprador.nome}',
+                style: TextStyle(
+                    color: context.cores.texto,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      Navigator.of(sheetContext).pop();
+                      await _escolherFoto(vm, comprador);
+                    },
+                    icon: Icon(Icons.photo_library,
+                        color: context.cores.texto, size: 18),
+                    label: Text('Galeria',
+                        style: TextStyle(color: context.cores.texto)),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                          color: context.cores.texto.withOpacity(0.3)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(sheetContext).pop();
+                      vm.atualizarComprador(comprador.id,
+                          limparAvatar: true);
+                    },
+                    icon: Icon(Icons.delete_outline,
+                        color: context.cores.perigoClaro, size: 18),
+                    label: Text('Remover',
+                        style: TextStyle(
+                            color: context.cores.perigoClaro)),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                          color: context.cores.texto.withOpacity(0.3)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: 0.8,
+              ),
+              itemCount: Avatares.DISPONIVEIS.length,
+              itemBuilder: (_, i) {
+                final item = Avatares.DISPONIVEIS[i];
+                final selecionado =
+                    item['chave'] == comprador.avatarChave;
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    vm.atualizarComprador(comprador.id,
+                        avatarChave: item['chave'] as String);
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: selecionado
+                              ? context.cores.primaria
+                              : context.cores.superficieElevada,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: selecionado
+                                ? context.cores.texto
+                                : context.cores.texto.withOpacity(0.12),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Icon(
+                          item['icone'] as IconData,
+                          color: context.cores.texto,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        item['label'] as String,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: selecionado
+                              ? context.cores.texto
+                              : context.cores.textoSuave,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<FaturaViewModel>(context);
@@ -194,20 +346,18 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                         padding: const EdgeInsets.all(12),
                         child: Row(
                           children: [
-                            if (banco != null)
-                              BancoLogo(
-                                  banco: banco, tamanho: 48, raio: 14)
-                            else
-                              Container(
-                                width: 48,
-                                height: 48,
-                                decoration: BoxDecoration(
-                                  color: context.cores.primaria,
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: Icon(Icons.person,
-                                    color: context.cores.texto, size: 26),
+                            GestureDetector(
+                              onTap: () =>
+                                  _mostrarAvatar(context, vm, comprador),
+                              child: AvatarDevedor(
+                                comprador: comprador,
+                                tamanho: 48,
+                                raio: 14,
+                                corFundo: banco != null
+                                    ? Color(banco.cor)
+                                    : null,
                               ),
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
