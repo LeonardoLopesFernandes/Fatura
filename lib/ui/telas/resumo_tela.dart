@@ -10,6 +10,7 @@ import '../../ui/temas.dart';
 import '../../ui/componentes/elementos.dart';
 import '../../ui/componentes/campo.dart';
 import '../../ui/componentes/compra_item.dart';
+import '../../ui/componentes/avatar_devedor.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/menu_compra.dart';
 import '../../ui/componentes/pix_sheet.dart';
@@ -202,6 +203,12 @@ class _ResumoScreenState extends State<ResumoScreen> {
                         onLongPress: () => widget.onDetalharComprador(comprador.id),
                         child: Row(
                           children: [
+                            AvatarDevedor(
+                              comprador: comprador,
+                              tamanho: 34,
+                              raio: 10,
+                            ),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 comprador.nome.toUpperCase(),
