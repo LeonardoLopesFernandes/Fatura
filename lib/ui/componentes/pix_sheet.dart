@@ -162,7 +162,7 @@ void mostrarCobrancaPix(
                 child: OutlinedButton.icon(
                   onPressed: () {
                     Share.share(
-                      'Pix ${banco.nome} ${formatarMoeda(valor)}\nChave: $chave\n```\n$codigo\n```',
+                      '$codigo\n\n\nPix ${banco.nome} ${formatarMoeda(valor)}\nChave: $chave',
                       subject: 'Cobrança Pix',
                     );
                   },
