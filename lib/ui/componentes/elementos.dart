@@ -101,7 +101,7 @@ class CabecalhoMes extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  rotuloMesLongo(mes).toUpperCase(),
+                  '${DateTime.now().day.toString().padLeft(2, '0')} ${rotuloMesLongo(mes).toUpperCase()}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: eAtual ? corDestaque : Branco,

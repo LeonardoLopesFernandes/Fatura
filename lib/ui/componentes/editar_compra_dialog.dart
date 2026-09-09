@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
+import '../../data/icones_compra.dart';
 import '../../models/compra.dart';
 import '../../models/mes.dart';
 import '../../ui/tema.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/campo.dart';
+import '../../ui/componentes/seletor_icone_dialog.dart';
 import '../../util/formatadores.dart';
 import '../../util/currency_input_formatter.dart';
 
@@ -26,6 +28,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
   late final FocusNode _focoValor;
   late final FocusNode _focoParcelas;
   late String? _bancoId;
+  late String? _iconeChave;
   late Mes _mes;
 
   @override
@@ -40,6 +43,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
     );
     _parcelas = TextEditingController(text: c.quantidadeParcelas.toString());
     _bancoId = c.bancoId;
+    _iconeChave = c.iconeChave;
     _mes = c.data;
     _focoDescricao = FocusNode();
     _focoValor = FocusNode();
@@ -185,6 +189,84 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
             ),
             const SizedBox(height: 10),
             Campo(
+              'Ícone da compra',
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  spacing: 6,
+                  children: [
+                    ...IconesCompra.DISPONIVEIS.map((item) {
+                      final selecionado = item['chave'] == _iconeChave;
+                      return GestureDetector(
+                        onTap: () => setState(
+                            () => _iconeChave = item['chave'] as String),
+                        child: SizedBox(
+                          width: 60,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: selecionado
+                                      ? CorPrimaria
+                                      : SuperficieElevada,
+                                  borderRadius:
+                                      BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: selecionado
+                                        ? Branco
+                                        : Branco.withOpacity(0.12),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Icon(
+                                  item['icone'] as IconData,
+                                  color: Branco,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                item['label'] as String,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: selecionado
+                                      ? Branco
+                                      : Branco54,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: () async {
+                  final chave =
+                      await mostrarSeletorIcone(context, _iconeChave);
+                  if (chave != null) {
+                    setState(() => _iconeChave = chave);
+                  }
+                },
+                icon: const Icon(Icons.grid_view,
+                    color: CorPrimaria, size: 16),
+                label: const Text('Ver todos',
+                    style:
+                        TextStyle(color: CorPrimaria, fontSize: 13)),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Campo(
               'Mês de referência',
               DropdownButtonFormField<Mes>(
                 value: _mes,
@@ -228,6 +310,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                     quantidadeParcelas: p,
                     bancoId: _bancoId!,
                     data: _mes,
+                    iconeChave: _iconeChave,
                   );
                   Navigator.of(context).pop();
                 },

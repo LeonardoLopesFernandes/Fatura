@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -40,6 +42,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
   int _corSelecionada = 0;
   String? _imagemSelecionada;
   String? _aviso;
+  bool _extraindoCor = false;
   late final bool _editando;
 
   List<String> get _iconesDisponiveis =>
@@ -104,6 +107,74 @@ class _BancoFormularioState extends State<BancoFormulario> {
       });
     } catch (_) {
       setState(() => _aviso = 'Não foi possível abrir a galeria.');
+    }
+  }
+
+  Future<void> _usarCorDoLogo() async {
+    if (_imagemSelecionada == null) return;
+    setState(() {
+      _extraindoCor = true;
+      _aviso = null;
+    });
+    try {
+      final palette = await PaletteGenerator.fromImageProvider(
+        FileImage(File(_imagemSelecionada!)),
+        maximumColorCount: 20,
+      );
+      final cor =
+          palette.dominantColor?.color ?? palette.vibrantColor?.color;
+      if (cor == null) {
+        setState(() {
+          _extraindoCor = false;
+          _aviso = 'Não foi possível extrair a cor do logo.';
+        });
+        return;
+      }
+      setState(() {
+        _corSelecionada = cor.toARGB32();
+        _extraindoCor = false;
+      });
+    } catch (_) {
+      setState(() {
+        _extraindoCor = false;
+        _aviso = 'Não foi possível extrair a cor do logo.';
+      });
+    }
+  }
+
+  Future<void> _abrirPickerCor() async {
+    Color temp = Color(_corSelecionada);
+    final escolhida = await showDialog<Color>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Superficie,
+        title: const Text('Cor personalizada',
+            style: TextStyle(color: Branco)),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: temp,
+            onColorChanged: (c) => temp = c,
+            enableAlpha: false,
+            labelTypes: const [],
+            pickerAreaHeightPercent: 0.7,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child:
+                const Text('Cancelar', style: TextStyle(color: Branco54)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(temp),
+            child: const Text('Usar cor',
+                style: TextStyle(color: CorPrimaria)),
+          ),
+        ],
+      ),
+    );
+    if (escolhida != null) {
+      setState(() => _corSelecionada = escolhida.toARGB32());
     }
   }
 
@@ -374,6 +445,53 @@ class _BancoFormularioState extends State<BancoFormulario> {
                         );
                       }).toList(),
                     ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: Color(_corSelecionada),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: Branco.withOpacity(0.3)),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text('Cor atual',
+                          style: TextStyle(
+                              color: Branco70, fontSize: 13)),
+                      const Spacer(),
+                      if (temImagem)
+                        TextButton.icon(
+                          onPressed: _extraindoCor
+                              ? null
+                              : _usarCorDoLogo,
+                          icon: _extraindoCor
+                              ? const SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: CorPrimaria),
+                                )
+                              : const Icon(Icons.auto_awesome,
+                                  color: CorPrimaria, size: 16),
+                          label: const Text('Cor do logo',
+                              style: TextStyle(
+                                  color: CorPrimaria, fontSize: 13)),
+                        ),
+                      TextButton.icon(
+                        onPressed: _abrirPickerCor,
+                        icon: const Icon(Icons.palette,
+                            color: CorPrimaria, size: 16),
+                        label: const Text('Personalizada',
+                            style: TextStyle(
+                                color: CorPrimaria, fontSize: 13)),
+                      ),
+                    ],
+                  ),
                   if (_editando) ...[
                     const SizedBox(height: 16),
                     const Text('FATURA DO MÊS ATUAL',

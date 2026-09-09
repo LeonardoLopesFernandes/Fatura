@@ -30,8 +30,8 @@ class CompraItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cor = Color(banco.cor);
-    final corTexto = contrastePara(banco.cor);
+    final cor = paga ? Correto : Color(banco.cor);
+    final corTexto = paga ? Branco : contrastePara(banco.cor);
     final valor = valorExibido ?? compra.valorTotal;
     final rotulo =
         rotuloParcelaCustom ?? rotuloParcela(compra.quantidadeParcelas);
@@ -58,7 +58,7 @@ class CompraItem extends StatelessWidget {
                 compra.iconeChave != null
                     ? IconesCompra.iconePorChave(compra.iconeChave)
                     : IconesCompra.iconePorDescricao(compra.descricao),
-                color: contrastePara(banco.cor),
+                color: corTexto,
                 size: 20,
               ),
             ),

@@ -207,16 +207,8 @@ class CompradorDetalheScreen extends StatelessWidget {
                                 vm.removerCompra(compra.id),
                             onPagaChanged: (compra, paga) =>
                                 vm.marcarPaga(compra.id, mes, paga),
-                            onEdit: (compra) => mostrarMenuCompra(
-                              context,
-                              compra,
-                              vm,
-                              jaPaga: compra.pagaNoMes(mes),
-                              onMarcarPaga: () => vm.marcarPaga(
-                                  compra.id,
-                                  mes,
-                                  !compra.pagaNoMes(mes)),
-                            ),
+                            onEdit: (compra) =>
+                                editarCompraAcesso(context, compra),
                           ),
                         );
                       }).toList(),

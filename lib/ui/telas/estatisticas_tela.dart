@@ -211,16 +211,15 @@ class _CartaoNumero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Branco.withOpacity(0.05),
+        color: Branco,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Branco.withOpacity(0.1)),
       ),
       padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(rotulo,
-              style: const TextStyle(color: Branco54, fontSize: 11)),
+              style: const TextStyle(color: CinzaClaro, fontSize: 11)),
           const SizedBox(height: 2),
           Text(
             valor,

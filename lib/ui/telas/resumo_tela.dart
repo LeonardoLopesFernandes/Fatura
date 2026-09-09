@@ -121,7 +121,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                   style: const TextStyle(
                     color: VermelhoBotao,
                     fontSize: 13,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
@@ -409,19 +409,9 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                                     compra.id, mes, paga),
                                             onRemove: () =>
                                                 vm.removerCompra(compra.id),
-                                            onEdit: () => mostrarMenuCompra(
-                                              context,
-                                              compra,
-                                              vm,
-                                              jaPaga:
-                                                  compra.pagaNoMes(mes),
-                                              onMarcarPaga: () =>
-                                                  vm.marcarPaga(
-                                                      compra.id,
-                                                      mes,
-                                                      !compra.pagaNoMes(
-                                                          mes)),
-                                            ),
+                                            onEdit: () =>
+                                                editarCompraAcesso(
+                                                    context, compra),
                                           );
                                           if (!selecionando) {
                                             return Padding(

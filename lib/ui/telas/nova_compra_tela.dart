@@ -7,6 +7,7 @@ import '../../models/mes.dart';
 import '../../ui/tema.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/campo.dart';
+import '../../ui/componentes/seletor_icone_dialog.dart';
 import '../../util/formatadores.dart';
 import '../../util/currency_input_formatter.dart';
 
@@ -327,6 +328,23 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           }),
                         ],
                       ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () async {
+                        final chave = await mostrarSeletorIcone(
+                            context, _iconeChave);
+                        if (chave != null) {
+                          setState(() => _iconeChave = chave);
+                        }
+                      },
+                      icon: const Icon(Icons.grid_view,
+                          color: CorPrimaria, size: 16),
+                      label: const Text('Ver todos',
+                          style: TextStyle(
+                              color: CorPrimaria, fontSize: 13)),
                     ),
                   ),
                   const SizedBox(height: 10),

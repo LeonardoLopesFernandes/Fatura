@@ -132,7 +132,7 @@ class BancosScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: SizedBox(
             width: double.infinity,
-            height: 52,
+            height: 70,
             child: ElevatedButton(
               onPressed: (vm.iconesDisponiveis.isNotEmpty &&
                       vm.coresDisponiveis.isNotEmpty)
@@ -144,7 +144,7 @@ class BancosScreen extends StatelessWidget {
                 disabledForegroundColor: Branco54,
                 disabledBackgroundColor: SuperficieElevada,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(20)),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,

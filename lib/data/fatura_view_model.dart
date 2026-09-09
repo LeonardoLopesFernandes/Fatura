@@ -551,6 +551,7 @@ class FaturaViewModel extends ChangeNotifier {
     int? quantidadeParcelas,
     String? bancoId,
     Mes? data,
+    String? iconeChave,
   }) {
     _compras = _compras.map((c) {
       if (c.id != id) return c;
@@ -563,6 +564,8 @@ class FaturaViewModel extends ChangeNotifier {
         quantidadeParcelas: quantidadeParcelas ?? c.quantidadeParcelas,
         data: data ?? c.data,
         pagasPorMes: c.pagasPorMes,
+        iconeChave: iconeChave ?? c.iconeChave,
+        origemFixaId: c.origemFixaId,
       );
     }).toList();
     _alterado();
