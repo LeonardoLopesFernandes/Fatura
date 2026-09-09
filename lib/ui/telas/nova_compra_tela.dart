@@ -182,8 +182,8 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           style:
                               TextStyle(color: context.cores.textoSuave, fontSize: 12)),
                       value: _fixa,
-                      activeTrackColor: context.cores.azulClaro,
-                      activeColor: context.cores.texto,
+                      activeTrackColor: context.cores.sucesso,
+                      activeColor: Colors.white,
                       onChanged: (v) => setState(() => _fixa = v),
                     ),
                   ),

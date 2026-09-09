@@ -127,7 +127,7 @@ class ConfiguracoesScreen extends StatelessWidget {
                 style: TextStyle(color: context.cores.textoSuave, fontSize: 12),
               ),
               value: vm.lembretesAtivos,
-              activeColor: context.cores.primaria,
+              activeColor: context.cores.sucesso,
               onChanged: (valor) {
                 vm.definirLembretesAtivos(valor);
                 agendarLembretes(valor);

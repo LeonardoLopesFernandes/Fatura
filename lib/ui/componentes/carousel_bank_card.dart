@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../models/banco.dart';
-import '../../ui/tema.dart';
-import '../../ui/temas.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../util/formatadores.dart';
 
@@ -23,11 +21,11 @@ class CarouselBankCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final corTexto = contrastePara(banco.cor);
+    const corTexto = Colors.white;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 128,
+        width: 172,
         decoration: BoxDecoration(
           color: Color(banco.cor),
           borderRadius: BorderRadius.circular(16),
@@ -39,44 +37,46 @@ class CarouselBankCard extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            BancoLogo(banco: banco, tamanho: 34, raio: 9),
+            Row(
+              children: [
+                BancoLogo(banco: banco, tamanho: 30, raio: 8),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    banco.nome,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: corTexto,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 6),
             Text(
-              banco.nome,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: corTexto,
-                fontSize: 11.5,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 1),
-            Text(
               formatarMoeda(saldo),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 color: corTexto,
-                fontSize: 14.5,
+                fontSize: 19,
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               faturaInformada > 0
                   ? 'inf ${formatarMoeda(faturaInformada)} · resta ${formatarMoeda(restante)}'
                   : 'resta ${formatarMoeda(restante)}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              softWrap: false,
               style: TextStyle(
-                color: corTexto.withOpacity(faturaInformada > 0 ? 0.85 : 0.7),
-                fontSize: 8.5,
+                color: corTexto.withOpacity(0.85),
+                fontSize: 10.5,
                 fontWeight: FontWeight.w600,
               ),
             ),

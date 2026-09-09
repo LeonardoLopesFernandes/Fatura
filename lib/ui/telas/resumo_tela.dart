@@ -431,8 +431,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                               children: [
                                                 Checkbox(
                                                   value: marcado,
-                                                  activeColor: context.cores.azulClaro,
-                                                  checkColor: context.cores.texto,
+                                                  activeColor: context.cores.sucesso,
+                                                  checkColor: Colors.white,
                                                   materialTapTargetSize:
                                                       MaterialTapTargetSize
                                                           .shrinkWrap,
