@@ -2,20 +2,31 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../models/compra.dart';
 import '../../models/grupo.dart';
+import '../../models/mes.dart';
 import '../../data/icones_compra.dart';
 import '../../util/formatadores.dart';
+
+String rotuloParcelaCompra(Compra c, Mes? mes) {
+  if (c.quantidadeParcelas <= 1) return 'Mensal';
+  final n = mes != null ? c.parcelaNoMes(mes) : 0;
+  if (n > 0) return 'Parcela $n de ${c.quantidadeParcelas}';
+  return '${c.quantidadeParcelas}x';
+}
 
 Future<String?> gerarImagem({
   required String nome,
   required double fatura,
   required List<Grupo> grupos,
+  Mes? mes,
 }) async {
   try {
     const int largura = 1080;
     const double escala = 3.0;
     final int alturaLogica =
-        400 + grupos.fold<int>(0, (s, g) => s + 132 + g.compras.length * 72) + 120;
+        400 + grupos.fold<int>(0, (s, g) => s + 132 + g.compras.length * 100) + 120;
+    // altura por grupo = cardHeight (112 + n*100) + espaçamento 20
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
@@ -153,7 +164,7 @@ Future<String?> gerarImagem({
       final subtotal =
           g.compras.fold(0.0, (s, c) => s + c.valorIndividual);
 
-      final cardHeight = 112.0 + g.compras.length * 72.0;
+      final cardHeight = 112.0 + g.compras.length * 100.0;
       desenharRetangulo(40, y, largura - 80, cardHeight, corBancoBg, 20);
       desenharBordaRetangulo(40, y, largura - 80, cardHeight, corBanco, 20, 2);
 
@@ -174,18 +185,20 @@ Future<String?> gerarImagem({
       double itemY = headerY + 76;
 
       for (final c in g.compras) {
-        desenharRetangulo(60, itemY, 44, 44, Colors.white.withOpacity(0.12), 10);
+        desenharRetangulo(60, itemY + 8, 44, 44, Colors.white.withOpacity(0.12), 10);
         final icone = c.iconeChave != null
             ? IconesCompra.iconePorChave(c.iconeChave)
             : IconesCompra.iconePorDescricao(c.descricao);
-        desenharIconeCompra(icone, 60, itemY);
+        desenharIconeCompra(icone, 60, itemY + 8);
 
-        desenhar(c.descricao, 118, itemY + 10, 20, const Color(0xFFE0E0E0));
+        desenhar(c.descricao, 118, itemY + 8, 20, const Color(0xFFE0E0E0));
+        desenhar(rotuloParcelaCompra(c, mes), 118, itemY + 36, 15,
+            const Color(0xFFA0B0C0));
         desenhar(formatarMoeda(c.valorIndividual),
-            (largura - 60).toDouble(), itemY + 10, 20, Colors.white,
+            (largura - 60).toDouble(), itemY + 28, 20, Colors.white,
             right: true, peso: FontWeight.w600);
 
-        itemY += 72;
+        itemY += 100;
       }
 
       y += cardHeight + 20;

@@ -274,7 +274,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                   style: TextStyle(color: context.cores.textoSuave)),
               onTap: () async {
                 final caminho = await gerarImagem(
-                    nome: nome, fatura: fatura, grupos: grupos);
+                    nome: nome, fatura: fatura, grupos: grupos, mes: mes);
                 if (sheetContext.mounted) {
                   Navigator.of(sheetContext).pop();
                   compartilharArquivo(
@@ -290,7 +290,7 @@ class CompradorDetalheScreen extends StatelessWidget {
                   style: TextStyle(color: context.cores.textoSuave)),
               onTap: () async {
                 final caminho = await gerarPdf(
-                    nome: nome, fatura: fatura, grupos: grupos);
+                    nome: nome, fatura: fatura, grupos: grupos, mes: mes);
                 if (sheetContext.mounted) {
                   Navigator.of(sheetContext).pop();
                   compartilharArquivo(
