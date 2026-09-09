@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../models/banco.dart';
 import '../../models/grupo.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../util/formatadores.dart';
 import '../../util/pix.dart';
 
@@ -29,7 +30,7 @@ void cobrarTotalDevedor(
   }
   showModalBottomSheet(
     context: context,
-    backgroundColor: Superficie,
+    backgroundColor: context.cores.superficie,
     builder: (sheetContext) => Container(
       padding: const EdgeInsets.all(14),
       child: Column(
@@ -38,14 +39,14 @@ void cobrarTotalDevedor(
         children: [
           Text(
               'Cobrar ${formatarMoeda(valorTotal)} via Pix. Qual chave usar?',
-              style: const TextStyle(
-                  color: Branco, fontSize: 15, fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  color: context.cores.texto, fontSize: 15, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ...comChave.map((g) => ListTile(
                 leading: Container(
                   width: 32,
                   height: 32,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
@@ -61,9 +62,9 @@ void cobrarTotalDevedor(
                   ),
                 ),
                 title: Text(g.banco.nome,
-                    style: const TextStyle(color: Branco)),
+                    style: TextStyle(color: context.cores.texto)),
                 subtitle: Text(g.banco.chavePix!.trim(),
-                    style: const TextStyle(color: Branco54, fontSize: 12)),
+                    style: TextStyle(color: context.cores.textoSuave, fontSize: 12)),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
                   mostrarCobrancaPix(context,
@@ -92,7 +93,7 @@ void mostrarCobrancaPix(
   final codigo = gerarPixCopiaECola(chave: chave, valor: valor);
   showModalBottomSheet(
     context: context,
-    backgroundColor: Superficie,
+    backgroundColor: context.cores.superficie,
     isScrollControlled: true,
     builder: (sheetContext) => Container(
       padding: EdgeInsets.only(
@@ -105,17 +106,17 @@ void mostrarCobrancaPix(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Cobrar via Pix',
+          Text('Cobrar via Pix',
               style: TextStyle(
-                  color: Branco, fontSize: 17, fontWeight: FontWeight.bold)),
+                  color: context.cores.texto, fontSize: 17, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Text(banco.nome.toUpperCase(),
-              style: const TextStyle(color: Branco54, fontSize: 13)),
+              style: TextStyle(color: context.cores.textoSuave, fontSize: 13)),
           const SizedBox(height: 8),
           Text(
             formatarMoeda(valor),
-            style: const TextStyle(
-              color: Branco,
+            style: TextStyle(
+              color: context.cores.texto,
               fontSize: 24,
               fontWeight: FontWeight.w900,
             ),
@@ -125,12 +126,12 @@ void mostrarCobrancaPix(
             width: double.infinity,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: SuperficieElevada,
+              color: context.cores.superficieElevada,
               borderRadius: BorderRadius.circular(10),
             ),
             child: SelectableText(
               codigo,
-              style: const TextStyle(color: Branco70, fontSize: 12),
+              style: TextStyle(color: context.cores.textoMedio, fontSize: 12),
             ),
           ),
           const SizedBox(height: 10),
@@ -145,12 +146,12 @@ void mostrarCobrancaPix(
                           content: Text('Código Pix copiado.')),
                     );
                   },
-                  icon: const Icon(Icons.copy, size: 18),
-                  label: const Text('Copiar código',
+                  icon: Icon(Icons.copy, size: 18),
+                  label: Text('Copiar código',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: CorPrimaria,
-                    foregroundColor: Branco,
+                    backgroundColor: context.cores.primaria,
+                    foregroundColor: context.cores.texto,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -161,16 +162,16 @@ void mostrarCobrancaPix(
                 child: OutlinedButton.icon(
                   onPressed: () {
                     Share.share(
-                      'Pix ${banco.nome} ${formatarMoeda(valor)}:\n$codigo',
+                      'Pix ${banco.nome} ${formatarMoeda(valor)}:\n```$codigo```',
                       subject: 'Cobrança Pix',
                     );
                   },
-                  icon: const Icon(Icons.share, size: 18),
-                  label: const Text('Enviar',
+                  icon: Icon(Icons.share, size: 18),
+                  label: Text('Enviar',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Branco,
-                    side: BorderSide(color: Branco.withOpacity(0.3)),
+                    foregroundColor: context.cores.texto,
+                    side: BorderSide(color: context.cores.texto.withOpacity(0.3)),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
 import '../../models/banco.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../util/formatadores.dart';
 
@@ -31,23 +32,23 @@ class BancosScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text('Bancos',
                         style: TextStyle(
-                            color: Branco,
+                            color: context.cores.texto,
                             fontSize: 28,
                             fontWeight: FontWeight.w800)),
                   ),
                   IconButton(
                     onPressed: onConfiguracoes,
-                    icon: const Icon(Icons.settings, color: Branco54),
+                    icon: Icon(Icons.settings, color: context.cores.textoSuave),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Text(
                 'Cada banco possui cor e ícone exclusivos, sem repetições.',
-                style: TextStyle(color: Branco.withOpacity(0.6), fontSize: 14),
+                style: TextStyle(color: context.cores.texto.withOpacity(0.6), fontSize: 14),
               ),
             ],
           ),
@@ -59,7 +60,7 @@ class BancosScreen extends StatelessWidget {
                     'Nenhum banco cadastrado.\nAdicione um novo banco.',
                     textAlign: TextAlign.center,
                     style:
-                        TextStyle(color: Branco.withOpacity(0.54), fontSize: 14),
+                        TextStyle(color: context.cores.texto.withOpacity(0.54), fontSize: 14),
                   ),
                 )
               : ListView.separated(
@@ -80,17 +81,17 @@ class BancosScreen extends StatelessWidget {
                           : DismissDirection.startToEnd,
                       background: Container(
                         decoration: BoxDecoration(
-                          color: VermelhoExcluir.withOpacity(0.18),
+                          color: context.cores.perigoClaro.withOpacity(0.18),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding: const EdgeInsets.only(left: 18),
                         alignment: Alignment.centerLeft,
-                        child: const Row(
+                        child: Row(
                           children: [
-                            Icon(Icons.delete_outline, color: Branco),
+                            Icon(Icons.delete_outline, color: context.cores.texto),
                             SizedBox(width: 6),
                             Text('Remover',
-                                style: TextStyle(color: Branco)),
+                                style: TextStyle(color: context.cores.texto)),
                           ],
                         ),
                       ),
@@ -118,7 +119,7 @@ class BancosScreen extends StatelessWidget {
                               ),
                               if (bloqueado)
                                 Icon(Icons.lock,
-                                    color: Branco.withOpacity(0.24),
+                                    color: context.cores.texto.withOpacity(0.24),
                                     size: 20),
                             ],
                           ),
@@ -139,14 +140,14 @@ class BancosScreen extends StatelessWidget {
                   ? onNovoBanco
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: CorPrimaria,
-                foregroundColor: Branco,
-                disabledForegroundColor: Branco54,
-                disabledBackgroundColor: SuperficieElevada,
+                backgroundColor: context.cores.primaria,
+                foregroundColor: context.cores.texto,
+                disabledForegroundColor: context.cores.textoSuave,
+                disabledBackgroundColor: context.cores.superficieElevada,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.add),
@@ -168,26 +169,26 @@ class BancosScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Superficie,
-        title: const Text('Remover banco?',
-            style: TextStyle(color: Branco)),
+        backgroundColor: context.cores.superficie,
+        title: Text('Remover banco?',
+            style: TextStyle(color: context.cores.texto)),
         content: Text(
           'O banco ${banco.nome} será removido da lista.',
-          style: TextStyle(color: Branco.withOpacity(0.7)),
+          style: TextStyle(color: context.cores.texto.withOpacity(0.7)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child:
-                const Text('Cancelar', style: TextStyle(color: Branco54)),
+                Text('Cancelar', style: TextStyle(color: context.cores.textoSuave)),
           ),
           TextButton(
             onPressed: () {
               vm.removerBanco(banco.id);
               Navigator.of(ctx).pop();
             },
-            child: const Text('Remover',
-                style: TextStyle(color: VermelhoExcluir)),
+            child: Text('Remover',
+                style: TextStyle(color: context.cores.perigoClaro)),
           ),
         ],
       ),

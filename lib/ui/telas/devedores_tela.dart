@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/campo.dart';
 import '../../util/formatadores.dart';
@@ -26,7 +27,7 @@ class _NovoDevedorSheetState extends State<NovoDevedorSheet> {
   Widget build(BuildContext context) {
     final vm = Provider.of<FaturaViewModel>(context, listen: false);
     return Container(
-      color: Superficie,
+      color: context.cores.superficie,
       padding: EdgeInsets.only(
         left: 14,
         right: 14,
@@ -37,13 +38,13 @@ class _NovoDevedorSheetState extends State<NovoDevedorSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Novo Devedor',
+          Text('Novo Devedor',
               style: TextStyle(
-                  color: Branco, fontSize: 20, fontWeight: FontWeight.bold)),
+                  color: context.cores.texto, fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
             controller: _controller,
-            style: const TextStyle(color: Branco, fontSize: 16),
+            style: TextStyle(color: context.cores.texto, fontSize: 16),
             decoration: campoCores('Nome do devedor',
                 hint: 'Ex.: Carlos, Ana…'),
             textCapitalization: TextCapitalization.words,
@@ -56,12 +57,12 @@ class _NovoDevedorSheetState extends State<NovoDevedorSheet> {
             child: ElevatedButton(
               onPressed: () => _confirmar(vm, context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: CorPrimaria,
-                foregroundColor: Branco,
+                backgroundColor: context.cores.primaria,
+                foregroundColor: context.cores.texto,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
-              child: const Text('Adicionar',
+              child: Text('Adicionar',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
           ),
@@ -122,33 +123,33 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
             children: [
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text('Devedores',
                         style: TextStyle(
-                            color: Branco,
+                            color: context.cores.texto,
                             fontSize: 28,
                             fontWeight: FontWeight.w800)),
                   ),
                   IconButton(
                     onPressed: widget.onConfiguracoes,
-                    icon: const Icon(Icons.settings, color: Branco54),
+                    icon: Icon(Icons.settings, color: context.cores.textoSuave),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Text(
                 'Cadastre quem usa o cartão e consulte as faturas individuais.',
-                style: TextStyle(color: Branco.withOpacity(0.6), fontSize: 14),
+                style: TextStyle(color: context.cores.texto.withOpacity(0.6), fontSize: 14),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: _filtro,
                 onChanged: (_) => setState(() {}),
-                style: const TextStyle(color: Branco, fontSize: 16),
+                style: TextStyle(color: context.cores.texto, fontSize: 16),
                 decoration: campoCores('', hint: 'Buscar devedor')
                     .copyWith(
                   prefixIcon:
-                      const Icon(Icons.search, color: CinzaClaro),
+                      Icon(Icons.search, color: context.cores.cinza),
                 ),
               ),
             ],
@@ -163,7 +164,7 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                         : 'Nenhum devedor encontrado.',
                     textAlign: TextAlign.center,
                     style:
-                        TextStyle(color: Branco.withOpacity(0.54), fontSize: 14),
+                        TextStyle(color: context.cores.texto.withOpacity(0.54), fontSize: 14),
                   ),
                 )
               : ListView.separated(
@@ -175,9 +176,9 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                     final comprador = compradores[index];
                     final banco = vm.bancoPrincipalDoComprador(comprador.id);
                     final corBanco =
-                        banco != null ? Color(banco.cor) : CorPrimaria;
+                        banco != null ? Color(banco.cor) : context.cores.primaria;
                     final fundo = Color.alphaBlend(
-                        corBanco.withOpacity(0.4), Superficie);
+                        corBanco.withOpacity(0.4), context.cores.superficie);
                     final totalCompras =
                         vm.comprasDoComprador(comprador.id).length;
                     final fatura = vm.faturaDoComprador(comprador.id);
@@ -201,11 +202,11 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                                 width: 48,
                                 height: 48,
                                 decoration: BoxDecoration(
-                                  color: CorPrimaria,
+                                  color: context.cores.primaria,
                                   borderRadius: BorderRadius.circular(14),
                                 ),
-                                child: const Icon(Icons.person,
-                                    color: Branco, size: 26),
+                                child: Icon(Icons.person,
+                                    color: context.cores.texto, size: 26),
                               ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -215,8 +216,8 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                                   Text(
                                     comprador.nome,
                                     maxLines: 1,
-                                    style: const TextStyle(
-                                      color: Branco,
+                                    style: TextStyle(
+                                      color: context.cores.texto,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -225,7 +226,7 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                                   Text(
                                     '$totalCompras compra(s)${banco != null ? ' · ${banco.nome}' : ''}',
                                     style: TextStyle(
-                                        color: Branco38, fontSize: 12),
+                                        color: context.cores.textoFraco, fontSize: 12),
                                   ),
                                 ],
                               ),
@@ -249,7 +250,7 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
                             ),
                             const SizedBox(width: 8),
                             Icon(Icons.chevron_right,
-                                color: Branco.withOpacity(0.38)),
+                                color: context.cores.texto.withOpacity(0.38)),
                           ],
                         ),
                       ),
@@ -265,12 +266,12 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
             child: ElevatedButton(
               onPressed: () => showModalBottomSheet(
                 context: context,
-                backgroundColor: Superficie,
+                backgroundColor: context.cores.superficie,
                 builder: (_) => const NovoDevedorSheet(),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: CorPrimaria,
-                foregroundColor: Branco,
+                backgroundColor: context.cores.primaria,
+                foregroundColor: context.cores.texto,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),

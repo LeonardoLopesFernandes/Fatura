@@ -6,6 +6,7 @@ import '../../models/compra.dart';
 import '../../models/grupo.dart';
 import '../../data/fatura_view_model.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/elementos.dart';
 import '../../ui/componentes/campo.dart';
 import '../../ui/componentes/compra_item.dart';
@@ -74,11 +75,11 @@ class _ResumoScreenState extends State<ResumoScreen> {
               const Spacer(),
               Container(
                 decoration: BoxDecoration(
-                  color: CorPrimaria,
+                  color: context.cores.primaria,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: CorPrimaria.withOpacity(0.35),
+                      color: context.cores.primaria.withOpacity(0.35),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -88,8 +89,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: Text(
                   formatarMoeda(totalFaturas),
-                  style: const TextStyle(
-                    color: Branco,
+                  style: TextStyle(
+                    color: context.cores.texto,
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
                   ),
@@ -100,10 +101,10 @@ class _ResumoScreenState extends State<ResumoScreen> {
           const SizedBox(height: 4),
           Row(
             children: [
-              const Text(
+              Text(
                 'Restante a receber',
                 style: TextStyle(
-                  color: Branco54,
+                  color: context.cores.textoSuave,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -111,15 +112,15 @@ class _ResumoScreenState extends State<ResumoScreen> {
               const Spacer(),
               Container(
                 decoration: BoxDecoration(
-                  color: Branco,
+                  color: context.cores.texto,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 child: Text(
                   formatarMoeda(totalRestante),
-                  style: const TextStyle(
-                    color: VermelhoBotao,
+                  style: TextStyle(
+                    color: context.cores.perigo,
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
                   ),
@@ -130,10 +131,10 @@ class _ResumoScreenState extends State<ResumoScreen> {
           const SizedBox(height: 6),
           TextField(
             onChanged: (v) => setState(() => _busca = v),
-            style: const TextStyle(color: Branco, fontSize: 15),
+            style: TextStyle(color: context.cores.texto, fontSize: 15),
             decoration: campoCores('', hint: 'Buscar devedor ou compra')
                 .copyWith(
-              prefixIcon: const Icon(Icons.search, color: CinzaClaro),
+              prefixIcon: Icon(Icons.search, color: context.cores.cinza),
             ),
           ),
           const SizedBox(height: 6),
@@ -187,10 +188,10 @@ class _ResumoScreenState extends State<ResumoScreen> {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Branco.withOpacity(0.05),
+                    color: context.cores.texto.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(14),
                     border:
-                        Border.all(color: Branco.withOpacity(0.1)),
+                        Border.all(color: context.cores.texto.withOpacity(0.1)),
                   ),
                   padding: const EdgeInsets.all(8),
                   child: Column(
@@ -204,8 +205,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                             Expanded(
                               child: Text(
                                 comprador.nome.toUpperCase(),
-                                style: const TextStyle(
-                                  color: Branco,
+                                style: TextStyle(
+                                  color: context.cores.texto,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -221,24 +222,24 @@ class _ResumoScreenState extends State<ResumoScreen> {
                               ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.pix,
-                                color: Branco54,
+                                color: context.cores.textoSuave,
                                 size: 20,
                               ),
                             ),
                             const SizedBox(width: 6),
                             Container(
                               decoration: BoxDecoration(
-                                color: Correto,
+                                color: context.cores.sucesso,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 6),
                               child: Text(
                                 formatarMoeda(faturaDoMes),
-                                style: const TextStyle(
-                                  color: Branco,
+                                style: TextStyle(
+                                  color: context.cores.texto,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -304,8 +305,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                         Expanded(
                                           child: Text(
                                             grupo.banco.nome.toUpperCase(),
-                                            style: const TextStyle(
-                                              color: Branco,
+                                            style: TextStyle(
+                                              color: context.cores.texto,
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -315,13 +316,13 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                           Container(
                                             width: 22,
                                             height: 22,
-                                            decoration: const BoxDecoration(
+                                            decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: Correto,
+                                              color: context.cores.sucesso,
                                             ),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.check,
-                                              color: Branco,
+                                              color: context.cores.texto,
                                               size: 14,
                                             ),
                                           ),
@@ -347,8 +348,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                                 : Icons
                                                     .check_box_outline_blank,
                                             color: selecionando
-                                                ? CorPrimaria
-                                                : Branco54,
+                                                ? context.cores.primaria
+                                                : context.cores.textoSuave,
                                             size: 18,
                                           ),
                                         ),
@@ -359,8 +360,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                           children: [
                                             Text(
                                               formatarMoeda(subtotal),
-                                              style: const TextStyle(
-                                                color: Branco,
+                                              style: TextStyle(
+                                                color: context.cores.texto,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -368,8 +369,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                             if (!grupoExpandido)
                                               Text(
                                                 '$qtd compra${qtd != 1 ? 's' : ''}',
-                                                style: const TextStyle(
-                                                  color: Branco54,
+                                                style: TextStyle(
+                                                  color: context.cores.textoSuave,
                                                   fontSize: 10,
                                                 ),
                                               ),
@@ -380,7 +381,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                           grupoExpandido
                                               ? Icons.keyboard_arrow_up
                                               : Icons.keyboard_arrow_down,
-                                          color: Branco54,
+                                          color: context.cores.textoSuave,
                                           size: 16,
                                         ),
                                       ],
@@ -430,8 +431,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                               children: [
                                                 Checkbox(
                                                   value: marcado,
-                                                  activeColor: AzulClaro,
-                                                  checkColor: Branco,
+                                                  activeColor: context.cores.azulClaro,
+                                                  checkColor: context.cores.texto,
                                                   materialTapTargetSize:
                                                       MaterialTapTargetSize
                                                           .shrinkWrap,
@@ -461,8 +462,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                               children: [
                                                 Text(
                                                   '${marcados.length} selecionada(s)',
-                                                  style: const TextStyle(
-                                                    color: Branco54,
+                                                  style: TextStyle(
+                                                    color: context.cores.textoSuave,
                                                     fontSize: 11,
                                                   ),
                                                 ),
@@ -474,19 +475,19 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                                     setState(() => _selecao
                                                         .remove(chaveGrupo));
                                                   },
-                                                  child: const Text(
+                                                  child: Text(
                                                       'Marcar pagas',
                                                       style: TextStyle(
                                                           color:
-                                                              AzulClaro)),
+                                                              context.cores.azulClaro)),
                                                 ),
                                                 TextButton(
                                                   onPressed: () => setState(
                                                       () => _selecao.remove(
                                                           chaveGrupo)),
-                                                  child: const Text('Limpar',
+                                                  child: Text('Limpar',
                                                       style: TextStyle(
-                                                          color: Branco54)),
+                                                          color: context.cores.textoSuave)),
                                                 ),
                                               ],
                                             ),
@@ -501,8 +502,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                       if (grupos.isEmpty)
                         Text(
                           'Sem compras em ${rotuloMesLongo(mes)}.',
-                          style: const TextStyle(
-                            color: Branco54,
+                          style: TextStyle(
+                            color: context.cores.textoSuave,
                             fontSize: 13,
                           ),
                         ),

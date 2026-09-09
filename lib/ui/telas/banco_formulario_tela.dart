@@ -11,6 +11,7 @@ import '../../data/catalogo_icones.dart';
 import '../../models/banco.dart';
 import '../../models/mes.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/campo.dart';
 import '../../util/formatadores.dart';
 import '../../util/currency_input_formatter.dart';
@@ -151,9 +152,9 @@ class _BancoFormularioState extends State<BancoFormulario> {
       final escolhida = await showDialog<Color>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-          backgroundColor: Superficie,
-          title: const Text('Cor personalizada',
-              style: TextStyle(color: Branco)),
+          backgroundColor: context.cores.superficie,
+          title: Text('Cor personalizada',
+              style: TextStyle(color: context.cores.texto)),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: temp,
@@ -167,12 +168,12 @@ class _BancoFormularioState extends State<BancoFormulario> {
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
               child:
-                  const Text('Cancelar', style: TextStyle(color: Branco54)),
+                  Text('Cancelar', style: TextStyle(color: context.cores.textoSuave)),
             ),
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(temp),
-          child: const Text('Usar cor',
-                style: TextStyle(color: AzulClaro)),
+          child: Text('Usar cor',
+                style: TextStyle(color: context.cores.azulClaro)),
             ),
           ],
         ),
@@ -233,18 +234,18 @@ class _BancoFormularioState extends State<BancoFormulario> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: FundoInicio,
+        backgroundColor: context.cores.gradienteA,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: widget.onVoltar,
-          icon: const Icon(Icons.arrow_back, color: Branco),
+          icon: Icon(Icons.arrow_back, color: context.cores.texto),
         ),
         title: Text(
           _editando ? 'Editar ${widget.bancoExistente!.nome}' : 'Novo Banco',
           maxLines: 1,
-          style: const TextStyle(
-            color: Branco,
+          style: TextStyle(
+            color: context.cores.texto,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -264,7 +265,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     TextField(
                       controller: _nome,
                       focusNode: _focoNome,
-                      style: const TextStyle(color: Branco, fontSize: 16),
+                      style: TextStyle(color: context.cores.texto, fontSize: 16),
                       textCapitalization: TextCapitalization.words,
                       decoration: campoCores(''),
                     ),
@@ -272,9 +273,9 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     focusNode: _focoNome,
                   ),
                   const SizedBox(height: 12),
-                  const Text('Logo do banco',
+                  Text('Logo do banco',
                       style: TextStyle(
-                        color: Branco70,
+                        color: context.cores.textoMedio,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       )),
@@ -292,15 +293,15 @@ class _BancoFormularioState extends State<BancoFormulario> {
                         IconButton(
                           onPressed: () =>
                               setState(() => _imagemSelecionada = null),
-                          icon: const Icon(Icons.close, color: Branco54),
+                          icon: Icon(Icons.close, color: context.cores.textoSuave),
                         ),
                         const SizedBox(width: 4),
                       ],
                       OutlinedButton(
                         onPressed: _escolherImagem,
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Branco,
-                          side: BorderSide(color: Branco.withOpacity(0.3)),
+                          foregroundColor: context.cores.texto,
+                          side: BorderSide(color: context.cores.texto.withOpacity(0.3)),
                         ),
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -315,17 +316,17 @@ class _BancoFormularioState extends State<BancoFormulario> {
                   ),
                   if (!temImagem) ...[
                     const SizedBox(height: 12),
-                    const Text('Ícone (sem repetições)',
+                    Text('Ícone (sem repetições)',
                         style: TextStyle(
-                          color: Branco70,
+                          color: context.cores.textoMedio,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         )),
                     const SizedBox(height: 6),
                     if (_iconesDisponiveis.isEmpty)
-                      const Text(
+                      Text(
                           'Todos os ícones disponíveis já foram usados.',
-                          style: TextStyle(color: Branco54, fontSize: 13))
+                          style: TextStyle(color: context.cores.textoSuave, fontSize: 13))
                     else
                       Wrap(
                         spacing: 6,
@@ -346,13 +347,13 @@ class _BancoFormularioState extends State<BancoFormulario> {
                                     height: 48,
                                     decoration: BoxDecoration(
                                       color: selecionado
-                                          ? CorPrimaria
-                                          : SuperficieElevada,
+                                          ? context.cores.primaria
+                                          : context.cores.superficieElevada,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: selecionado
-                                            ? CorPrimaria
-                                            : Branco.withOpacity(0.12),
+                                            ? context.cores.primaria
+                                            : context.cores.texto.withOpacity(0.12),
                                         width: 1.5,
                                       ),
                                     ),
@@ -360,8 +361,8 @@ class _BancoFormularioState extends State<BancoFormulario> {
                                       child: icone != null
                                           ? Icon(icone,
                                               color: selecionado
-                                                  ? Branco
-                                                  : Branco70,
+                                                  ? context.cores.texto
+                                                  : context.cores.textoMedio,
                                               size: 22)
                                           : null,
                                     ),
@@ -372,7 +373,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: selecionado ? Branco : Branco54,
+                                      color: selecionado ? context.cores.texto : context.cores.textoSuave,
                                       fontSize: 10,
                                     ),
                                   ),
@@ -389,7 +390,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     TextField(
                       controller: _pix,
                       focusNode: _focoPix,
-                      style: const TextStyle(color: Branco, fontSize: 16),
+                      style: TextStyle(color: context.cores.texto, fontSize: 16),
                       keyboardType: TextInputType.text,
                       decoration: campoCores(''),
                     ),
@@ -402,7 +403,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     TextField(
                       controller: _vencimento,
                       focusNode: _focoVencimento,
-                      style: const TextStyle(color: Branco, fontSize: 16),
+                      style: TextStyle(color: context.cores.texto, fontSize: 16),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly
@@ -413,17 +414,17 @@ class _BancoFormularioState extends State<BancoFormulario> {
                     focusNode: _focoVencimento,
                   ),
                   const SizedBox(height: 12),
-                  const Text('Cor característica',
+                  Text('Cor característica',
                       style: TextStyle(
-                        color: Branco70,
+                        color: context.cores.textoMedio,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       )),
                   const SizedBox(height: 6),
                   if (_coresDisponiveis.isEmpty)
-                    const Text(
+                    Text(
                         'Todas as cores disponíveis já foram usadas.',
-                        style: TextStyle(color: Branco54, fontSize: 13))
+                        style: TextStyle(color: context.cores.textoSuave, fontSize: 13))
                   else
                     Wrap(
                       spacing: 8,
@@ -439,14 +440,14 @@ class _BancoFormularioState extends State<BancoFormulario> {
                               color: Color(cor),
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: selecionado ? Branco : Colors.transparent,
+                                color: selecionado ? context.cores.texto : Colors.transparent,
                                 width: 3,
                               ),
                             ),
                             child: selecionado
-                                ? const Center(
+                                ? Center(
                                     child: Icon(Icons.check,
-                                        color: Branco, size: 20))
+                                        color: context.cores.texto, size: 20))
                                 : null,
                           ),
                         );
@@ -462,13 +463,13 @@ class _BancoFormularioState extends State<BancoFormulario> {
                           color: Color(_corSelecionada),
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: Branco.withOpacity(0.3)),
+                              color: context.cores.texto.withOpacity(0.3)),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Text('Cor atual',
+                      Text('Cor atual',
                           style: TextStyle(
-                              color: Branco70, fontSize: 13)),
+                              color: context.cores.textoMedio, fontSize: 13)),
                       const Spacer(),
                       if (temImagem)
                         TextButton.icon(
@@ -476,34 +477,34 @@ class _BancoFormularioState extends State<BancoFormulario> {
                               ? null
                               : _usarCorDoLogo,
                           icon: _extraindoCor
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 14,
                                   height: 14,
                                   child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: AzulClaro),
+                                      color: context.cores.azulClaro),
                                 )
-                              : const Icon(Icons.auto_awesome,
-                                  color: AzulClaro, size: 16),
-                          label: const Text('Cor do logo',
+                              : Icon(Icons.auto_awesome,
+                                  color: context.cores.azulClaro, size: 16),
+                          label: Text('Cor do logo',
                               style: TextStyle(
-                                  color: AzulClaro, fontSize: 13)),
+                                  color: context.cores.azulClaro, fontSize: 13)),
                         ),
                         TextButton.icon(
                           onPressed: _abrirPickerCor,
-                          icon: const Icon(Icons.palette,
-                              color: AzulClaro, size: 16),
-                          label: const Text('Personalizada',
+                          icon: Icon(Icons.palette,
+                              color: context.cores.azulClaro, size: 16),
+                          label: Text('Personalizada',
                               style: TextStyle(
-                                  color: AzulClaro, fontSize: 13)),
+                                  color: context.cores.azulClaro, fontSize: 13)),
                       ),
                     ],
                   ),
                   if (_editando) ...[
                     const SizedBox(height: 16),
-                    const Text('FATURA DO MÊS ATUAL',
+                    Text('FATURA DO MÊS ATUAL',
                         style: TextStyle(
-                          color: TituloAzul,
+                          color: context.cores.tituloSecao,
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
@@ -514,7 +515,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                       TextField(
                         controller: _fatura,
                         focusNode: _focoFatura,
-                        style: const TextStyle(color: Branco, fontSize: 16),
+                        style: TextStyle(color: context.cores.texto, fontSize: 16),
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
@@ -541,7 +542,7 @@ class _BancoFormularioState extends State<BancoFormulario> {
                         informada > 0
                             ? 'Devedores: ${formatarMoeda(devedores)} · resta: ${formatarMoeda(restante)}'
                             : 'Compras dos devedores: ${formatarMoeda(devedores)}',
-                        style: const TextStyle(color: Branco54, fontSize: 12),
+                        style: TextStyle(color: context.cores.textoSuave, fontSize: 12),
                       );
                     }),
                   ],
@@ -554,23 +555,23 @@ class _BancoFormularioState extends State<BancoFormulario> {
                           ? null
                           : _salvar,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: CorPrimaria,
-                        foregroundColor: Branco,
-                        disabledForegroundColor: Branco54,
-                        disabledBackgroundColor: SuperficieElevada,
+                        backgroundColor: context.cores.primaria,
+                        foregroundColor: context.cores.texto,
+                        disabledForegroundColor: context.cores.textoSuave,
+                        disabledBackgroundColor: context.cores.superficieElevada,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14)),
                       ),
                       child: Text(
                           _editando ? 'Salvar Alterações' : 'Salvar Banco',
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),
                   if (_aviso != null) ...[
                     const SizedBox(height: 8),
                     Text(_aviso!,
-                        style: TextStyle(color: Branco70, fontSize: 13)),
+                        style: TextStyle(color: context.cores.textoMedio, fontSize: 13)),
                   ],
                 ],
               ),
@@ -604,7 +605,7 @@ class EditarBancoScreen extends StatelessWidget {
     if (banco == null) {
       WidgetsBinding.instance
           .addPostFrameCallback((_) => onVoltar());
-      return const Scaffold(backgroundColor: FundoInicio);
+      return Scaffold(backgroundColor: context.cores.gradienteA);
     }
     return BancoFormulario(bancoExistente: banco, onVoltar: onVoltar);
   }

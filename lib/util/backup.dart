@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import '../ui/tema.dart';
+import '../ui/temas.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import '../data/fatura_view_model.dart';
@@ -32,21 +33,21 @@ Future<void> importarBackup(
   final confirmar = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Superficie,
-      title: const Text('Importar backup?',
-          style: TextStyle(color: Branco)),
-      content: const Text(
+      backgroundColor: context.cores.superficie,
+      title: Text('Importar backup?',
+          style: TextStyle(color: context.cores.texto)),
+      content: Text(
         'Isso substituirá todos os dados atuais pelos do arquivo de backup.',
-        style: TextStyle(color: Branco54),
+        style: TextStyle(color: context.cores.textoSuave),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(false),
-          child: const Text('Cancelar', style: TextStyle(color: Branco54)),
+          child: Text('Cancelar', style: TextStyle(color: context.cores.textoSuave)),
         ),
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(true),
-          child: const Text('Importar', style: TextStyle(color: AzulClaro)),
+          child: Text('Importar', style: TextStyle(color: context.cores.azulClaro)),
         ),
       ],
     ),

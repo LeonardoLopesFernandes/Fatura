@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/elementos.dart';
 import '../../ui/telas/resumo_tela.dart';
 import '../../ui/telas/devedores_tela.dart';
@@ -85,32 +86,32 @@ class _AppNavegacaoState extends State<AppNavegacao> {
       final sair = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          backgroundColor: Superficie,
-          title: const Text('Sair do Faturas?',
-              style: TextStyle(color: Branco)),
-          content: const Text('Deseja sair do aplicativo',
-              style: TextStyle(color: Branco54)),
+          backgroundColor: context.cores.superficie,
+          title: Text('Sair do Faturas?',
+              style: TextStyle(color: context.cores.texto)),
+          content: Text('Deseja sair do aplicativo',
+              style: TextStyle(color: context.cores.textoSuave)),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.of(ctx).pop(false),
               style: ElevatedButton.styleFrom(
-                backgroundColor: VermelhoBotao,
-                foregroundColor: Branco,
+                backgroundColor: context.cores.perigo,
+                foregroundColor: context.cores.texto,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text('NÃO',
+              child: Text('NÃO',
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(ctx).pop(true),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Correto,
-                foregroundColor: Branco,
+                backgroundColor: context.cores.sucesso,
+                foregroundColor: context.cores.texto,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text('SIM',
+              child: Text('SIM',
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
@@ -235,14 +236,14 @@ class _AppNavegacaoState extends State<AppNavegacao> {
         backgroundColor: Colors.transparent,
         appBar: _rotaAtual == 'resumo'
             ? AppBar(
-                backgroundColor: FundoInicio,
+                backgroundColor: context.cores.gradienteA,
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 centerTitle: true,
                 title: Text(
                   _tituloAba,
-                  style: const TextStyle(
-                    color: Branco,
+                  style: TextStyle(
+                    color: context.cores.texto,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -251,11 +252,11 @@ class _AppNavegacaoState extends State<AppNavegacao> {
                   IconButton(
                     onPressed: () => _push('estatisticas'),
                     icon:
-                        const Icon(Icons.bar_chart, color: Branco54),
+                        Icon(Icons.bar_chart, color: context.cores.textoSuave),
                   ),
                   IconButton(
                     onPressed: () => _push('configuracoes'),
-                    icon: const Icon(Icons.settings, color: Branco54),
+                    icon: Icon(Icons.settings, color: context.cores.textoSuave),
                   ),
                 ],
               )
@@ -276,32 +277,32 @@ class _AppNavegacaoState extends State<AppNavegacao> {
                   labelTextStyle: WidgetStateProperty.resolveWith(
                     (states) => TextStyle(
                       color: states.contains(WidgetState.selected)
-                          ? Branco
-                          : Branco54,
+                          ? context.cores.texto
+                          : context.cores.textoSuave,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
                 child: NavigationBar(
-                  backgroundColor: NavBar,
-                  indicatorColor: CorPrimaria.withOpacity(0.25),
+                  backgroundColor: context.cores.navBar,
+                  indicatorColor: context.cores.primaria.withOpacity(0.25),
                   selectedIndex: _indice,
                   onDestinationSelected: _irParaAba,
-                  destinations: const [
+                  destinations: [
                     NavigationDestination(
-                      icon: Icon(Icons.dashboard_outlined, color: Branco54),
-                      selectedIcon: Icon(Icons.dashboard, color: Branco),
+                      icon: Icon(Icons.dashboard_outlined, color: context.cores.textoSuave),
+                      selectedIcon: Icon(Icons.dashboard, color: context.cores.texto),
                       label: 'Resumo',
                     ),
                     NavigationDestination(
-                      icon: Icon(Icons.people_outlined, color: Branco54),
-                      selectedIcon: Icon(Icons.people, color: Branco),
+                      icon: Icon(Icons.people_outlined, color: context.cores.textoSuave),
+                      selectedIcon: Icon(Icons.people, color: context.cores.texto),
                       label: 'Devedores',
                     ),
                     NavigationDestination(
-                      icon: Icon(Icons.account_balance_outlined, color: Branco54),
-                      selectedIcon: Icon(Icons.account_balance, color: Branco),
+                      icon: Icon(Icons.account_balance_outlined, color: context.cores.textoSuave),
+                      selectedIcon: Icon(Icons.account_balance, color: context.cores.texto),
                       label: 'Bancos',
                     ),
                   ],

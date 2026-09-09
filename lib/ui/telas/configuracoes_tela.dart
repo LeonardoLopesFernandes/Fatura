@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../util/backup.dart';
 import '../../util/formatadores.dart';
 import '../../util/notificacoes.dart';
@@ -18,16 +19,16 @@ class ConfiguracoesScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: FundoInicio,
+        backgroundColor: context.cores.gradienteA,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back, color: Branco54),
+          icon: Icon(Icons.arrow_back, color: context.cores.textoSuave),
         ),
-        title: const Text('Configurações',
+        title: Text('Configurações',
             style: TextStyle(
-                color: Branco, fontSize: 18, fontWeight: FontWeight.bold)),
+                color: context.cores.texto, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: AppBackground(
         child: ListView(
@@ -50,22 +51,83 @@ class ConfiguracoesScreen extends StatelessWidget {
               icone: Icons.delete_forever,
               titulo: 'Limpar dados',
               subtitulo: 'Remove todos os bancos, devedores e compras',
-              cor: VermelhoExcluir,
+              cor: context.cores.perigoClaro,
               onTap: () => _confirmarLimpar(context, vm),
             ),
+            _Secao('Aparência'),
+            ...rotulosTemas.entries.map((e) {
+              final nome = e.key;
+              final esquema = esquemas[nome]!;
+              final ativo =
+                  context.watch<TemaProvider>().nome == nome;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: context.cores.superficie.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: ativo
+                        ? esquema.primaria
+                        : context.cores.texto.withOpacity(0.08),
+                    width: ativo ? 2 : 1,
+                  ),
+                ),
+                child: ListTile(
+                  leading: Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: esquema.superficieElevada,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: esquema.texto.withOpacity(0.2)),
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: esquema.primaria,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ),
+                  title: Text('Tema ${e.value}',
+                      style: TextStyle(
+                          color: context.cores.texto, fontSize: 15)),
+                  subtitle: Text(
+                    nome == 'amoled'
+                        ? 'Preto puro, ideal para telas AMOLED'
+                        : nome == 'claro'
+                            ? 'Fundo claro para ambientes iluminados'
+                            : 'Fundo escuro padrão',
+                    style: TextStyle(
+                        color: context.cores.textoSuave, fontSize: 12),
+                  ),
+                  trailing: ativo
+                      ? Icon(Icons.check_circle,
+                          color: esquema.primaria)
+                      : null,
+                  onTap: () => context
+                      .read<TemaProvider>()
+                      .definir(nome),
+                ),
+              );
+            }),
             _Secao('Lembretes'),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               secondary:
-                  const Icon(Icons.notifications_active, color: Branco),
-              title: const Text('Lembretes de fatura',
-                  style: TextStyle(color: Branco, fontSize: 15)),
-              subtitle: const Text(
+                  Icon(Icons.notifications_active, color: context.cores.texto),
+              title: Text('Lembretes de fatura',
+                  style: TextStyle(color: context.cores.texto, fontSize: 15)),
+              subtitle: Text(
                 'Aviso diário e alerta de vencimento dos bancos',
-                style: TextStyle(color: Branco54, fontSize: 12),
+                style: TextStyle(color: context.cores.textoSuave, fontSize: 12),
               ),
               value: vm.lembretesAtivos,
-              activeColor: CorPrimaria,
+              activeColor: context.cores.primaria,
               onChanged: (valor) {
                 vm.definirLembretesAtivos(valor);
                 agendarLembretes(valor);
@@ -73,9 +135,9 @@ class ConfiguracoesScreen extends StatelessWidget {
             ),
             _Secao('Contas fixas'),
             if (vm.fixas.isEmpty)
-              const Text(
+              Text(
                 'Nenhuma conta fixa cadastrada.\nAtive "Repetir todo mês" na nova compra.',
-                style: TextStyle(color: Branco54, fontSize: 13),
+                style: TextStyle(color: context.cores.textoSuave, fontSize: 13),
               )
             else
               ...vm.fixas.map((fixa) {
@@ -83,7 +145,7 @@ class ConfiguracoesScreen extends StatelessWidget {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
-                    color: Superficie.withOpacity(0.5),
+                    color: context.cores.superficie.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: ListTile(
@@ -91,21 +153,21 @@ class ConfiguracoesScreen extends StatelessWidget {
                       Icons.repeat,
                       color: banco != null
                           ? Color(banco.cor)
-                          : Branco,
+                          : context.cores.texto,
                     ),
                     title: Text(fixa.descricao,
                         style:
-                            const TextStyle(color: Branco, fontSize: 15)),
+                            TextStyle(color: context.cores.texto, fontSize: 15)),
                     subtitle: Text(
                       '${banco?.nome ?? ''} · ${formatarMoeda(fixa.valorIndividual)}/mês',
-                      style: const TextStyle(
-                          color: Branco54, fontSize: 12),
+                      style: TextStyle(
+                          color: context.cores.textoSuave, fontSize: 12),
                     ),
                     trailing: IconButton(
                       onPressed: () => _confirmarRemoverFixa(
                           context, vm, fixa.id, fixa.descricao),
-                      icon: const Icon(Icons.delete_outline,
-                          color: VermelhoExcluir),
+                      icon: Icon(Icons.delete_outline,
+                          color: context.cores.perigoClaro),
                     ),
                   ),
                 );
@@ -132,25 +194,25 @@ class ConfiguracoesScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Superficie,
-        title: const Text('Remover conta fixa?',
-            style: TextStyle(color: Branco)),
+        backgroundColor: context.cores.superficie,
+        title: Text('Remover conta fixa?',
+            style: TextStyle(color: context.cores.texto)),
         content: Text(
           '"$descricao" não será mais lançada nos próximos meses. Lançamentos futuros pendentes serão apagados.',
-          style: const TextStyle(color: Branco54),
+          style: TextStyle(color: context.cores.textoSuave),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancelar', style: TextStyle(color: Branco54)),
+            child: Text('Cancelar', style: TextStyle(color: context.cores.textoSuave)),
           ),
           TextButton(
             onPressed: () {
               vm.removerFixa(id);
               Navigator.of(ctx).pop();
             },
-            child: const Text('Remover',
-                style: TextStyle(color: VermelhoExcluir)),
+            child: Text('Remover',
+                style: TextStyle(color: context.cores.perigoClaro)),
           ),
         ],
       ),
@@ -161,25 +223,25 @@ class ConfiguracoesScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Superficie,
-        title: const Text('Limpar todos os dados?',
-            style: TextStyle(color: Branco)),
-        content: const Text(
+        backgroundColor: context.cores.superficie,
+        title: Text('Limpar todos os dados?',
+            style: TextStyle(color: context.cores.texto)),
+        content: Text(
           'Esta ação removerá permanentemente bancos, devedores e compras.',
-          style: TextStyle(color: Branco54),
+          style: TextStyle(color: context.cores.textoSuave),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancelar', style: TextStyle(color: Branco54)),
+            child: Text('Cancelar', style: TextStyle(color: context.cores.textoSuave)),
           ),
           TextButton(
             onPressed: () {
               vm.limparTudo();
               Navigator.of(ctx).pop();
             },
-            child: const Text('Limpar',
-                style: TextStyle(color: VermelhoExcluir)),
+            child: Text('Limpar',
+                style: TextStyle(color: context.cores.perigoClaro)),
           ),
         ],
       ),
@@ -191,29 +253,29 @@ class ConfiguracoesScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Superficie,
-        title: const Text('Faturas',
-            style: TextStyle(color: Branco)),
+        backgroundColor: context.cores.superficie,
+        title: Text('Faturas',
+            style: TextStyle(color: context.cores.texto)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Controle de faturas compartilhadas entre devedores.',
-              style: TextStyle(color: Branco54),
+              style: TextStyle(color: context.cores.textoSuave),
             ),
             const SizedBox(height: 8),
-            const Text('Versão: $kVersaoApp',
-                style: TextStyle(color: Branco)),
+            Text('Versão: $kVersaoApp',
+                style: TextStyle(color: context.cores.texto)),
             const SizedBox(height: 4),
-            const Text('Desenvolvedor: Leonardo Lopes',
-                style: TextStyle(color: Branco)),
+            Text('Desenvolvedor: Leonardo Lopes',
+                style: TextStyle(color: context.cores.texto)),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('OK', style: TextStyle(color: CorPrimaria)),
+            child: Text('OK', style: TextStyle(color: context.cores.primaria)),
           ),
         ],
       ),
@@ -231,8 +293,8 @@ class _Secao extends StatelessWidget {
       padding: const EdgeInsets.only(top: 12, bottom: 6),
       child: Text(
         titulo.toUpperCase(),
-        style: const TextStyle(
-          color: TituloAzul,
+        style: TextStyle(
+          color: context.cores.tituloSecao,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
@@ -262,17 +324,17 @@ class _Item extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Superficie.withOpacity(0.5),
+        color: context.cores.superficie.withOpacity(0.5),
         borderRadius: BorderRadius.circular(14),
       ),
       child: ListTile(
-        leading: Icon(icone, color: cor ?? Branco),
+        leading: Icon(icone, color: cor ?? context.cores.texto),
         title: Text(titulo,
-            style: TextStyle(color: cor ?? Branco, fontSize: 15)),
+            style: TextStyle(color: cor ?? context.cores.texto, fontSize: 15)),
         subtitle: Text(subtitulo,
-            style: const TextStyle(color: Branco54, fontSize: 12)),
-        trailing: const Icon(Icons.chevron_right,
-            color: Branco54),
+            style: TextStyle(color: context.cores.textoSuave, fontSize: 12)),
+        trailing: Icon(Icons.chevron_right,
+            color: context.cores.textoSuave),
         onTap: onTap,
       ),
     );

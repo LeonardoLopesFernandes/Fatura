@@ -5,6 +5,7 @@ import '../../models/banco.dart';
 import '../../data/catalogo_icones.dart';
 import '../../data/recursos_banco.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 
 class BancoLogo extends StatelessWidget {
   final Banco banco;
@@ -67,7 +68,7 @@ class BancoLogo extends StatelessWidget {
       width: tamanho,
       height: tamanho,
       decoration: BoxDecoration(
-        color: Branco,
+        color: context.cores.texto,
         borderRadius: BorderRadius.circular(raio),
         boxShadow: [
           BoxShadow(

@@ -5,6 +5,7 @@ import '../../data/fatura_view_model.dart';
 import '../../models/mes.dart';
 import '../../models/banco.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/campo.dart';
 import '../../util/formatadores.dart';
@@ -53,7 +54,7 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
 
     if (banco == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) => widget.onVoltar());
-      return const Scaffold(backgroundColor: FundoInicio);
+      return Scaffold(backgroundColor: context.cores.gradienteA);
     }
 
     final faturaAtual =
@@ -69,16 +70,16 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: FundoInicio,
+        backgroundColor: context.cores.gradienteA,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: widget.onVoltar,
-          icon: const Icon(Icons.close, color: Branco54),
+          icon: Icon(Icons.close, color: context.cores.textoSuave),
         ),
         title: Text('Fatura do ${banco.nome}',
-            style: const TextStyle(
-                color: Branco, fontSize: 18, fontWeight: FontWeight.bold)),
+            style: TextStyle(
+                color: context.cores.texto, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(14),
@@ -91,7 +92,7 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
               TextField(
                 controller: _valor,
                 focusNode: _focoValor,
-                style: const TextStyle(color: Branco, fontSize: 16),
+                style: TextStyle(color: context.cores.texto, fontSize: 16),
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
@@ -105,23 +106,23 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
             const SizedBox(height: 8),
             Text(
               'Compras dos devedores no mês: ${formatarMoeda(devedores)}',
-              style: const TextStyle(color: Branco54, fontSize: 12),
+              style: TextStyle(color: context.cores.textoSuave, fontSize: 12),
             ),
             if (faturaAtual > 0)
               Text(
                 'Restante para completar a fatura: ${formatarMoeda(restante)}',
-                style: const TextStyle(
-                    color: Correto, fontSize: 13, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: context.cores.sucesso, fontSize: 13, fontWeight: FontWeight.bold),
               )
             else
               Text(
                 'Restante a receber dos devedores: ${formatarMoeda(restante)}',
-                style: const TextStyle(color: Branco54, fontSize: 12),
+                style: TextStyle(color: context.cores.textoSuave, fontSize: 12),
               ),
             if (faturaAtual > 0)
               Text(
                 'Fatura informada: ${formatarMoeda(faturaAtual)}',
-                style: TextStyle(color: Branco.withOpacity(0.38), fontSize: 12),
+                style: TextStyle(color: context.cores.texto.withOpacity(0.38), fontSize: 12),
               ),
             const SizedBox(height: 4),
             if (faturaAtual > 0)
@@ -131,13 +132,13 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
                       widget.bancoId, widget.mes, 0.0);
                   widget.onVoltar();
                 },
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.delete, color: Branco, size: 18),
+                    Icon(Icons.delete, color: context.cores.texto, size: 18),
                     SizedBox(width: 6),
                     Text('Limpar fatura',
-                        style: TextStyle(color: Branco)),
+                        style: TextStyle(color: context.cores.texto)),
                   ],
                 ),
               ),
@@ -154,12 +155,12 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
                   widget.onVoltar();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: CorPrimaria,
-                  foregroundColor: Branco,
+                  backgroundColor: context.cores.primaria,
+                  foregroundColor: context.cores.texto,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('Salvar Fatura',
+                child: Text('Salvar Fatura',
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),

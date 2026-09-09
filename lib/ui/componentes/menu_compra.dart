@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/fatura_view_model.dart';
 import '../../models/compra.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/editar_compra_dialog.dart';
 import '../../util/formatadores.dart';
 
@@ -14,13 +15,13 @@ void mostrarMenuCompra(
 }) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: Superficie,
+    backgroundColor: context.cores.superficie,
     builder: (_) => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(
-          leading: const Icon(Icons.edit, color: Branco),
-          title: const Text('Editar', style: TextStyle(color: Branco)),
+          leading: Icon(Icons.edit, color: context.cores.texto),
+          title: Text('Editar', style: TextStyle(color: context.cores.texto)),
           onTap: () {
             Navigator.of(context).pop();
             showDialog(
@@ -30,10 +31,10 @@ void mostrarMenuCompra(
           },
         ),
         ListTile(
-          leading: const Icon(Icons.check_circle_outline, color: Correto),
+          leading: Icon(Icons.check_circle_outline, color: context.cores.sucesso),
           title: Text(
             jaPaga ? 'Marcar como não paga' : 'Marcar como paga',
-            style: const TextStyle(color: Branco),
+            style: TextStyle(color: context.cores.texto),
           ),
           onTap: () {
             Navigator.of(context).pop();
@@ -41,34 +42,34 @@ void mostrarMenuCompra(
           },
         ),
         ListTile(
-          leading: const Icon(Icons.delete_outline, color: VermelhoExcluir),
-          title: const Text('Excluir',
-              style: TextStyle(color: VermelhoExcluir)),
+          leading: Icon(Icons.delete_outline, color: context.cores.perigoClaro),
+          title: Text('Excluir',
+              style: TextStyle(color: context.cores.perigoClaro)),
           onTap: () {
             Navigator.of(context).pop();
             showDialog(
               context: context,
               builder: (ctx) => AlertDialog(
-                backgroundColor: Superficie,
-                title: const Text('Excluir compra?',
-                    style: TextStyle(color: Branco)),
+                backgroundColor: context.cores.superficie,
+                title: Text('Excluir compra?',
+                    style: TextStyle(color: context.cores.texto)),
                 content: Text(
                   '${compra.descricao}\n${formatarMoeda(compra.valorTotal)} será removida da fatura.',
-                  style: TextStyle(color: Branco.withOpacity(0.7)),
+                  style: TextStyle(color: context.cores.texto.withOpacity(0.7)),
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(),
-                    child: const Text('Cancelar',
-                        style: TextStyle(color: Branco54)),
+                    child: Text('Cancelar',
+                        style: TextStyle(color: context.cores.textoSuave)),
                   ),
                   TextButton(
                     onPressed: () {
                       vm.removerCompra(compra.id);
                       Navigator.of(ctx).pop();
                     },
-                    child: const Text('Excluir',
-                        style: TextStyle(color: VermelhoExcluir)),
+                    child: Text('Excluir',
+                        style: TextStyle(color: context.cores.perigoClaro)),
                   ),
                 ],
               ),

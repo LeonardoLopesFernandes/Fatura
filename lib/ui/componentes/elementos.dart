@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/mes.dart';
 import '../../util/formatadores.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 
 class TituloSecao extends StatelessWidget {
   final String titulo;
@@ -11,8 +12,8 @@ class TituloSecao extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       titulo.toUpperCase(),
-      style: const TextStyle(
-        color: TituloAzul,
+      style: TextStyle(
+        color: context.cores.tituloSecao,
         fontSize: 12,
         fontWeight: FontWeight.bold,
         letterSpacing: 1.2,
@@ -30,15 +31,15 @@ class MensagemVazia extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Branco.withOpacity(0.04),
+        color: context.cores.texto.withOpacity(0.04),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Branco.withOpacity(0.08)),
+        border: Border.all(color: context.cores.texto.withOpacity(0.08)),
       ),
       padding: const EdgeInsets.all(16),
       child: Text(
         texto,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Branco.withOpacity(0.54), fontSize: 14),
+        style: TextStyle(color: context.cores.texto.withOpacity(0.54), fontSize: 14),
       ),
     );
   }
@@ -57,10 +58,10 @@ class BotaoMes extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: SuperficieElevada,
+          color: context.cores.superficieElevada,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icone, color: Branco),
+        child: Icon(icone, color: context.cores.texto),
       ),
     );
   }
@@ -78,9 +79,9 @@ class CabecalhoMes extends StatelessWidget {
     const corDestaque = Color(0xFF60A5FA);
     return Container(
       decoration: BoxDecoration(
-        color: Superficie.withOpacity(0.55),
+        color: context.cores.superficie.withOpacity(0.55),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Branco.withOpacity(0.08)),
+        border: Border.all(color: context.cores.texto.withOpacity(0.08)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
       child: Row(
@@ -93,7 +94,7 @@ class CabecalhoMes extends StatelessWidget {
                 Text(
                   eAtual ? 'MÊS ATUAL' : 'MÊS',
                   style: TextStyle(
-                    color: eAtual ? corDestaque : TituloAzul,
+                    color: eAtual ? corDestaque : context.cores.tituloSecao,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
@@ -104,7 +105,7 @@ class CabecalhoMes extends StatelessWidget {
                   '${DateTime.now().day.toString().padLeft(2, '0')} ${rotuloMesLongo(mes).toUpperCase()}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: eAtual ? corDestaque : Branco,
+                    color: eAtual ? corDestaque : context.cores.texto,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.5,

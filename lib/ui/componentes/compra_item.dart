@@ -3,6 +3,7 @@ import '../../models/banco.dart';
 import '../../models/compra.dart';
 import '../../data/icones_compra.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../util/formatadores.dart';
 
@@ -30,8 +31,8 @@ class CompraItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cor = paga ? Correto : Color(banco.cor);
-    final corTexto = paga ? Branco : contrastePara(banco.cor);
+    final cor = paga ? context.cores.sucesso : Color(banco.cor);
+    final corTexto = paga ? context.cores.texto : contrastePara(banco.cor);
     final valor = valorExibido ?? compra.valorTotal;
     final rotulo =
         rotuloParcelaCustom ?? rotuloParcela(compra.quantidadeParcelas);
@@ -51,7 +52,7 @@ class CompraItem extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Branco.withOpacity(0.15),
+                color: context.cores.texto.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -106,7 +107,7 @@ class CompraItem extends StatelessWidget {
                 const SizedBox(height: 4),
                 Container(
                   decoration: BoxDecoration(
-                    color: Branco.withOpacity(0.22),
+                    color: context.cores.texto.withOpacity(0.22),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding:
@@ -152,17 +153,17 @@ class CompraItem extends StatelessWidget {
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: LacunaVermelha,
+                        color: context.cores.perigo,
                       ),
-                      child: const Icon(Icons.delete_outline,
-                          color: Branco, size: 22),
+                      child: Icon(Icons.delete_outline,
+                          color: context.cores.texto, size: 22),
                     ),
                     const SizedBox(width: 10),
-                    const Text('Excluir',
+                    Text('Excluir',
                         style: TextStyle(
-                            color: Branco, fontWeight: FontWeight.bold)),
+                            color: context.cores.texto, fontWeight: FontWeight.bold)),
                   ],
                 ),
               )
@@ -174,19 +175,19 @@ class CompraItem extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('Paga',
+                    Text('Paga',
                         style: TextStyle(
-                            color: Branco, fontWeight: FontWeight.bold)),
+                            color: context.cores.texto, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 10),
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Correto,
+                        color: context.cores.sucesso,
                       ),
-                      child: const Icon(Icons.check_circle_outline,
-                          color: Branco, size: 22),
+                      child: Icon(Icons.check_circle_outline,
+                          color: context.cores.texto, size: 22),
                     ),
                   ],
                 ),
@@ -198,23 +199,23 @@ class CompraItem extends StatelessWidget {
             final ok = await showDialog<bool>(
               context: context,
               builder: (ctx) => AlertDialog(
-                backgroundColor: Superficie,
-                title: const Text('Excluir compra?',
-                    style: TextStyle(color: Branco)),
+                backgroundColor: context.cores.superficie,
+                title: Text('Excluir compra?',
+                    style: TextStyle(color: context.cores.texto)),
                 content: Text(
                   '${compra.descricao}\n${formatarMoeda(compra.valorTotal)} será removida da fatura.',
-                  style: TextStyle(color: Branco.withOpacity(0.7)),
+                  style: TextStyle(color: context.cores.texto.withOpacity(0.7)),
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(false),
                     child: Text('Cancelar',
-                        style: TextStyle(color: Branco.withOpacity(0.7))),
+                        style: TextStyle(color: context.cores.texto.withOpacity(0.7))),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(ctx).pop(true),
-                    child: const Text('Excluir',
-                        style: TextStyle(color: VermelhoExcluir)),
+                    child: Text('Excluir',
+                        style: TextStyle(color: context.cores.perigoClaro)),
                   ),
                 ],
               ),

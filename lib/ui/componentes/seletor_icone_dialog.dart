@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/icones_compra.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 
 Future<String?> mostrarSeletorIcone(BuildContext context, String? atual) {
   return showDialog<String>(
@@ -30,9 +31,9 @@ class _SeletorIconeDialogState extends State<_SeletorIconeDialog> {
             (item['chave'] as String).toLowerCase().contains(termo)).toList();
 
     return AlertDialog(
-      backgroundColor: Superficie,
-      title: const Text('Escolher ícone',
-          style: TextStyle(color: Branco)),
+      backgroundColor: context.cores.superficie,
+      title: Text('Escolher ícone',
+          style: TextStyle(color: context.cores.texto)),
       content: SizedBox(
         width: double.maxFinite,
         height: MediaQuery.of(context).size.height * 0.55,
@@ -40,13 +41,13 @@ class _SeletorIconeDialogState extends State<_SeletorIconeDialog> {
           children: [
             TextField(
               onChanged: (v) => setState(() => _busca = v),
-              style: const TextStyle(color: Branco, fontSize: 15),
+              style: TextStyle(color: context.cores.texto, fontSize: 15),
               decoration: InputDecoration(
                 hintText: 'Buscar ícone...',
-                hintStyle: const TextStyle(color: Branco54, fontSize: 14),
-                prefixIcon: const Icon(Icons.search, color: Branco54),
+                hintStyle: TextStyle(color: context.cores.textoSuave, fontSize: 14),
+                prefixIcon: Icon(Icons.search, color: context.cores.textoSuave),
                 filled: true,
-                fillColor: SuperficieElevada,
+                fillColor: context.cores.superficieElevada,
                 contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 10),
                 border: OutlineInputBorder(
@@ -58,9 +59,9 @@ class _SeletorIconeDialogState extends State<_SeletorIconeDialog> {
             const SizedBox(height: 10),
             Expanded(
               child: itens.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text('Nenhum ícone encontrado.',
-                          style: TextStyle(color: Branco54)),
+                          style: TextStyle(color: context.cores.textoSuave)),
                     )
                   : GridView.builder(
                       gridDelegate:
@@ -86,20 +87,20 @@ class _SeletorIconeDialogState extends State<_SeletorIconeDialog> {
                                 height: 48,
                                 decoration: BoxDecoration(
                                   color: selecionado
-                                      ? CorPrimaria
-                                      : SuperficieElevada,
+                                      ? context.cores.primaria
+                                      : context.cores.superficieElevada,
                                   borderRadius:
                                       BorderRadius.circular(12),
                                   border: Border.all(
                                     color: selecionado
-                                        ? Branco
-                                        : Branco.withOpacity(0.12),
+                                        ? context.cores.texto
+                                        : context.cores.texto.withOpacity(0.12),
                                     width: 1.5,
                                   ),
                                 ),
                                 child: Icon(
                                   item['icone'] as IconData,
-                                  color: Branco,
+                                  color: context.cores.texto,
                                   size: 22,
                                 ),
                               ),
@@ -110,8 +111,8 @@ class _SeletorIconeDialogState extends State<_SeletorIconeDialog> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: selecionado
-                                      ? Branco
-                                      : Branco54,
+                                      ? context.cores.texto
+                                      : context.cores.textoSuave,
                                   fontSize: 10,
                                 ),
                               ),
@@ -128,7 +129,7 @@ class _SeletorIconeDialogState extends State<_SeletorIconeDialog> {
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child:
-              const Text('Cancelar', style: TextStyle(color: Branco54)),
+              Text('Cancelar', style: TextStyle(color: context.cores.textoSuave)),
         ),
       ],
     );

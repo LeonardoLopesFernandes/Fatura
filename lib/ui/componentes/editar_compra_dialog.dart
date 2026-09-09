@@ -6,6 +6,7 @@ import '../../data/icones_compra.dart';
 import '../../models/compra.dart';
 import '../../models/mes.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/campo.dart';
 import '../../ui/componentes/seletor_icone_dialog.dart';
@@ -71,9 +72,9 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
     }
 
     return AlertDialog(
-      backgroundColor: Superficie,
-      title: const Text('Editar compra',
-          style: TextStyle(color: Branco)),
+      backgroundColor: context.cores.superficie,
+      title: Text('Editar compra',
+          style: TextStyle(color: context.cores.texto)),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -84,7 +85,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
               TextField(
                 controller: _descricao,
                 focusNode: _focoDescricao,
-                style: const TextStyle(color: Branco, fontSize: 16),
+                style: TextStyle(color: context.cores.texto, fontSize: 16),
                 textCapitalization: TextCapitalization.sentences,
                 decoration: campoCores(''),
               ),
@@ -100,7 +101,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                     TextField(
                       controller: _valor,
                       focusNode: _focoValor,
-                      style: const TextStyle(color: Branco, fontSize: 16),
+                      style: TextStyle(color: context.cores.texto, fontSize: 16),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
@@ -119,7 +120,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                     TextField(
                       controller: _parcelas,
                       focusNode: _focoParcelas,
-                      style: const TextStyle(color: Branco, fontSize: 16),
+                      style: TextStyle(color: context.cores.texto, fontSize: 16),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly
@@ -136,8 +137,8 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
             Campo(
               'Cartão do lançamento',
               vm.bancos.isEmpty
-                  ? const Text('Cadastre um banco primeiro.',
-                      style: TextStyle(color: Branco54, fontSize: 13))
+                  ? Text('Cadastre um banco primeiro.',
+                      style: TextStyle(color: context.cores.textoSuave, fontSize: 13))
                   : SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -151,12 +152,12 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                               decoration: BoxDecoration(
                                 color: selecionado
                                     ? Color(banco.cor)
-                                    : SuperficieElevada,
+                                    : context.cores.superficieElevada,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: selecionado
-                                      ? Branco
-                                      : Branco.withOpacity(0.12),
+                                      ? context.cores.texto
+                                      : context.cores.texto.withOpacity(0.12),
                                   width: 1.5,
                                 ),
                               ),
@@ -174,7 +175,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                                     style: TextStyle(
                                       color: selecionado
                                           ? contrastePara(banco.cor)
-                                          : Branco,
+                                          : context.cores.texto,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -210,20 +211,20 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                                 height: 44,
                                 decoration: BoxDecoration(
                                   color: selecionado
-                                      ? CorPrimaria
-                                      : SuperficieElevada,
+                                      ? context.cores.primaria
+                                      : context.cores.superficieElevada,
                                   borderRadius:
                                       BorderRadius.circular(10),
                                   border: Border.all(
                                     color: selecionado
-                                        ? Branco
-                                        : Branco.withOpacity(0.12),
+                                        ? context.cores.texto
+                                        : context.cores.texto.withOpacity(0.12),
                                     width: 1.5,
                                   ),
                                 ),
                                 child: Icon(
                                   item['icone'] as IconData,
-                                  color: Branco,
+                                  color: context.cores.texto,
                                   size: 20,
                                 ),
                               ),
@@ -234,8 +235,8 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: selecionado
-                                      ? Branco
-                                      : Branco54,
+                                      ? context.cores.texto
+                                      : context.cores.textoSuave,
                                   fontSize: 10,
                                 ),
                               ),
@@ -258,11 +259,11 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                     setState(() => _iconeChave = chave);
                   }
                 },
-                icon: const Icon(Icons.grid_view,
-                    color: AzulClaro, size: 16),
-                label: const Text('Ver todos',
+                icon: Icon(Icons.grid_view,
+                    color: context.cores.azulClaro, size: 16),
+                label: Text('Ver todos',
                     style:
-                        TextStyle(color: AzulClaro, fontSize: 13)),
+                        TextStyle(color: context.cores.azulClaro, fontSize: 13)),
               ),
             ),
             const SizedBox(height: 10),
@@ -274,11 +275,11 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                   return DropdownMenuItem(
                     value: m,
                     child: Text(rotuloMesLongo(m),
-                        style: const TextStyle(color: Branco)),
+                        style: TextStyle(color: context.cores.texto)),
                   );
                 }).toList(),
                 onChanged: (m) => setState(() => _mes = m!),
-                dropdownColor: SuperficieElevada,
+                dropdownColor: context.cores.superficieElevada,
                 decoration: campoCores(''),
               ),
             ),
@@ -289,7 +290,7 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child:
-              const Text('Cancelar', style: TextStyle(color: Branco54)),
+              Text('Cancelar', style: TextStyle(color: context.cores.textoSuave)),
         ),
         TextButton(
           onPressed: vm.bancos.isEmpty || !bancoValido
@@ -314,8 +315,8 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                   );
                   Navigator.of(context).pop();
                 },
-          child: const Text('Salvar',
-              style: TextStyle(color: AzulClaro)),
+          child: Text('Salvar',
+              style: TextStyle(color: context.cores.azulClaro)),
         ),
       ],
     );

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'data/fatura_view_model.dart';
 import 'ui/navegacao/app.dart';
-import 'ui/tema.dart';
+import 'ui/temas.dart';
 import 'util/formatadores.dart';
 import 'util/notificacoes.dart';
 
@@ -11,6 +10,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final vm = FaturaViewModel();
   await vm.carregar();
+  final tema = TemaProvider();
+  await tema.carregar();
   await inicializarNotificacoes();
   if (vm.lembretesAtivos) {
     await agendarLembretes(true);
@@ -22,29 +23,37 @@ void main() async {
       ]);
     }
   }
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: StatusBar,
-    statusBarIconBrightness: Brightness.light,
-    systemNavigationBarColor: StatusBar,
-    systemNavigationBarIconBrightness: Brightness.light,
-  ));
   runApp(
-    ChangeNotifierProvider.value(
-      value: vm,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          brightness: Brightness.dark,
-          scaffoldBackgroundColor: Colors.transparent,
-          primaryColor: CorPrimaria,
-          colorScheme: ColorScheme.dark(
-            primary: CorPrimaria,
-            surface: Superficie,
-            onSurface: Branco,
-          ),
-          useMaterial3: true,
-        ),
-        home: const AppNavegacao(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: vm),
+        ChangeNotifierProvider.value(value: tema),
+      ],
+      child: Consumer<TemaProvider>(
+        builder: (_, temaProv, __) {
+          final cores = temaProv.cores;
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              brightness:
+                  cores.claro ? Brightness.light : Brightness.dark,
+              scaffoldBackgroundColor: Colors.transparent,
+              primaryColor: cores.primaria,
+              colorScheme: (cores.claro
+                      ? const ColorScheme.light()
+                      : const ColorScheme.dark())
+                  .copyWith(
+                primary: cores.primaria,
+                surface: cores.superficie,
+                onSurface: cores.texto,
+              ),
+              useMaterial3: true,
+            ),
+            home: Consumer<TemaProvider>(
+              builder: (_, __, ___) => const AppNavegacao(),
+            ),
+          );
+        },
       ),
     ),
   );

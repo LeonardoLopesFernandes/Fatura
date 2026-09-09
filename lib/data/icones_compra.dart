@@ -37,7 +37,7 @@ class IconesCompra {
     {'chave': 'presente', 'icone': Icons.card_giftcard, 'label': 'Presente'},
     {'chave': 'roupa', 'icone': Icons.checkroom, 'label': 'Roupa'},
     {'chave': 'calcado', 'icone': Icons.shopping_bag, 'label': 'Calçado'},
-    {'chave': 'tenis', 'icone': Icons.shopping_bag, 'label': 'Tênis'},
+    {'chave': 'tenis', 'icone': Icons.directions_run, 'label': 'Tênis'},
     {'chave': 'livro', 'icone': Icons.menu_book, 'label': 'Livro'},
     {'chave': 'curso', 'icone': Icons.school, 'label': 'Curso'},
     {'chave': 'remedio', 'icone': Icons.local_pharmacy, 'label': 'Remédio'},
@@ -50,7 +50,7 @@ class IconesCompra {
     {'chave': 'jardim', 'icone': Icons.yard, 'label': 'Jardim'},
     {'chave': 'decoracao', 'icone': Icons.home, 'label': 'Decoração'},
     {'chave': 'moveis', 'icone': Icons.chair, 'label': 'Móveis'},
-    {'chave': 'eletro', 'icone': Icons.devices, 'label': 'Eletrônico'},
+    {'chave': 'eletro', 'icone': Icons.kitchen, 'label': 'Eletrodomésticos'},
     {'chave': 'computador', 'icone': Icons.computer, 'label': 'Computador'},
     {'chave': 'notebook', 'icone': Icons.laptop, 'label': 'Notebook'},
     {'chave': 'tablet', 'icone': Icons.tablet, 'label': 'Tablet'},
@@ -63,6 +63,10 @@ class IconesCompra {
     {'chave': '-airpods', 'icone': Icons.headphones, 'label': 'AirPods'},
     {'chave': 'applewatch', 'icone': Icons.watch, 'label': 'Apple Watch'},
     {'chave': 'imac', 'icone': Icons.computer, 'label': 'iMac'},
+    {'chave': 'emprestimo', 'icone': Icons.handshake, 'label': 'Empréstimo'},
+    {'chave': 'dinheiro', 'icone': Icons.payments, 'label': 'Dinheiro'},
+    {'chave': 'cosern', 'icone': Icons.bolt, 'label': 'COSERN'},
+    {'chave': 'caern', 'icone': Icons.water_drop, 'label': 'CAERN'},
   ];
 
   static final Map<String, IconData> _mapa = {
@@ -100,7 +104,7 @@ class IconesCompra {
     'presente': Icons.card_giftcard,
     'roupa': Icons.checkroom,
     'calcado': Icons.shopping_bag,
-    'tenis': Icons.shopping_bag,
+    'tenis': Icons.directions_run,
     'livro': Icons.menu_book,
     'curso': Icons.school,
     'remedio': Icons.local_pharmacy,
@@ -113,7 +117,7 @@ class IconesCompra {
     'jardim': Icons.yard,
     'decoracao': Icons.home,
     'moveis': Icons.chair,
-    'eletro': Icons.devices,
+    'eletro': Icons.kitchen,
     'computador': Icons.computer,
     'notebook': Icons.laptop,
     'tablet': Icons.tablet,
@@ -126,6 +130,12 @@ class IconesCompra {
     'airpods': Icons.headphones,
     'applewatch': Icons.watch,
     'imac': Icons.computer,
+    'emprestimo': Icons.handshake,
+    'emprest': Icons.handshake,
+    'emprestado': Icons.handshake,
+    'dinheiro': Icons.payments,
+    'cosern': Icons.bolt,
+    'caern': Icons.water_drop,
   };
 
   static IconData iconePorChave(String? chave) {

@@ -10,6 +10,7 @@ import '../../models/compra.dart';
 import '../../models/grupo.dart';
 import '../../models/mes.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/compra_item.dart';
 import '../../ui/componentes/elementos.dart';
@@ -43,7 +44,7 @@ class CompradorDetalheScreen extends StatelessWidget {
         body: Center(
           child: Text(
             'Devedor não encontrado.',
-            style: TextStyle(color: Branco54, fontSize: 14),
+            style: TextStyle(color: context.cores.textoSuave, fontSize: 14),
           ),
         ),
       );
@@ -58,19 +59,19 @@ class CompradorDetalheScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: FundoInicio,
+        backgroundColor: context.cores.gradienteA,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: onVoltar,
-          icon: const Icon(Icons.arrow_back, color: Branco),
+          icon: Icon(Icons.arrow_back, color: context.cores.texto),
         ),
         title: Text(
           comprador.nome,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: Branco,
+          style: TextStyle(
+            color: context.cores.texto,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -79,16 +80,16 @@ class CompradorDetalheScreen extends StatelessWidget {
           IconButton(
             onPressed: () => cobrarTotalDevedor(
                 context, grupos: grupos, valorTotal: faturaBruta),
-            icon: const Icon(Icons.pix, color: Branco54),
+            icon: Icon(Icons.pix, color: context.cores.textoSuave),
           ),
           IconButton(
             onPressed: () => _mostrarCompartilhar(
                 context, vm, comprador.nome, faturaBruta, grupos),
-            icon: const Icon(Icons.share, color: Branco54),
+            icon: Icon(Icons.share, color: context.cores.textoSuave),
           ),
           IconButton(
             onPressed: () => _confirmarApagar(context, vm, comprador.id),
-            icon: const Icon(Icons.delete_outline, color: Branco54),
+            icon: Icon(Icons.delete_outline, color: context.cores.textoSuave),
           ),
         ],
       ),
@@ -100,7 +101,7 @@ class CompradorDetalheScreen extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Superficie,
+                  color: context.cores.superficie,
                   borderRadius: BorderRadius.circular(18),
                 ),
                 padding: const EdgeInsets.all(12),
@@ -113,9 +114,9 @@ class CompradorDetalheScreen extends StatelessWidget {
                       () => vm.definirMesSelecionado(mes.maisMeses(1)),
                     ),
                     const SizedBox(height: 8),
-                    const Text('FATURA INDIVIDUAL',
+                    Text('FATURA INDIVIDUAL',
                         style: TextStyle(
-                          color: TituloAzul,
+                          color: context.cores.tituloSecao,
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
@@ -123,8 +124,8 @@ class CompradorDetalheScreen extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       formatarMoeda(faturaBruta),
-                      style: const TextStyle(
-                        color: Branco,
+                      style: TextStyle(
+                        color: context.cores.texto,
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                       ),
@@ -132,10 +133,10 @@ class CompradorDetalheScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           'Restante a receber',
                           style: TextStyle(
-                            color: Branco54,
+                            color: context.cores.textoSuave,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -143,15 +144,15 @@ class CompradorDetalheScreen extends StatelessWidget {
                         const Spacer(),
                         Container(
                           decoration: BoxDecoration(
-                            color: Branco,
+                            color: context.cores.texto,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 4),
                           child: Text(
                             formatarMoeda(faturaRestante),
-                            style: const TextStyle(
-                              color: VermelhoBotao,
+                            style: TextStyle(
+                              color: context.cores.perigo,
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
@@ -168,11 +169,11 @@ class CompradorDetalheScreen extends StatelessWidget {
                             ? null
                             : () => onAdicionarCompra(comprador.nome),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: CorPrimaria,
-                          foregroundColor: Branco,
-                          disabledForegroundColor: Branco54,
+                          backgroundColor: context.cores.primaria,
+                          foregroundColor: context.cores.texto,
+                          disabledForegroundColor: context.cores.textoSuave,
                           disabledBackgroundColor:
-                              SuperficieElevada,
+                              context.cores.superficieElevada,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14)),
                         ),
@@ -191,9 +192,9 @@ class CompradorDetalheScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     if (grupos.isEmpty)
-                      const Text(
+                      Text(
                         'Nenhuma compra registrada para este devedor.',
-                        style: TextStyle(color: Branco54, fontSize: 14),
+                        style: TextStyle(color: context.cores.textoSuave, fontSize: 14),
                       )
                     else
                       ...grupos.map((grupo) {
@@ -231,7 +232,7 @@ class CompradorDetalheScreen extends StatelessWidget {
   ) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Superficie,
+      backgroundColor: context.cores.superficie,
       isScrollControlled: true,
       builder: (_) => _PreviewCompartilhar(
         nome: nome,
@@ -252,25 +253,25 @@ class CompradorDetalheScreen extends StatelessWidget {
     final mes = Provider.of<FaturaViewModel>(context, listen: false).mesSelecionado;
     showModalBottomSheet(
       context: context,
-      backgroundColor: Superficie,
+      backgroundColor: context.cores.superficie,
       builder: (sheetContext) => Container(
         padding: const EdgeInsets.all(14),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Compartilhar como',
+            Text('Compartilhar como',
                 style: TextStyle(
-                    color: Branco,
+                    color: context.cores.texto,
                     fontSize: 17,
                     fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             ListTile(
-              leading: const Icon(Icons.image, color: Branco),
-              title: const Text('Imagem (PNG)',
-                  style: TextStyle(color: Branco)),
-              subtitle: const Text('Captura visual da fatura',
-                  style: TextStyle(color: Branco54)),
+              leading: Icon(Icons.image, color: context.cores.texto),
+              title: Text('Imagem (PNG)',
+                  style: TextStyle(color: context.cores.texto)),
+              subtitle: Text('Captura visual da fatura',
+                  style: TextStyle(color: context.cores.textoSuave)),
               onTap: () async {
                 final caminho = await gerarImagem(
                     nome: nome, fatura: fatura, grupos: grupos);
@@ -282,11 +283,11 @@ class CompradorDetalheScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.picture_as_pdf, color: Branco),
+              leading: Icon(Icons.picture_as_pdf, color: context.cores.texto),
               title:
-                  const Text('PDF', style: TextStyle(color: Branco)),
-              subtitle: const Text('Documento formatado',
-                  style: TextStyle(color: Branco54)),
+                  Text('PDF', style: TextStyle(color: context.cores.texto)),
+              subtitle: Text('Documento formatado',
+                  style: TextStyle(color: context.cores.textoSuave)),
               onTap: () async {
                 final caminho = await gerarPdf(
                     nome: nome, fatura: fatura, grupos: grupos);
@@ -298,11 +299,11 @@ class CompradorDetalheScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.text_snippet, color: Branco),
+              leading: Icon(Icons.text_snippet, color: context.cores.texto),
               title:
-                  const Text('Texto', style: TextStyle(color: Branco)),
-              subtitle: const Text('Compartilhar como mensagem',
-                  style: TextStyle(color: Branco54)),
+                  Text('Texto', style: TextStyle(color: context.cores.texto)),
+              subtitle: Text('Compartilhar como mensagem',
+                  style: TextStyle(color: context.cores.textoSuave)),
               onTap: () {
                 final texto = StringBuffer();
                 texto.writeln('Fatura - $nome');
@@ -327,11 +328,11 @@ class CompradorDetalheScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.table_chart, color: Branco),
+              leading: Icon(Icons.table_chart, color: context.cores.texto),
               title:
-                  const Text('CSV', style: TextStyle(color: Branco)),
-              subtitle: const Text('Planilha separada por vírgulas',
-                  style: TextStyle(color: Branco54)),
+                  Text('CSV', style: TextStyle(color: context.cores.texto)),
+              subtitle: Text('Planilha separada por vírgulas',
+                  style: TextStyle(color: context.cores.textoSuave)),
               onTap: () async {
                 try {
                   final dir = Directory(
@@ -427,18 +428,18 @@ class CompradorDetalheScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Superficie,
-        title: const Text('Apagar devedor?',
-            style: TextStyle(color: Branco)),
+        backgroundColor: context.cores.superficie,
+        title: Text('Apagar devedor?',
+            style: TextStyle(color: context.cores.texto)),
         content: Text(
           'Todas as compras de ${vm.compradorPorId(id)?.nome ?? ''} serão removidas.',
-          style: TextStyle(color: Branco.withOpacity(0.7)),
+          style: TextStyle(color: context.cores.texto.withOpacity(0.7)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancelar',
-                style: TextStyle(color: Branco54)),
+            child: Text('Cancelar',
+                style: TextStyle(color: context.cores.textoSuave)),
           ),
           TextButton(
             onPressed: () {
@@ -446,8 +447,8 @@ class CompradorDetalheScreen extends StatelessWidget {
               Navigator.of(ctx).pop();
               onVoltar();
             },
-            child: const Text('Apagar',
-                style: TextStyle(color: VermelhoExcluir)),
+            child: Text('Apagar',
+                style: TextStyle(color: context.cores.perigoClaro)),
           ),
         ],
       ),
@@ -517,8 +518,8 @@ class _GrupoCardState extends State<GrupoCard> {
                   Expanded(
                     child: Text(
                       widget.banco.nome.toUpperCase(),
-                      style: const TextStyle(
-                        color: Branco,
+                      style: TextStyle(
+                        color: context.cores.texto,
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
@@ -528,13 +529,13 @@ class _GrupoCardState extends State<GrupoCard> {
                     Container(
                       width: 22,
                       height: 22,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Correto,
+                        color: context.cores.sucesso,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.check,
-                        color: Branco,
+                        color: context.cores.texto,
                         size: 14,
                       ),
                     ),
@@ -545,8 +546,8 @@ class _GrupoCardState extends State<GrupoCard> {
                     children: [
                       Text(
                         formatarMoeda(subtotal),
-                        style: const TextStyle(
-                          color: Branco,
+                        style: TextStyle(
+                          color: context.cores.texto,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -554,8 +555,8 @@ class _GrupoCardState extends State<GrupoCard> {
                       if (!_expandido)
                         Text(
                           '$qtd compra${qtd != 1 ? 's' : ''}',
-                          style: const TextStyle(
-                            color: Branco54,
+                          style: TextStyle(
+                            color: context.cores.textoSuave,
                             fontSize: 10,
                           ),
                         ),
@@ -566,7 +567,7 @@ class _GrupoCardState extends State<GrupoCard> {
                     _expandido
                         ? Icons.keyboard_arrow_up
                         : Icons.keyboard_arrow_down,
-                    color: Branco54,
+                    color: context.cores.textoSuave,
                     size: 16,
                   ),
                 ],
@@ -628,12 +629,12 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Preview da Fatura',
+          Text('Preview da Fatura',
               style: TextStyle(
-                  color: Branco, fontSize: 17, fontWeight: FontWeight.bold)),
+                  color: context.cores.texto, fontSize: 17, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Text(widget.nome,
-              style: const TextStyle(color: Branco54, fontSize: 13)),
+              style: TextStyle(color: context.cores.textoSuave, fontSize: 13)),
           const SizedBox(height: 8),
           Flexible(
             child: ListView(
@@ -649,7 +650,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('FATURA INDIVIDUAL',
+                Text('FATURA INDIVIDUAL',
                     style: TextStyle(
                       color: Color(0xFFA0B0C0),
                       fontSize: 10,
@@ -659,8 +660,8 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                 const SizedBox(height: 4),
                 Text(
                   formatarMoeda(widget.fatura),
-                  style: const TextStyle(
-                    color: Branco,
+                  style: TextStyle(
+                    color: context.cores.texto,
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                   ),
@@ -706,7 +707,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                           Container(
                             width: 24,
                             height: 24,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
                             ),
@@ -726,8 +727,8 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                           Expanded(
                             child: Text(
                               grupo.banco.nome.toUpperCase(),
-                              style: const TextStyle(
-                                color: Branco,
+                              style: TextStyle(
+                                color: context.cores.texto,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -737,11 +738,11 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                             Container(
                               width: 22,
                               height: 22,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Color(0xFF00C853),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.check,
                                 color: Colors.white,
                                 size: 14,
@@ -750,8 +751,8 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                           const SizedBox(width: 6),
                           Text(
                             formatarMoeda(subtotal),
-                            style: const TextStyle(
-                              color: Branco,
+                            style: TextStyle(
+                              color: context.cores.texto,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -761,7 +762,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                             expandido
                                 ? Icons.keyboard_arrow_up
                                 : Icons.keyboard_arrow_down,
-                            color: Branco54,
+                            color: context.cores.textoSuave,
                             size: 16,
                           ),
                         ],
@@ -780,8 +781,8 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                       ),
                       child: Text(
                         formatarMoeda(subtotal),
-                        style: const TextStyle(
-                          color: Branco,
+                        style: TextStyle(
+                          color: context.cores.texto,
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                         ),
@@ -809,7 +810,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                                       compra.iconeChave != null
                                           ? IconesCompra.iconePorChave(compra.iconeChave)
                                           : IconesCompra.iconePorDescricao(compra.descricao),
-                                      color: Branco54,
+                                      color: context.cores.textoSuave,
                                       size: 14,
                                     ),
                                   ),
@@ -817,7 +818,7 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                                   Expanded(
                                     child: Text(
                                       compra.descricao,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Color(0xFFE0E0E0),
                                         fontSize: 13,
                                       ),
@@ -825,8 +826,8 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                                   ),
                                   Text(
                                     formatarMoeda(compra.valorIndividual),
-                                    style: const TextStyle(
-                                      color: Branco,
+                                    style: TextStyle(
+                                      color: context.cores.texto,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -856,12 +857,12 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                 widget.onCompartilhar?.call();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: CorPrimaria,
-                foregroundColor: Branco,
+                backgroundColor: context.cores.primaria,
+                foregroundColor: context.cores.texto,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
-              child: const Text('Compartilhar',
+              child: Text('Compartilhar',
                   style: TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold)),
             ),

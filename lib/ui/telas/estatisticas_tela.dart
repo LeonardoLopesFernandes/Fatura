@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../data/fatura_view_model.dart';
 import '../../models/mes.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/elementos.dart';
 import '../../util/formatadores.dart';
 
@@ -28,16 +29,16 @@ class EstatisticasScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: FundoInicio,
+        backgroundColor: context.cores.gradienteA,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: onVoltar,
-          icon: const Icon(Icons.arrow_back, color: Branco),
+          icon: Icon(Icons.arrow_back, color: context.cores.texto),
         ),
-        title: const Text('Estatísticas',
+        title: Text('Estatísticas',
             style: TextStyle(
-                color: Branco, fontSize: 18, fontWeight: FontWeight.bold)),
+                color: context.cores.texto, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12),
@@ -54,9 +55,9 @@ class EstatisticasScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Branco.withOpacity(0.05),
+                color: context.cores.texto.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Branco.withOpacity(0.1)),
+                border: Border.all(color: context.cores.texto.withOpacity(0.1)),
               ),
               padding: const EdgeInsets.all(10),
               child: SizedBox(
@@ -72,8 +73,8 @@ class EstatisticasScreen extends StatelessWidget {
                             Text(
                               formatarMoedaAbrev(totais[i]),
                               maxLines: 1,
-                              style: const TextStyle(
-                                color: Branco54,
+                              style: TextStyle(
+                                color: context.cores.textoSuave,
                                 fontSize: 9,
                               ),
                             ),
@@ -86,8 +87,8 @@ class EstatisticasScreen extends StatelessWidget {
                                   horizontal: 5),
                               decoration: BoxDecoration(
                                 color: meses[i] == mes
-                                    ? CorPrimaria
-                                    : Branco.withOpacity(0.25),
+                                    ? context.cores.primaria
+                                    : context.cores.texto.withOpacity(0.25),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                             ),
@@ -96,8 +97,8 @@ class EstatisticasScreen extends StatelessWidget {
                               nomeMesCurto(meses[i].mes),
                               style: TextStyle(
                                 color: meses[i] == mes
-                                    ? Branco
-                                    : Branco54,
+                                    ? context.cores.texto
+                                    : context.cores.textoSuave,
                                 fontSize: 10,
                                 fontWeight: meses[i] == mes
                                     ? FontWeight.bold
@@ -118,17 +119,17 @@ class EstatisticasScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: _CartaoNumero(
-                      'Total', formatarMoeda(brutoMes), CorPrimaria),
+                      'Total', formatarMoeda(brutoMes), context.cores.primaria),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _CartaoNumero(
-                      'Pago', formatarMoeda(pagoMes), Correto),
+                      'Pago', formatarMoeda(pagoMes), context.cores.sucesso),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _CartaoNumero('A receber',
-                      formatarMoeda(pendenteMes), VermelhoBotao),
+                      formatarMoeda(pendenteMes), context.cores.perigo),
                 ),
               ],
             ),
@@ -161,8 +162,8 @@ class EstatisticasScreen extends StatelessWidget {
                               banco.nome.toUpperCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Branco,
+                              style: TextStyle(
+                                color: context.cores.texto,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -170,8 +171,8 @@ class EstatisticasScreen extends StatelessWidget {
                           ),
                           Text(
                             formatarMoeda(total),
-                            style: const TextStyle(
-                              color: Branco,
+                            style: TextStyle(
+                              color: context.cores.texto,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -184,7 +185,7 @@ class EstatisticasScreen extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: fracao,
                           minHeight: 7,
-                          backgroundColor: Branco.withOpacity(0.1),
+                          backgroundColor: context.cores.texto.withOpacity(0.1),
                           valueColor: AlwaysStoppedAnimation<Color>(
                               Color(banco.cor)),
                         ),
@@ -211,7 +212,7 @@ class _CartaoNumero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Branco,
+        color: context.cores.texto,
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(8),
@@ -219,7 +220,7 @@ class _CartaoNumero extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(rotulo,
-              style: const TextStyle(color: CinzaClaro, fontSize: 11)),
+              style: TextStyle(color: context.cores.cinza, fontSize: 11)),
           const SizedBox(height: 2),
           Text(
             valor,

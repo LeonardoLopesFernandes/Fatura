@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../ui/tema.dart';
+import 'package:provider/provider.dart';
+import '../../ui/temas.dart';
 
 class Campo extends StatefulWidget {
   final String label;
@@ -41,6 +42,7 @@ class _CampoState extends State<Campo> {
 
   @override
   Widget build(BuildContext context) {
+    final cores = context.watch<TemaProvider>().cores;
     final titulo =
         (_focado && widget.hint != null) ? widget.hint! : widget.label;
     return Column(
@@ -48,8 +50,8 @@ class _CampoState extends State<Campo> {
       children: [
         Text(
           titulo,
-          style: const TextStyle(
-            color: Branco70,
+          style: TextStyle(
+            color: cores.textoMedio,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -68,22 +70,23 @@ InputDecoration campoCores(
   bool flutuante = true,
 }) {
   final textoDica = hint ?? label;
+  final cores = EsquemaAtual.valor;
   return InputDecoration(
     labelText: flutuante ? textoDica : null,
     hintText: flutuante ? null : (textoDica.isEmpty ? null : textoDica),
-    labelStyle: const TextStyle(
-      color: Branco70,
+    labelStyle: TextStyle(
+      color: cores.textoMedio,
       fontSize: 12,
       fontWeight: FontWeight.w600,
     ),
-    hintStyle: const TextStyle(
-      color: CinzaClaro,
+    hintStyle: TextStyle(
+      color: cores.cinza,
       fontSize: 13,
     ),
     floatingLabelBehavior: FloatingLabelBehavior.auto,
     prefixIcon: prefixIcon,
     filled: true,
-    fillColor: SuperficieElevada,
+    fillColor: cores.superficieElevada,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
       borderSide: BorderSide.none,

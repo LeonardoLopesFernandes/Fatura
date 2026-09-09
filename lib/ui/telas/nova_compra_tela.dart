@@ -5,6 +5,7 @@ import '../../data/fatura_view_model.dart';
 import '../../data/icones_compra.dart';
 import '../../models/mes.dart';
 import '../../ui/tema.dart';
+import '../../ui/temas.dart';
 import '../../ui/componentes/banco_logo.dart';
 import '../../ui/componentes/campo.dart';
 import '../../ui/componentes/seletor_icone_dialog.dart';
@@ -76,15 +77,15 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: FundoInicio,
+        backgroundColor: context.cores.gradienteA,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: widget.onVoltar,
-          icon: const Icon(Icons.close, color: Branco54),
+          icon: Icon(Icons.close, color: context.cores.textoSuave),
         ),
-        title: const Text('Nova Compra',
-            style: TextStyle(color: Branco, fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text('Nova Compra',
+            style: TextStyle(color: context.cores.texto, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: Column(
         children: [
@@ -99,7 +100,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     TextField(
                       controller: _descricao,
                       focusNode: _focoDescricao,
-                      style: const TextStyle(color: Branco, fontSize: 16),
+                      style: TextStyle(color: context.cores.texto, fontSize: 16),
                       keyboardType: TextInputType.text,
                       textCapitalization: TextCapitalization.sentences,
                       decoration: campoCores(''),
@@ -113,7 +114,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     TextField(
                       controller: _devedor,
                       focusNode: _focoDevedor,
-                      style: const TextStyle(color: Branco, fontSize: 16),
+                      style: TextStyle(color: context.cores.texto, fontSize: 16),
                       textCapitalization: TextCapitalization.words,
                       decoration: campoCores(''),
                     ),
@@ -129,7 +130,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           TextField(
                             controller: _valor,
                             focusNode: _focoValor,
-                            style: const TextStyle(color: Branco, fontSize: 16),
+                            style: TextStyle(color: context.cores.texto, fontSize: 16),
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
@@ -149,7 +150,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                             controller: _parcelas,
                             focusNode: _focoParcelas,
                             enabled: !_fixa,
-                            style: const TextStyle(color: Branco, fontSize: 16),
+                            style: TextStyle(color: context.cores.texto, fontSize: 16),
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
@@ -165,24 +166,24 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                   const SizedBox(height: 10),
                   Container(
                     decoration: BoxDecoration(
-                      color: SuperficieElevada,
+                      color: context.cores.superficieElevada,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: SwitchListTile(
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 2),
-                      title: const Text('Repetir todo mês',
+                      title: Text('Repetir todo mês',
                           style: TextStyle(
-                              color: Branco,
+                              color: context.cores.texto,
                               fontSize: 14,
                               fontWeight: FontWeight.bold)),
-                      subtitle: const Text(
+                      subtitle: Text(
                           'Conta fixa: lança sozinha nos próximos meses',
                           style:
-                              TextStyle(color: Branco54, fontSize: 12)),
+                              TextStyle(color: context.cores.textoSuave, fontSize: 12)),
                       value: _fixa,
-                      activeTrackColor: AzulClaro,
-                      activeColor: Branco,
+                      activeTrackColor: context.cores.azulClaro,
+                      activeColor: context.cores.texto,
                       onChanged: (v) => setState(() => _fixa = v),
                     ),
                   ),
@@ -190,8 +191,8 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                   Campo(
                     'Cartão do lançamento',
                     vm.bancos.isEmpty
-                        ? const Text('Cadastre um banco primeiro.',
-                            style: TextStyle(color: Branco54, fontSize: 13))
+                        ? Text('Cadastre um banco primeiro.',
+                            style: TextStyle(color: context.cores.textoSuave, fontSize: 13))
                         : SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
@@ -206,12 +207,12 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                       decoration: BoxDecoration(
                                         color: selecionado
                                             ? Color(banco.cor)
-                                            : SuperficieElevada,
+                                            : context.cores.superficieElevada,
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                           color: selecionado
-                                              ? Branco
-                                              : Branco.withOpacity(0.12),
+                                              ? context.cores.texto
+                                              : context.cores.texto.withOpacity(0.12),
                                           width: 1.5,
                                         ),
                                       ),
@@ -229,7 +230,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                             style: TextStyle(
                                               color: selecionado
                                                   ? contrastePara(banco.cor)
-                                                  : Branco,
+                                                  : context.cores.texto,
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -243,23 +244,30 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                   onTap: widget.onNovoBanco,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: SuperficieElevada,
+                                      color: context.cores.superficieElevada,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: Branco.withOpacity(0.12),
+                                        color: context.cores.texto.withOpacity(0.12),
                                         width: 1.5,
                                       ),
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 6),
-                                    child: const Row(
+                                    child: Row(
                                       children: [
-                                        Icon(Icons.add,
-                                            color: Branco, size: 20),
-                                        SizedBox(width: 6),
+                                        SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: Center(
+                                            child: Icon(Icons.add,
+                                                color: context.cores.texto,
+                                                size: 20),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
                                         Text('Novo',
                                             style: TextStyle(
-                                                color: Branco,
+                                                color: context.cores.texto,
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600)),
                                       ],
@@ -293,20 +301,20 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                       height: 44,
                                       decoration: BoxDecoration(
                                         color: selecionado
-                                            ? CorPrimaria
-                                            : SuperficieElevada,
+                                            ? context.cores.primaria
+                                            : context.cores.superficieElevada,
                                         borderRadius:
                                             BorderRadius.circular(10),
                                         border: Border.all(
                                           color: selecionado
-                                              ? Branco
-                                              : Branco.withOpacity(0.12),
+                                              ? context.cores.texto
+                                              : context.cores.texto.withOpacity(0.12),
                                           width: 1.5,
                                         ),
                                       ),
                                       child: Icon(
                                         item['icone'] as IconData,
-                                        color: Branco,
+                                        color: context.cores.texto,
                                         size: 20,
                                       ),
                                     ),
@@ -317,8 +325,8 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         color: selecionado
-                                            ? Branco
-                                            : Branco54,
+                                            ? context.cores.texto
+                                            : context.cores.textoSuave,
                                         fontSize: 10,
                                       ),
                                     ),
@@ -341,11 +349,11 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                           setState(() => _iconeChave = chave);
                         }
                       },
-                        icon: const Icon(Icons.grid_view,
-                            color: AzulClaro, size: 16),
-                        label: const Text('Ver todos',
+                        icon: Icon(Icons.grid_view,
+                            color: context.cores.azulClaro, size: 16),
+                        label: Text('Ver todos',
                             style: TextStyle(
-                                color: AzulClaro, fontSize: 13)),
+                                color: context.cores.azulClaro, fontSize: 13)),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -357,11 +365,11 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                         return DropdownMenuItem(
                           value: m,
                           child: Text(rotuloMesLongo(m),
-                              style: const TextStyle(color: Branco)),
+                              style: TextStyle(color: context.cores.texto)),
                         );
                       }).toList(),
                       onChanged: (m) => setState(() => _mes = m!),
-                      dropdownColor: SuperficieElevada,
+                      dropdownColor: context.cores.superficieElevada,
                       decoration: campoCores(''),
                     ),
                   ),
@@ -406,14 +414,14 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                               widget.onVoltar();
                             },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: CorPrimaria,
-                        foregroundColor: Branco,
-                        disabledForegroundColor: Branco54,
-                        disabledBackgroundColor: SuperficieElevada,
+                        backgroundColor: context.cores.primaria,
+                        foregroundColor: context.cores.texto,
+                        disabledForegroundColor: context.cores.textoSuave,
+                        disabledBackgroundColor: context.cores.superficieElevada,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14)),
                       ),
-                      child: const Text('Salvar Compra',
+                      child: Text('Salvar Compra',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
@@ -422,7 +430,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                     const SizedBox(height: 8),
                     Text(_aviso!,
                         style:
-                            TextStyle(color: Branco70, fontSize: 13)),
+                            TextStyle(color: context.cores.textoMedio, fontSize: 13)),
                   ],
                 ],
               ),
