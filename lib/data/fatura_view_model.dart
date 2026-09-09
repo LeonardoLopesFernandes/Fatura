@@ -9,6 +9,7 @@ import '../models/mes.dart';
 import '../models/grupo.dart';
 import 'catalogo_cores.dart';
 import 'catalogo_icones.dart';
+import 'icones_recentes.dart';
 import '../util/formatadores.dart';
 
 class FaturaViewModel extends ChangeNotifier {
@@ -524,8 +525,10 @@ class FaturaViewModel extends ChangeNotifier {
       valorIndividual: valorIndividual,
       quantidadeParcelas: quantidadeParcelas,
       data: data,
-      iconeChave: iconeChave,
+      iconeChave: iconeArquivo != null ? null : iconeChave,
+      iconeArquivo: iconeArquivo,
     ));
+    IconesRecentes.registrar(iconeChave);
     _alterado();
   }
 
@@ -611,6 +614,7 @@ class FaturaViewModel extends ChangeNotifier {
         origemFixaId: c.origemFixaId,
       );
     }).toList();
+    IconesRecentes.registrar(iconeChave);
     _alterado();
   }
 
