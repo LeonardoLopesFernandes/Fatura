@@ -105,7 +105,7 @@ const EsquemaCores esquemaAmoled = EsquemaCores(
   textoSuave: Color(0x8CFFFFFF),
   textoMedio: Color(0xB3FFFFFF),
   textoFraco: Color(0x61FFFFFF),
-  primaria: Color(0xFF74B8FF),
+  primaria: Color(0xFF2563EA),
   azulClaro: Color(0xFFA8D3FF),
   textoSobreCor: Color(0xFF0B1226),
   sucesso: Color(0xFF00E676),
