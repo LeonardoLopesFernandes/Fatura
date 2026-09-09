@@ -4,8 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import '../../data/fatura_view_model.dart';
 import '../../data/catalogo_icones.dart';
 import '../../models/banco.dart';
@@ -15,6 +13,7 @@ import '../../ui/temas.dart';
 import '../../ui/componentes/campo.dart';
 import '../../util/formatadores.dart';
 import '../../util/currency_input_formatter.dart';
+import '../../util/imagem_helper.dart';
 
 class BancoFormulario extends StatefulWidget {
   final Banco? bancoExistente;
@@ -93,23 +92,21 @@ class _BancoFormularioState extends State<BancoFormulario> {
   }
 
   Future<void> _escolherImagem() async {
-    try {
-      final picker = ImagePicker();
-      final imagem = await picker.pickImage(source: ImageSource.gallery);
-      if (imagem == null) return;
-      final dir =
-          Directory('${(await getApplicationDocumentsDirectory()).path}/icones');
-      await dir.create(recursive: true);
-      final ext = imagem.path.split('.').last;
-      final destino = '${dir.path}/logo_${DateTime.now().microsecondsSinceEpoch}.$ext';
-      await File(imagem.path).copy(destino);
-      setState(() {
-        _imagemSelecionada = destino;
-        _iconeSelecionado = null;
-      });
-    } catch (_) {
-      setState(() => _aviso = 'Não foi possível abrir a galeria.');
+    final destino = await escolherImagemCortada(
+      context,
+      pasta: 'icones',
+      prefixo: 'logo',
+    );
+    if (destino == null) {
+      if (mounted) {
+        setState(() => _aviso = 'Não foi possível abrir a galeria.');
+      }
+      return;
     }
+    setState(() {
+      _imagemSelecionada = destino;
+      _iconeSelecionado = null;
+    });
   }
 
   Future<void> _usarCorDoLogo() async {

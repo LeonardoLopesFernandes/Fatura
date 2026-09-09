@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ import '../../ui/componentes/campo.dart';
 import '../../ui/componentes/seletor_icone_dialog.dart';
 import '../../util/formatadores.dart';
 import '../../util/currency_input_formatter.dart';
+import '../../util/imagem_helper.dart';
 
 class NovaCompraScreen extends StatefulWidget {
   final String? nomePadrao;
@@ -39,7 +41,22 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
   final _focoParcelas = FocusNode();
   String? _bancoId;
   String? _iconeChave;
+  String? _iconeArquivo;
   bool _iconeManual = false;
+
+  Future<void> _escolherImagemIcone() async {
+    final caminho = await escolherImagemCortada(
+      context,
+      pasta: 'icones_compra',
+      prefixo: 'compra',
+    );
+    if (caminho != null && mounted) {
+      setState(() {
+        _iconeArquivo = caminho;
+        _iconeManual = true;
+      });
+    }
+  }
   late Mes _mes;
   String? _aviso;
   bool _fixa = false;
@@ -349,25 +366,74 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        final chave = await mostrarSeletorIcone(
-                            context, _iconeChave);
-                        if (chave != null) {
-                          setState(() {
-                            _iconeChave = chave;
-                            _iconeManual = true;
-                          });
-                        }
-                      },
+                  Row(
+                    children: [
+                      if (_iconeArquivo != null) ...[
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                File(_iconeArquivo!),
+                                width: 44,
+                                height: 44,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: GestureDetector(
+                                onTap: () => setState(() {
+                                  _iconeArquivo = null;
+                                  _iconeManual = false;
+                                  _iconeChave = IconesCompra
+                                      .chavePorDescricao(_descricao.text);
+                                }),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: context.cores.perigo,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(Icons.close,
+                                      color: context.cores.texto,
+                                      size: 14),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      const Spacer(),
+                      TextButton.icon(
+                        onPressed: _escolherImagemIcone,
+                        icon: Icon(Icons.photo_library,
+                            color: context.cores.azulClaro, size: 16),
+                        label: Text('Galeria',
+                            style: TextStyle(
+                                color: context.cores.azulClaro,
+                                fontSize: 13)),
+                      ),
+                      TextButton.icon(
+                        onPressed: () async {
+                          final chave = await mostrarSeletorIcone(
+                              context, _iconeChave);
+                          if (chave != null) {
+                            setState(() {
+                              _iconeChave = chave;
+                              _iconeManual = true;
+                            });
+                          }
+                        },
                         icon: Icon(Icons.grid_view,
                             color: context.cores.azulClaro, size: 16),
                         label: Text('Ver todos',
                             style: TextStyle(
-                                color: context.cores.azulClaro, fontSize: 13)),
-                    ),
+                                color: context.cores.azulClaro,
+                                fontSize: 13)),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
                   Campo(
@@ -417,6 +483,7 @@ class _NovaCompraScreenState extends State<NovaCompraScreen> {
                                 quantidadeParcelas: p,
                                 data: _mes,
                                 iconeChave: _iconeChave,
+                                iconeArquivo: _iconeArquivo,
                                 fixaMensal: _fixa,
                               );
                               if (_devedor.text.trim().toLowerCase() !=

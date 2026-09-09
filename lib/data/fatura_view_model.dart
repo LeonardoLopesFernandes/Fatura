@@ -497,6 +497,7 @@ class FaturaViewModel extends ChangeNotifier {
     required int quantidadeParcelas,
     required Mes data,
     String? iconeChave,
+    String? iconeArquivo,
     bool fixaMensal = false,
   }) {
     if (fixaMensal) {
@@ -508,7 +509,8 @@ class FaturaViewModel extends ChangeNotifier {
         valorIndividual: valorIndividual,
         quantidadeParcelas: 1,
         data: data,
-        iconeChave: iconeChave,
+        iconeChave: iconeArquivo != null ? null : iconeChave,
+        iconeArquivo: iconeArquivo,
       ));
       materializarFixas(_mesSelecionado);
       _alterado();
@@ -544,6 +546,7 @@ class FaturaViewModel extends ChangeNotifier {
           quantidadeParcelas: 1,
           data: mes,
           iconeChave: fixa.iconeChave,
+          iconeArquivo: fixa.iconeArquivo,
           origemFixaId: fixa.id,
         ));
         mudou = true;
@@ -574,9 +577,24 @@ class FaturaViewModel extends ChangeNotifier {
     String? bancoId,
     Mes? data,
     String? iconeChave,
+    String? iconeArquivo,
+    bool limparIcone = false,
   }) {
     _compras = _compras.map((c) {
       if (c.id != id) return c;
+      if (limparIcone) {
+        return Compra(
+          id: c.id,
+          compradorId: c.compradorId,
+          bancoId: bancoId ?? c.bancoId,
+          descricao: descricao ?? c.descricao,
+          valorIndividual: valorIndividual ?? c.valorIndividual,
+          quantidadeParcelas: quantidadeParcelas ?? c.quantidadeParcelas,
+          data: data ?? c.data,
+          pagasPorMes: c.pagasPorMes,
+          origemFixaId: c.origemFixaId,
+        );
+      }
       return Compra(
         id: c.id,
         compradorId: c.compradorId,
@@ -586,7 +604,10 @@ class FaturaViewModel extends ChangeNotifier {
         quantidadeParcelas: quantidadeParcelas ?? c.quantidadeParcelas,
         data: data ?? c.data,
         pagasPorMes: c.pagasPorMes,
-        iconeChave: iconeChave ?? c.iconeChave,
+        iconeChave:
+            iconeChave ?? (iconeArquivo != null ? null : c.iconeChave),
+        iconeArquivo:
+            iconeArquivo ?? (iconeChave != null ? null : c.iconeArquivo),
         origemFixaId: c.origemFixaId,
       );
     }).toList();

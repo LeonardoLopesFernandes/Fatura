@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/banco.dart';
 import '../../models/compra.dart';
@@ -55,12 +56,33 @@ class CompraItem extends StatelessWidget {
                 color: context.cores.texto.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                compra.iconeChave != null
-                    ? IconesCompra.iconePorChave(compra.iconeChave)
-                    : IconesCompra.iconePorDescricao(compra.descricao),
-                color: corTexto,
-                size: 20,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: compra.iconeArquivo != null
+                    ? Image.file(
+                        File(compra.iconeArquivo!),
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Icon(
+                          compra.iconeChave != null
+                              ? IconesCompra.iconePorChave(
+                                  compra.iconeChave)
+                              : IconesCompra.iconePorDescricao(
+                                  compra.descricao),
+                          color: corTexto,
+                          size: 20,
+                        ),
+                      )
+                    : Icon(
+                        compra.iconeChave != null
+                            ? IconesCompra.iconePorChave(
+                                compra.iconeChave)
+                            : IconesCompra.iconePorDescricao(
+                                compra.descricao),
+                        color: corTexto,
+                        size: 20,
+                      ),
               ),
             ),
             const SizedBox(width: 12),

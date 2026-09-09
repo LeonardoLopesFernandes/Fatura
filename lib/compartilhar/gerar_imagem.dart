@@ -125,6 +125,40 @@ Future<String?> gerarImagem({
       );
     }
 
+    Future<ui.Image?> carregarImagemArquivo(String path) async {
+      try {
+        final bytes = await File(path).readAsBytes();
+        final codec = await ui.instantiateImageCodec(
+          bytes.buffer.asUint8List(),
+          targetWidth: 132,
+          targetHeight: 132,
+        );
+        final frame = await codec.getNextFrame();
+        return frame.image;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    void desenharFotoCompra(
+        ui.Image foto, double boxX, double boxY) {
+      const box = 44.0;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(boxX, boxY, box, box),
+        const Radius.circular(10),
+      );
+      canvas.save();
+      canvas.clipRRect(rrect);
+      canvas.drawImageRect(
+        foto,
+        Rect.fromLTWH(
+            0, 0, foto.width.toDouble(), foto.height.toDouble()),
+        Rect.fromLTWH(boxX, boxY, box, box),
+        Paint(),
+      );
+      canvas.restore();
+    }
+
     void desenharIconeCompra(IconData icone, double boxX, double boxY) {
       const box = 44.0;
       final tp = TextPainter(
@@ -185,11 +219,20 @@ Future<String?> gerarImagem({
       double itemY = headerY + 76;
 
       for (final c in g.compras) {
-        desenharRetangulo(60, itemY + 8, 44, 44, Colors.white.withOpacity(0.12), 10);
-        final icone = c.iconeChave != null
-            ? IconesCompra.iconePorChave(c.iconeChave)
-            : IconesCompra.iconePorDescricao(c.descricao);
-        desenharIconeCompra(icone, 60, itemY + 8);
+        ui.Image? foto;
+        if (c.iconeArquivo != null) {
+          foto = await carregarImagemArquivo(c.iconeArquivo!);
+        }
+        if (foto != null) {
+          desenharFotoCompra(foto, 60, itemY + 8);
+        } else {
+          desenharRetangulo(
+              60, itemY + 8, 44, 44, Colors.white.withOpacity(0.12), 10);
+          final icone = c.iconeChave != null
+              ? IconesCompra.iconePorChave(c.iconeChave)
+              : IconesCompra.iconePorDescricao(c.descricao);
+          desenharIconeCompra(icone, 60, itemY + 8);
+        }
 
         desenhar(c.descricao, 118, itemY + 8, 20, const Color(0xFFE0E0E0));
         desenhar(rotuloParcelaCompra(c, mes), 118, itemY + 36, 15,

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import '../../ui/componentes/campo.dart';
 import '../../ui/componentes/seletor_icone_dialog.dart';
 import '../../util/formatadores.dart';
 import '../../util/currency_input_formatter.dart';
+import '../../util/imagem_helper.dart';
 
 class EditarCompraDialog extends StatefulWidget {
   final Compra compra;
@@ -30,8 +32,24 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
   late final FocusNode _focoParcelas;
   late String? _bancoId;
   late String? _iconeChave;
+  late String? _iconeArquivo;
   late bool _iconeManual;
+  late bool _tinhaIcone;
   late Mes _mes;
+
+  Future<void> _escolherImagemIcone() async {
+    final caminho = await escolherImagemCortada(
+      context,
+      pasta: 'icones_compra',
+      prefixo: 'compra',
+    );
+    if (caminho != null && mounted) {
+      setState(() {
+        _iconeArquivo = caminho;
+        _iconeManual = true;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -46,7 +64,9 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
     _parcelas = TextEditingController(text: c.quantidadeParcelas.toString());
     _bancoId = c.bancoId;
     _iconeChave = c.iconeChave;
-    _iconeManual = c.iconeChave != null;
+    _iconeArquivo = c.iconeArquivo;
+    _iconeManual = c.iconeChave != null || c.iconeArquivo != null;
+    _tinhaIcone = c.iconeChave != null || c.iconeArquivo != null;
     _mes = c.data;
     _focoDescricao = FocusNode();
     _focoValor = FocusNode();
@@ -260,25 +280,73 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                onPressed: () async {
-                  final chave =
-                      await mostrarSeletorIcone(context, _iconeChave);
-                  if (chave != null) {
-                    setState(() {
-                      _iconeChave = chave;
-                      _iconeManual = true;
-                    });
-                  }
-                },
-                icon: Icon(Icons.grid_view,
-                    color: context.cores.azulClaro, size: 16),
-                label: Text('Ver todos',
-                    style:
-                        TextStyle(color: context.cores.azulClaro, fontSize: 13)),
-              ),
+            Row(
+              children: [
+                if (_iconeArquivo != null) ...[
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          File(_iconeArquivo!),
+                          width: 44,
+                          height: 44,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: GestureDetector(
+                          onTap: () => setState(() {
+                            _iconeArquivo = null;
+                            if (!_tinhaIcone) {
+                              _iconeManual = false;
+                              _iconeChave = IconesCompra
+                                  .chavePorDescricao(_descricao.text);
+                            }
+                          }),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: context.cores.perigo,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.close,
+                                color: context.cores.texto, size: 14),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: _escolherImagemIcone,
+                  icon: Icon(Icons.photo_library,
+                      color: context.cores.azulClaro, size: 16),
+                  label: Text('Galeria',
+                      style: TextStyle(
+                          color: context.cores.azulClaro, fontSize: 13)),
+                ),
+                TextButton.icon(
+                  onPressed: () async {
+                    final chave =
+                        await mostrarSeletorIcone(context, _iconeChave);
+                    if (chave != null) {
+                      setState(() {
+                        _iconeChave = chave;
+                        _iconeManual = true;
+                      });
+                    }
+                  },
+                  icon: Icon(Icons.grid_view,
+                      color: context.cores.azulClaro, size: 16),
+                  label: Text('Ver todos',
+                      style: TextStyle(
+                          color: context.cores.azulClaro, fontSize: 13)),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Campo(
@@ -318,15 +386,37 @@ class _EditarCompraDialogState extends State<EditarCompraDialog> {
                       _bancoId == null) {
                     return;
                   }
-                  vm.editarCompra(
-                    widget.compra.id,
-                    descricao: _descricao.text.trim(),
-                    valorIndividual: v / p,
-                    quantidadeParcelas: p,
-                    bancoId: _bancoId!,
-                    data: _mes,
-                    iconeChave: _iconeChave,
-                  );
+                  if (_iconeArquivo != null) {
+                    vm.editarCompra(
+                      widget.compra.id,
+                      descricao: _descricao.text.trim(),
+                      valorIndividual: v / p,
+                      quantidadeParcelas: p,
+                      bancoId: _bancoId!,
+                      data: _mes,
+                      iconeArquivo: _iconeArquivo,
+                    );
+                  } else if (_iconeChave != null) {
+                    vm.editarCompra(
+                      widget.compra.id,
+                      descricao: _descricao.text.trim(),
+                      valorIndividual: v / p,
+                      quantidadeParcelas: p,
+                      bancoId: _bancoId!,
+                      data: _mes,
+                      iconeChave: _iconeChave,
+                    );
+                  } else {
+                    vm.editarCompra(
+                      widget.compra.id,
+                      descricao: _descricao.text.trim(),
+                      valorIndividual: v / p,
+                      quantidadeParcelas: p,
+                      bancoId: _bancoId!,
+                      data: _mes,
+                      limparIcone: _tinhaIcone,
+                    );
+                  }
                   Navigator.of(context).pop();
                 },
           child: Text('Salvar',

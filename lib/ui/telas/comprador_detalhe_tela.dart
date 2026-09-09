@@ -806,12 +806,39 @@ class _PreviewCompartilharState extends State<_PreviewCompartilhar> {
                                       color: Colors.white.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
-                                    child: Icon(
-                                      compra.iconeChave != null
-                                          ? IconesCompra.iconePorChave(compra.iconeChave)
-                                          : IconesCompra.iconePorDescricao(compra.descricao),
-                                      color: context.cores.textoSuave,
-                                      size: 14,
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(6),
+                                      child: compra.iconeArquivo != null
+                                          ? Image.file(
+                                              File(compra.iconeArquivo!),
+                                              width: 28,
+                                              height: 28,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) =>
+                                                  Icon(
+                                                compra.iconeChave != null
+                                                    ? IconesCompra.iconePorChave(
+                                                        compra.iconeChave)
+                                                    : IconesCompra
+                                                        .iconePorDescricao(
+                                                            compra.descricao),
+                                                color: context
+                                                    .cores.textoSuave,
+                                                size: 14,
+                                              ),
+                                            )
+                                          : Icon(
+                                              compra.iconeChave != null
+                                                  ? IconesCompra.iconePorChave(
+                                                      compra.iconeChave)
+                                                  : IconesCompra
+                                                      .iconePorDescricao(
+                                                          compra.descricao),
+                                              color: context
+                                                  .cores.textoSuave,
+                                              size: 14,
+                                            ),
                                     ),
                                   ),
                                   const SizedBox(width: 10),

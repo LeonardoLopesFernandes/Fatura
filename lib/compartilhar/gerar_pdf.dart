@@ -64,14 +64,79 @@ Future<String?> gerarPdf({
 }) async {
   try {
     final icones = <String, Uint8List>{};
+    final fotos = <String, Uint8List>{};
     for (final g in grupos) {
       for (final c in g.compras) {
+        if (c.iconeArquivo != null) {
+          try {
+            fotos[c.id] = await File(c.iconeArquivo!).readAsBytes();
+            continue;
+          } catch (_) {}
+        }
         final icone = c.iconeChave != null
             ? IconesCompra.iconePorChave(c.iconeChave)
             : IconesCompra.iconePorDescricao(c.descricao);
         final png = await _iconePng(icone);
         if (png != null) icones[c.id] = png;
       }
+    }
+
+    pw.Widget iconeCompra(Compra c, PdfColor bancoCor) {
+      if (fotos.containsKey(c.id)) {
+        return pw.Container(
+          width: 30,
+          height: 30,
+          decoration: pw.BoxDecoration(
+            borderRadius: pw.BorderRadius.circular(8),
+          ),
+          child: pw.ClipRRect(
+            horizontalRadius: 8,
+            verticalRadius: 8,
+            child: pw.Image(
+              pw.MemoryImage(fotos[c.id]!),
+              width: 30,
+              height: 30,
+              fit: pw.BoxFit.cover,
+            ),
+          ),
+        );
+      }
+      if (icones.containsKey(c.id)) {
+        return pw.Container(
+          width: 30,
+          height: 30,
+          decoration: pw.BoxDecoration(
+            color: PdfColors.white,
+            borderRadius: pw.BorderRadius.circular(8),
+          ),
+          padding: pw.EdgeInsets.all(4),
+          child: pw.Image(
+            pw.MemoryImage(icones[c.id]!),
+            width: 22,
+            height: 22,
+          ),
+        );
+      }
+      return pw.Container(
+        width: 30,
+        height: 30,
+        decoration: const pw.BoxDecoration(
+          color: PdfColors.white,
+          shape: pw.BoxShape.circle,
+        ),
+        child: pw.Center(
+          child: pw.Text(
+            c.descricao.trim().isNotEmpty
+                ? c.descricao.trim().substring(0, 1).toUpperCase()
+                : '?',
+            style: pw.TextStyle(
+              color: bancoCor,
+              fontSize: 12,
+              fontWeight: pw.FontWeight.bold,
+            ),
+          ),
+        ),
+      );
     }
     final doc = pw.Document();
     final fundo = PdfColor.fromInt(0xFF0D1B2A);
@@ -185,38 +250,7 @@ Future<String?> gerarPdf({
                         crossAxisAlignment:
                             pw.CrossAxisAlignment.center,
                         children: [
-                          pw.Container(
-                            width: 30,
-                            height: 30,
-                            decoration: pw.BoxDecoration(
-                              color: PdfColors.white,
-                              borderRadius:
-                                  pw.BorderRadius.circular(8),
-                            ),
-                            padding: pw.EdgeInsets.all(4),
-                            child: icones.containsKey(c.id)
-                                ? pw.Image(
-                                    pw.MemoryImage(icones[c.id]!),
-                                    width: 22,
-                                    height: 22,
-                                  )
-                                : pw.Center(
-                                    child: pw.Text(
-                                      c.descricao.trim().isNotEmpty
-                                          ? c.descricao
-                                              .trim()
-                                              .substring(0, 1)
-                                              .toUpperCase()
-                                          : '?',
-                                      style: pw.TextStyle(
-                                        color: bancoCor,
-                                        fontSize: 12,
-                                        fontWeight:
-                                            pw.FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                          ),
+                          iconeCompra(c, bancoCor),
                           pw.SizedBox(width: 10),
                           pw.Expanded(
                             child: pw.Column(

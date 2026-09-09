@@ -1,7 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../../data/avatares.dart';
 import '../../data/fatura_view_model.dart';
@@ -11,6 +8,7 @@ import '../../ui/temas.dart';
 import '../../ui/componentes/avatar_devedor.dart';
 import '../../ui/componentes/campo.dart';
 import '../../util/formatadores.dart';
+import '../../util/imagem_helper.dart';
 
 class NovoDevedorSheet extends StatefulWidget {
   const NovoDevedorSheet({super.key});
@@ -111,19 +109,13 @@ class _DevedoresScreenState extends State<DevedoresScreen> {
 
   Future<void> _escolherFoto(
       FaturaViewModel vm, Comprador comprador) async {
-    try {
-      final picker = ImagePicker();
-      final imagem = await picker.pickImage(source: ImageSource.gallery);
-      if (imagem == null) return;
-      final dir = Directory(
-          '${(await getApplicationDocumentsDirectory()).path}/avatares');
-      await dir.create(recursive: true);
-      final ext = imagem.path.split('.').last;
-      final destino =
-          '${dir.path}/avatar_${DateTime.now().microsecondsSinceEpoch}.$ext';
-      await File(imagem.path).copy(destino);
-      vm.atualizarComprador(comprador.id, avatarArquivo: destino);
-    } catch (_) {}
+    final destino = await escolherImagemCortada(
+      context,
+      pasta: 'avatares',
+      prefixo: 'avatar',
+    );
+    if (destino == null) return;
+    vm.atualizarComprador(comprador.id, avatarArquivo: destino);
   }
 
   void _mostrarAvatar(BuildContext context, FaturaViewModel vm,

@@ -10,6 +10,7 @@ class Compra {
   final Mes data;
   final Set<int> pagasPorMes;
   final String? iconeChave;
+  final String? iconeArquivo;
   final String? origemFixaId;
 
   Compra({
@@ -22,6 +23,7 @@ class Compra {
     required this.data,
     Set<int>? pagasPorMes,
     this.iconeChave,
+    this.iconeArquivo,
     this.origemFixaId,
   }) : pagasPorMes = pagasPorMes ?? {};
 
@@ -66,6 +68,7 @@ class Compra {
     Mes? data,
     Set<int>? pagasPorMes,
     String? iconeChave,
+    String? iconeArquivo,
     String? origemFixaId,
   }) =>
       Compra(
@@ -78,6 +81,7 @@ class Compra {
         data: data ?? this.data,
         pagasPorMes: pagasPorMes ?? this.pagasPorMes,
         iconeChave: iconeChave ?? this.iconeChave,
+        iconeArquivo: iconeArquivo ?? this.iconeArquivo,
         origemFixaId: origemFixaId ?? this.origemFixaId,
       );
 
@@ -93,6 +97,7 @@ class Compra {
         'pagasPorMes': pagasPorMes.toList(),
         'paga': paga,
         if (iconeChave != null) 'iconeChave': iconeChave,
+        if (iconeArquivo != null) 'iconeArquivo': iconeArquivo,
         if (origemFixaId != null) 'origemFixaId': origemFixaId,
       };
 
@@ -117,6 +122,7 @@ class Compra {
       data: Mes(json['ano'], json['mes']),
       pagasPorMes: pagas,
       iconeChave: json['iconeChave'],
+      iconeArquivo: json['iconeArquivo'],
       origemFixaId: json['origemFixaId'],
     );
   }
