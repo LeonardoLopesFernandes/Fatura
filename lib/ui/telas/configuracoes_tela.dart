@@ -8,7 +8,7 @@ import '../../util/backup.dart';
 import '../../util/formatadores.dart';
 import '../../util/notificacoes.dart';
 
-const String kVersaoApp = '1.0.36';
+const String kVersaoApp = '1.0.37';
 
 class ConfiguracoesScreen extends StatelessWidget {
   const ConfiguracoesScreen({super.key});
