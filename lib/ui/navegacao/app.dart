@@ -251,8 +251,7 @@ class _AppNavegacaoState extends State<AppNavegacao> {
                 actions: [
                   IconButton(
                     onPressed: () => _push('estatisticas'),
-                    icon:
-                        Icon(Icons.bar_chart, color: context.cores.azulClaro),
+                    icon: const _IconeEstatistica(),
                   ),
                   IconButton(
                     onPressed: () => _push('configuracoes'),
@@ -309,6 +308,40 @@ class _AppNavegacaoState extends State<AppNavegacao> {
                 ),
               )
             : null,
+      ),
+    );
+  }
+}
+
+class _IconeEstatistica extends StatelessWidget {
+  const _IconeEstatistica();
+
+  @override
+  Widget build(BuildContext context) {
+    Widget barra(double altura, Color cor) {
+      return Container(
+        width: 5,
+        height: altura,
+        decoration: BoxDecoration(
+          color: cor,
+          borderRadius: BorderRadius.circular(2.5),
+        ),
+      );
+    }
+
+    return SizedBox(
+      width: 24,
+      height: 24,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          barra(10, const Color(0xFF2563EB)),
+          const SizedBox(width: 3),
+          barra(17, const Color(0xFFFACC15)),
+          const SizedBox(width: 3),
+          barra(22, const Color(0xFFEF4444)),
+        ],
       ),
     );
   }
