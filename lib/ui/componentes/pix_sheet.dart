@@ -160,9 +160,13 @@ void mostrarCobrancaPix(
               const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {
-                    Share.share(
-                      '$codigo\n\n\nPix ${banco.nome} ${formatarMoeda(valor)}\nChave: $chave',
+                  onPressed: () async {
+                    await Share.share(
+                      codigo,
+                      subject: 'Código Pix',
+                    );
+                    await Share.share(
+                      'Pix ${banco.nome} ${formatarMoeda(valor)}\nChave: $chave',
                       subject: 'Cobrança Pix',
                     );
                   },
