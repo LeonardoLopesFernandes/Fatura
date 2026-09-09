@@ -348,7 +348,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                                 : Icons
                                                     .check_box_outline_blank,
                                             color: selecionando
-                                                ? context.cores.primaria
+                                                ? context.cores.sucesso
                                                 : context.cores.textoSuave,
                                             size: 18,
                                           ),
