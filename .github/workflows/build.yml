@@ -66,3 +66,12 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Manter somente as duas últimas tags
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git fetch --tags --force
+          antigas=$(git tag --sort=-v:refname | grep '^v' | tail -n +3)
+          for t in $antigas; do
+            git push origin ":refs/tags/$t" || true
+          done
