@@ -80,16 +80,16 @@ class CompradorDetalheScreen extends StatelessWidget {
           IconButton(
             onPressed: () => cobrarTotalDevedor(
                 context, grupos: grupos, valorTotal: faturaBruta),
-            icon: Icon(Icons.pix, color: context.cores.textoSuave),
+            icon: const Icon(Icons.pix, color: Color(0xFF4DB6AC)),
           ),
           IconButton(
             onPressed: () => _mostrarCompartilhar(
                 context, vm, comprador.nome, faturaBruta, grupos),
-            icon: Icon(Icons.share, color: context.cores.textoSuave),
+            icon: Icon(Icons.share, color: context.cores.azulClaro),
           ),
           IconButton(
             onPressed: () => _confirmarApagar(context, vm, comprador.id),
-            icon: Icon(Icons.delete_outline, color: context.cores.textoSuave),
+            icon: Icon(Icons.delete_outline, color: context.cores.perigo),
           ),
         ],
       ),

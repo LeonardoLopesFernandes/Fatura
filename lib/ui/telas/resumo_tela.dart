@@ -222,9 +222,9 @@ class _ResumoScreenState extends State<ResumoScreen> {
                               ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.pix,
-                                color: context.cores.textoSuave,
+                                color: Color(0xFF4DB6AC),
                                 size: 20,
                               ),
                             ),

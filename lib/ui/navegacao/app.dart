@@ -252,11 +252,11 @@ class _AppNavegacaoState extends State<AppNavegacao> {
                   IconButton(
                     onPressed: () => _push('estatisticas'),
                     icon:
-                        Icon(Icons.bar_chart, color: context.cores.textoSuave),
+                        Icon(Icons.bar_chart, color: context.cores.azulClaro),
                   ),
                   IconButton(
                     onPressed: () => _push('configuracoes'),
-                    icon: Icon(Icons.settings, color: context.cores.textoSuave),
+                    icon: Icon(Icons.settings, color: context.cores.primaria),
                   ),
                 ],
               )
