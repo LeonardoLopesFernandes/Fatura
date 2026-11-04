@@ -7,8 +7,9 @@ import '../../ui/temas.dart';
 import '../../util/backup.dart';
 import '../../util/formatadores.dart';
 import '../../util/notificacoes.dart';
+import 'open_finance_tela.dart';
 
-const String kVersaoApp = '1.0.37';
+const String kVersaoApp = '1.0.47';
 
 class ConfiguracoesScreen extends StatelessWidget {
   const ConfiguracoesScreen({super.key});
@@ -53,6 +54,17 @@ class ConfiguracoesScreen extends StatelessWidget {
               subtitulo: 'Remove todos os bancos, devedores e compras',
               cor: context.cores.perigoClaro,
               onTap: () => _confirmarLimpar(context, vm),
+            ),
+            _Secao('Open Finance (POC)'),
+            _Item(
+              icone: Icons.account_balance,
+              titulo: 'Importar faturas dos bancos',
+              subtitulo: 'POC com dados simulados; pronto para o backend Pluggy',
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const OpenFinanceScreen(),
+                ),
+              ),
             ),
             _Secao('Aparência'),
             ...rotulosTemas.entries.map((e) {

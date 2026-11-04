@@ -13,6 +13,12 @@ void cobrarTotalDevedor(
   required List<Grupo> grupos,
   required double valorTotal,
 }) {
+  if (valorTotal <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Nada a receber neste mês.')),
+    );
+    return;
+  }
   final comChave = grupos
       .where((g) => (g.banco.chavePix?.trim() ?? '').isNotEmpty)
       .toList();

@@ -79,7 +79,7 @@ class CompradorDetalheScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () => cobrarTotalDevedor(
-                context, grupos: grupos, valorTotal: faturaBruta),
+                context, grupos: grupos, valorTotal: faturaRestante),
             icon: const Icon(Icons.pix, color: Color(0xFF4DB6AC)),
           ),
           IconButton(
@@ -377,9 +377,10 @@ class CompradorDetalheScreen extends StatelessWidget {
 
   String _montarTexto(
       FaturaViewModel vm, String nome, double fatura, List<Grupo> grupos) {
+    final mes = vm.mesSelecionado;
     final buffer = StringBuffer();
     buffer.writeln('Fatura - $nome');
-    buffer.writeln('Mês: ${rotuloMesLongo(vm.mesSelecionado)}');
+    buffer.writeln('Mês: ${rotuloMesLongo(mes)}');
     buffer.writeln('');
     if (grupos.isEmpty) {
       buffer.writeln('Nenhuma compra neste mês.');
@@ -388,11 +389,11 @@ class CompradorDetalheScreen extends StatelessWidget {
       buffer.writeln(g.banco.nome);
       for (final c in g.compras) {
         final parcela = c.quantidadeParcelas > 1
-            ? ' (${c.quantidadeParcelas}x)'
+            ? ' (${c.parcelaNoMes(mes)}/${c.quantidadeParcelas})'
             : '';
-        final pago = c.paga ? ' [pago]' : '';
+        final pago = c.pagaNoMes(mes) ? ' [pago neste mês]' : '';
         buffer.writeln(
-            '  - ${c.descricao}: ${formatarMoeda(c.valorTotal)}$parcela$pago');
+            '  - ${c.descricao}: ${formatarMoeda(c.valorIndividual)}$parcela$pago');
       }
     }
     buffer.writeln('');
@@ -401,8 +402,10 @@ class CompradorDetalheScreen extends StatelessWidget {
   }
 
   String _montarCsv(FaturaViewModel vm, String nome, List<Grupo> grupos) {
+    final mes = vm.mesSelecionado;
     final buffer = StringBuffer();
-    buffer.writeln('devedor,banco,descricao,valor,parcelas,data,paga');
+    buffer.writeln(
+        'devedor,banco,descricao,valor,parcelas,parcela,data,paga_no_mes');
     for (final g in grupos) {
       for (final c in g.compras) {
         final data =
@@ -411,10 +414,11 @@ class CompradorDetalheScreen extends StatelessWidget {
             '"${nome.replaceAll('"', "'")}",'
             '"${g.banco.nome.replaceAll('"', "'")}",'
             '"${c.descricao.replaceAll('"', "'")}",'
-            '${c.valorTotal.toStringAsFixed(2).replaceAll('.', ',')},'
+            '${c.valorIndividual.toStringAsFixed(2).replaceAll('.', ',')},'
             '${c.quantidadeParcelas},'
+            '${c.parcelaNoMes(mes)},'
             '$data,'
-            '${c.paga ? 'sim' : 'nao'}');
+            '${c.pagaNoMes(mes) ? 'sim' : 'nao'}');
       }
     }
     return buffer.toString();

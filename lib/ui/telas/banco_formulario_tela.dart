@@ -531,8 +531,9 @@ class _BancoFormularioState extends State<BancoFormulario> {
                           widget.bancoExistente!.id, mesAtual);
                       final devedores = vm.faturaDoBancoBrutoNoMes(
                           widget.bancoExistente!.id, mesAtual);
+                      final diferenca = informada - devedores;
                       final restante = informada > 0
-                          ? (informada - devedores)
+                          ? (diferenca > 0 ? diferenca : 0.0)
                           : vm.faturaDoBancoNoMes(
                               widget.bancoExistente!.id, mesAtual);
                       return Text(

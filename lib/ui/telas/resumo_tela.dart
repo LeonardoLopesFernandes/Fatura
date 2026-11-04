@@ -153,11 +153,12 @@ class _ResumoScreenState extends State<ResumoScreen> {
                       vm.faturaDoBancoBrutoNoMes(banco.id, mes);
                   final devedoresPendentes =
                       vm.faturaDoBancoNoMes(banco.id, mes);
+                  final diferenca = informada - devedores;
                   final saldo = informada > 0
-                      ? (informada - devedores)
+                      ? (diferenca > 0 ? diferenca : 0.0)
                       : devedores;
                   final restante = informada > 0
-                      ? (informada - devedores)
+                      ? (diferenca > 0 ? diferenca : 0.0)
                       : devedoresPendentes;
                   return CarouselBankCard(
                     banco: banco,
@@ -223,9 +224,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                               onPressed: () => cobrarTotalDevedor(
                                 context,
                                 grupos: grupos,
-                                valorTotal:
-                                    vm.faturaDoCompradorBrutoNoMes(
-                                        comprador.id, mes),
+                                valorTotal: faturaDoMes,
                               ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),

@@ -63,9 +63,12 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
         vm.faturaDoBancoBrutoNoMes(widget.bancoId, widget.mes);
     final devedoresPendentes =
         vm.faturaDoBancoNoMes(widget.bancoId, widget.mes);
+    final diferenca = faturaAtual - devedores;
     final restante = faturaAtual > 0
-        ? (faturaAtual - devedores)
+        ? (diferenca > 0 ? diferenca : 0.0)
         : devedoresPendentes;
+    final excedente =
+        faturaAtual > 0 && diferenca < 0 ? -diferenca : 0.0;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -118,6 +121,14 @@ class _FaturaBancoScreenState extends State<FaturaBancoScreen> {
               Text(
                 'Restante a receber dos devedores: ${formatarMoeda(restante)}',
                 style: TextStyle(color: context.cores.textoSuave, fontSize: 12),
+              ),
+            if (excedente > 0)
+              Text(
+                'Compras excedem a fatura em ${formatarMoeda(excedente)}',
+                style: TextStyle(
+                    color: context.cores.perigo,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
               ),
             if (faturaAtual > 0)
               Text(

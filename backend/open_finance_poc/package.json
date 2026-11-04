@@ -1,0 +1,9 @@
+{
+  "name": "fatura-open-finance-poc",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs"
+  }
+}

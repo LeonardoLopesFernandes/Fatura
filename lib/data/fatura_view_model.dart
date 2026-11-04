@@ -535,11 +535,12 @@ class FaturaViewModel extends ChangeNotifier {
   void materializarFixas(Mes mes) {
     var mudou = false;
     for (final fixa in _fixas) {
-      if (fixa.data.indice() > mes.indice()) continue;
-      final existe = _compras.any((c) =>
-          c.origemFixaId == fixa.id &&
-          c.data.indice() == mes.indice());
-      if (!existe) {
+      final inicio = fixa.data.indice();
+      final fim = mes.indice();
+      for (var indice = inicio; indice <= fim; indice++) {
+        final existe = _compras.any((c) =>
+            c.origemFixaId == fixa.id && c.data.indice() == indice);
+        if (existe) continue;
         _compras.add(Compra(
           id: novoId('compra'),
           compradorId: fixa.compradorId,
@@ -547,7 +548,7 @@ class FaturaViewModel extends ChangeNotifier {
           descricao: fixa.descricao,
           valorIndividual: fixa.valorIndividual,
           quantidadeParcelas: 1,
-          data: mes,
+          data: Mes.porIndice(indice),
           iconeChave: fixa.iconeChave,
           iconeArquivo: fixa.iconeArquivo,
           origemFixaId: fixa.id,
@@ -585,6 +586,19 @@ class FaturaViewModel extends ChangeNotifier {
   }) {
     _compras = _compras.map((c) {
       if (c.id != id) return c;
+      final novoInicio = (data ?? c.data).indice();
+      final novaQuantidade = quantidadeParcelas ?? c.quantidadeParcelas;
+      // Preserva o pagamento pela parcela (1ª, 2ª...), não pelo mês antigo.
+      // Assim, mudar a data/quantidade não marca o mês errado como pago.
+      final novasPagas = <int>{};
+      for (final indice in c.pagasPorMes) {
+        final parcela = indice - c.data.indice() + 1;
+        if (parcela >= 1 &&
+            parcela <= c.quantidadeParcelas &&
+            parcela <= novaQuantidade) {
+          novasPagas.add(novoInicio + parcela - 1);
+        }
+      }
       if (limparIcone) {
         return Compra(
           id: c.id,
@@ -592,9 +606,9 @@ class FaturaViewModel extends ChangeNotifier {
           bancoId: bancoId ?? c.bancoId,
           descricao: descricao ?? c.descricao,
           valorIndividual: valorIndividual ?? c.valorIndividual,
-          quantidadeParcelas: quantidadeParcelas ?? c.quantidadeParcelas,
+          quantidadeParcelas: novaQuantidade,
           data: data ?? c.data,
-          pagasPorMes: c.pagasPorMes,
+          pagasPorMes: novasPagas,
           origemFixaId: c.origemFixaId,
         );
       }
@@ -604,9 +618,9 @@ class FaturaViewModel extends ChangeNotifier {
         bancoId: bancoId ?? c.bancoId,
         descricao: descricao ?? c.descricao,
         valorIndividual: valorIndividual ?? c.valorIndividual,
-        quantidadeParcelas: quantidadeParcelas ?? c.quantidadeParcelas,
+        quantidadeParcelas: novaQuantidade,
         data: data ?? c.data,
-        pagasPorMes: c.pagasPorMes,
+        pagasPorMes: novasPagas,
         iconeChave:
             iconeChave ?? (iconeArquivo != null ? null : c.iconeChave),
         iconeArquivo:
