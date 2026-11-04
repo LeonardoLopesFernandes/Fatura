@@ -9,7 +9,7 @@ import '../../util/formatadores.dart';
 import '../../util/notificacoes.dart';
 import 'open_finance_tela.dart';
 
-const String kVersaoApp = '1.0.48';
+const String kVersaoApp = '1.0.49';
 
 class ConfiguracoesScreen extends StatelessWidget {
   const ConfiguracoesScreen({super.key});
